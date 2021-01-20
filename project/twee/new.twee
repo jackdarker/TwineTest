@@ -1,0 +1,16 @@
+:: Cabinet {"position":"960,752.3000030517578","size":"100,100"}
+<section> 
+<aside id="sidebar"></aside>
+<article>
+There is nothing here
+
+[[Living_Room]]
+</article>
+
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {
+	renderToSelector("#sidebar", "footer");
+  });
+</script>
+</section>
