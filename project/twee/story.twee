@@ -7,7 +7,7 @@ teyt
 	"ifid": "90EFC306-4C57-4786-8CD3-9789B523C8AF",
 	"format": "Snowman",
 	"format-version": "2.0.2",
-	"start": "Bedroom",
+	"Start": "Start",
 	"tag-colors": {
 		"template": "orange"
 	},
@@ -65,7 +65,11 @@ window.gm = {
     addTime: function(min) {
     window.story.state.vars.time += min;
     document.querySelector("output").textContent = window.story.state.vars.time;
-  }
+  },
+  dropBanana: function() {
+    window.story.state.vars.bananas -=1;
+    return(window.story.state.vars.bananas)
+    }
 }
 
 :: Bedroom {"position":"1033,470","size":"100,100"}
@@ -221,6 +225,17 @@ document.querySelector('#wait').addEventListener('click', function() {window.gm.
 
 
 :: Start {"position":"512,202.3000030517578","size":"100,100"}
+Select a Link:
+<ul>
+    <li>[[_SuperSimpleStory_]]</li>
+	  <li>[[_ImagesAndOtherMedia_]]</li>
+    <li>[[_VariablesAndScript_]]</li>
+    <li>[[_Inventory_]]</li>
+    <li>[[_SaveAndRestore_]]</li>
+</ul>
+
+
+:: _SaveLoad_
 <%
   if(window.storage.ok()) { %>
   Window storage works!

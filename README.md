@@ -14,5 +14,6 @@ Place additional css/ js in the styles/scripts-folders.
 Place images/sounds,... here ./dist/assets
 Then execute run build.bat. This will compile the html in ./dist and should open the game in your browser.
 
-If you have a project in twine editor you can export an archiv and use tweego to create a twee: tweego -d -o archiv.twee archiv.html
-You can also use tweego to export the twee to a twine-compatible version:
+If you have a project in twine editor you can export an archiv and use tweego to create a twee: 
+tweego -d -o archiv.twee archiv.html
+You can load the html created by tweego into twine-editor

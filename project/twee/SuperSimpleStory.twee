@@ -1,0 +1,87 @@
+:: _SuperSimpleStory_
+<%if(visited(window.passage.name)<=1) {%>
+Welcome to this short story.</br></br>
+<%}%>
+<mark>The previous part is an example how to conditional build the html output </br></mark>
+You are lying in your bed.</br>
+What would you like to do.</br>
+[[Sleep]]</br>
+[[Wakeup]] </br>
+
+:: Sleep
+You are sleeping some more. </br>
+<mark>The folowing is an example how to print a javascript calculation to html:</br></mark>
+It is now <%= 5*visited(window.passage.name)%> minutes later.</br>
+[[Continue|_SuperSimpleStory_]]
+
+:: Wakeup
+You groan as you wake up. 'Damn life'</br>
+[[Start]]
+
+:: _ImagesAndOtherMedia_
+<mark>embed images in the following way:</mark></br>
+stored on a server:</br>
+<img alt="twinerylogo" src="https://twinery.org/homepage/img/logo.svg" width="256" height="256"></br>
+stored in .dist/assets:</br>
+<img alt="tweegoicon" src="assets/favicon.png" ></br>
+animated gif:</br>
+<img alt="bird.gif" src="assets/bird.gif" ></br>
+audio with manual control:</br> 
+<audio id="audio_with_controls" controls src="assets/drink.ogg" type="audio/ogg" ></audio>
+audio autoplay:</br>
+<audio id="audio_autoplay" autoplay src="assets/chimes.ogg" type="audio/ogg" ></audio>
+video with autoplay:</br>
+<video id="player2" autoplay >
+  <source src="assets/Comedy.mp4" type="video/mp4">
+</video>
+
+video with integrated and separate controls:</br>
+<video id="player" controls>
+  <source src="assets/Comedy.mp4" type="video/mp4">
+</video>
+
+<button id="play">Play</button>
+<button id="pause">Pause</button>
+<button id="duration">Länge anzeigen</button>
+<p id="ausgabe"></p>
+ 
+<script>
+  var song = document.getElementById('player');
+  document.getElementById('play').addEventListener('click', function() { song.play(); }, false);
+  document.getElementById('pause').addEventListener('click', function() { song.pause(); }, false);
+  document.getElementById('duration').addEventListener('click', function() { 
+  document.getElementById('ausgabe').innerHTML = 'Die Dauer des Videos beträgt: '+ song.duration; +' Sekunden.'}, false);
+</script>
+[[Start]]
+
+
+:: _VariablesAndScript_
+<script>
+function getBanana(elmnt,val) {
+    window.story.state.vars.bananas +=val;
+    //window.story.show(window.passage.name); this would reload the passage but would overwrite the elmnt-replace
+    elmnt.replaceWith("took bananas "+val); //replace the calling link with simple text to it a one-timer. But it will be restored if passage is reloaded 
+}
+</script>
+<%
+//initialise game state
+//s is window.story.state from snowman!
+//create a vars-container and define startvalues for some variables
+if (!s.vars) { 
+	s.vars = {
+    bananas : 0
+  }; 
+}
+%>
+<% if(visited(window.passage.name)<=1) {
+    s.vars.bananas+=2;}
+%>
+You have <%=s.vars.bananas%> bananas. </br>
+<mark>If you want to call functions in this way you have to add them to a global object.This is done in the StoryScrip-passage. See there. </br></mark>
+You droped a banana and have now <%-window.gm.dropBanana()%>. </br>
+
+<mark>This is a empty link that is used to trigger a function that is defined in the page-script </br></mark>
+<a0 onclick=getBanana(this,5)>Get more banana</a> </br>
+<mark>Press refreh to update page display </br></mark>
+[[Refresh|_VariablesAndScript_]] </br>
+[[Start]]
