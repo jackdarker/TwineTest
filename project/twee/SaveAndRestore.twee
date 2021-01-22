@@ -1,0 +1,35 @@
+:: _SaveAndRestore_
+<script>
+var x = 1; 
+var maxSlots = 4; //number saveslots available; has to fit form below
+ do {
+   const _x = x;
+   const slot = 'save'.concat(x);
+  document.querySelector('#save'.concat(x)).addEventListener('click', function(){window.storage.saveBrowser(slot)});
+  document.querySelector('#load'.concat(x)).addEventListener('click', function(){window.storage.loadBrowser(slot)});
+  document.querySelector('#delete'.concat(x)).addEventListener('click', function(){window.storage.delete(slot)});
+  document.querySelector('#save'.concat(x)).addEventListener('click', function(){refresh(_x)});
+  document.querySelector('#load'.concat(x)).addEventListener('click', function(){refresh(_x)});
+  document.querySelector('#delete'.concat(x)).addEventListener('click', function(){refresh(_x)});
+   refresh(x);
+   x = x + 1;
+ } while (x <= maxSlots);
+function refresh(slot){
+  var ok = window.storage.getSaveInfo('save'.concat(slot));
+   document.querySelector('output'.concat(slot)).textContent = ok;
+}
+</script>
+<form>
+<label>Info:<output></output></label></br>
+<button type="button" id="save1">save 1</button><button type="button" id="load1">load 1</button>
+<button type="button" id="delete1">delete 1</button><label>Info:<output1></output1></label></br>
+<button type="button" id="save2">save 2</button><button type="button" id="load2">load 2</button>
+<button type="button" id="delete2">delete 2</button><label>Info:<output2></output2></label></br>
+<button type="button" id="save3">save 3</button><button type="button" id="load3">load 3</button>
+<button type="button" id="delete3">delete 3</button><label>Info:<output3></output3></label></br>
+<button type="button" id="save4">save 4</button><button type="button" id="load4">load 4</button>
+<button type="button" id="delete4">delete 4</button><label>Info:<output4></output4></label></br>
+</form>
+
+
+[[Start]]

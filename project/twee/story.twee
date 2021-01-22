@@ -16,61 +16,78 @@ teyt
 
 :: Story JavaScript [script]
 window.storage = {
-  ok: function() {
-    try {
-        var storage = window["localStorage"],
-          x = '__storage_test__';
-        storage.setItem(x, x);
-        storage.removeItem(x);
-        return true;
+    ok: function() {
+      try {
+          var storage = window["localStorage"],
+            x = '__storage_test__';
+          storage.setItem(x, x);
+          storage.removeItem(x);
+          return true;
+        }
+        catch(e) {
+          return e instanceof DOMException && (
+          // everything except Firefox
+          e.code === 22 ||
+          // Firefox
+          e.code === 1014 ||
+          // test name field too, because code might not be present
+          // everything except Firefox
+          e.name === 'QuotaExceededError' ||
+          // Firefox
+          e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+          // acknowledge QuotaExceededError only if there's something already stored
+          storage.length !== 0;
+        }
+    },
+    save: function(slot,hash) {
+      window.localStorage.setItem(slot, hash);
+    },
+    restore: function(slot) {
+      return window.localStorage.getItem(slot);
+    },
+    delete: function(slot) {
+      window.localStorage.removeItem(slot);
+      window.localStorage.removeItem(slot.concat('info'));
+    },
+      getSaveInfo: function(slot) {
+          var info=null;
+        if(window.storage.ok()) {
+            info =window.storage.restore(slot.concat('info'));		
+        }
+      if(!info) {
+        return('');
       }
-      catch(e) {
-        return e instanceof DOMException && (
-        // everything except Firefox
-        e.code === 22 ||
-        // Firefox
-        e.code === 1014 ||
-        // test name field too, because code might not be present
-        // everything except Firefox
-        e.name === 'QuotaExceededError' ||
-        // Firefox
-        e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
-        // acknowledge QuotaExceededError only if there's something already stored
-        storage.length !== 0;
-      }
-  },
-  save: function(hash) {
-    window.localStorage.setItem('hash', hash);
-  },
-  restore: function() {
-    return window.localStorage.getItem('hash');
-  },
-  delete: function() {
-    window.localStorage.removeItem("hash");
-  },
-	saveBrowser: function() {
-	var hash =window.story.save();				
-	document.querySelector("output").textContent = hash;
-		window.storage.save(hash);
-  },
-	loadBrowser: function() {
-		if(window.storage.ok()) {
-			var hash =window.storage.restore();	
-			window.story.restore(hash) ; 
-			document.querySelector("output").textContent = hash;
-		}
-  }
-}
-window.gm = {
-    addTime: function(min) {
-    window.story.state.vars.time += min;
-    document.querySelector("output").textContent = window.story.state.vars.time;
-  },
-  dropBanana: function() {
-    window.story.state.vars.bananas -=1;
-    return(window.story.state.vars.bananas)
+      return(info);
+        
+    },
+      saveBrowser: function(slot) {
+        var hash=window.story.save();
+        var info=new Date().toString();
+        window.localStorage.setItem(slot.concat('info'),info);
+        window.localStorage.setItem(slot,hash);
+        document.querySelector("output").textContent = info;
+    },
+      loadBrowser: function(slot) {
+          var hash,info;
+          if(window.storage.ok()) {
+            //not possible to save object {info,hash} ??
+            hash=window.localStorage.getItem(slot);
+            info=window.localStorage.getItem(slot.concat('info'));
+            window.story.restore(hash) ; 
+            document.querySelector("output").textContent = (info);
+          }
     }
-}
+  };
+  window.gm = {
+      addTime: function(min) {
+      window.story.state.vars.time += min;
+      document.querySelector("output").textContent = window.story.state.vars.time;
+    },
+    dropBanana: function() {
+      window.story.state.vars.bananas -=1;
+      return(window.story.state.vars.bananas);
+      }
+  };
 
 :: Bedroom {"position":"1033,470","size":"100,100"}
 <section> 

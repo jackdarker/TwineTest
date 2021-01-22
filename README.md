@@ -17,3 +17,10 @@ Then execute run build.bat. This will compile the html in ./dist and should open
 If you have a project in twine editor you can export an archiv and use tweego to create a twee: 
 tweego -d -o archiv.twee archiv.html
 You can load the html created by tweego into twine-editor
+
+How to debug this
+--------------------------------
+After opening the html in browser activate developer tools by pressing F12.
+You will not find the scripts on tab sources ! To find a function add a watch for the object containing the function. f.e window.gm
+You should see the functions in the watch. And you can right click and select "show function defenition".
+Now the script should be shown and you can set breakpoints and debug.
