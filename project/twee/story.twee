@@ -7,7 +7,7 @@ teyt
 	"ifid": "90EFC306-4C57-4786-8CD3-9789B523C8AF",
 	"format": "Snowman",
 	"format-version": "2.0.2",
-	"Start": "Start",
+	"Start": "Intro",
 	"tag-colors": {
 		"template": "orange"
 	},
@@ -15,103 +15,70 @@ teyt
 }
 
 :: Story JavaScript [script]
-window.storage = {
-    ok: function() {
-      try {
-          var storage = window["localStorage"],
-            x = '__storage_test__';
-          storage.setItem(x, x);
-          storage.removeItem(x);
-          return true;
-        }
-        catch(e) {
-          return e instanceof DOMException && (
-          // everything except Firefox
-          e.code === 22 ||
-          // Firefox
-          e.code === 1014 ||
-          // test name field too, because code might not be present
-          // everything except Firefox
-          e.name === 'QuotaExceededError' ||
-          // Firefox
-          e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
-          // acknowledge QuotaExceededError only if there's something already stored
-          storage.length !== 0;
-        }
-    },
-    save: function(slot,hash) {
-      window.localStorage.setItem(slot, hash);
-    },
-    restore: function(slot) {
-      return window.localStorage.getItem(slot);
-    },
-    delete: function(slot) {
-      window.localStorage.removeItem(slot);
-      window.localStorage.removeItem(slot.concat('info'));
-    },
-      getSaveInfo: function(slot) {
-          var info=null;
-        if(window.storage.ok()) {
-            info =window.storage.restore(slot.concat('info'));		
-        }
-      if(!info) {
-        return('');
-      }
-      return(info);
-        
-    },
-      saveBrowser: function(slot) {
-        var hash=window.story.save();
-        var info=new Date().toString();
-        window.localStorage.setItem(slot.concat('info'),info);
-        window.localStorage.setItem(slot,hash);
-        document.querySelector("output").textContent = info;
-    },
-      loadBrowser: function(slot) {
-          var hash,info;
-          if(window.storage.ok()) {
-            //not possible to save object {info,hash} ??
-            hash=window.localStorage.getItem(slot);
-            info=window.localStorage.getItem(slot.concat('info'));
-            window.story.restore(hash) ; 
-            document.querySelector("output").textContent = (info);
-          }
-    }
-  };
-  window.gm = {
-      addTime: function(min) {
-      window.story.state.vars.time += min;
-      document.querySelector("output").textContent = window.story.state.vars.time;
-    },
-    dropBanana: function() {
-      window.story.state.vars.bananas -=1;
-      return(window.story.state.vars.bananas);
-      }
-  };
+
+:: Start {"position":"512,202.3000030517578","size":"100,100"}
+Select a Link:
+<ul>
+    <li>[[_SuperSimpleStory_]]</li>
+	  <li>[[_ImagesAndOtherMedia_]]</li>
+    <li>[[_VariablesAndScript_]]</li>
+    <li>[[_Inventory_]]</li>
+    <li>[[_SaveAndRestore_]]</li>
+    <li>[[StartPage]]</li>
+</ul>
+
+:: StartPage
+<article>
+<h1 align="center">Teyt <%-window.gm.getSaveVersion()%></h1>
+<h1 align="center">DISCLAIMER</h1>
+<h2 align="center">Warning: Adult content! Fetishes!</h2>
+<hr>
+<div align="center">This is a work of fiction; any resemblance to actual persons, places, or events is unintended. All characters in the game are fictional too. All coincidence with reality is random.
+All characters in this game are fictional and any similarities to any persons living or dead are purely coincidental.
+All explicit images are performed by consenting adults aged 18 or older. Images are for illustrative purposes only.</div>
+<hr><hr>
+<div align="center">Are you 21+ years old and want to play?</div>
+<div align="center">[[Yes!|Intro]] | [[No|StartPage]]</div>
+<hr><hr>
+This game is powered by twine and tweego.</br> 
+<img src="https://twinery.org/homepage/img/logo.svg" width="256" height="256">
+</article>
+
+:: Intro
+<script>
+function getBanana(elmnt,val) {
+    window.story.state.vars.bananas +=val;
+    //window.story.show(window.passage.name); this would reload the passage but would overwrite the elmnt-replace
+    elmnt.replaceWith("took bananas "+val); //replace the calling link with simple text to it a one-timer. But it will be restored if passage is reloaded 
+}
+</script>
+<article>
+<%window.gm.initGame();%>
+Welcome to your new home. </br>
+Together with your mom you have moved to #todo into an old but spacious house. </br>
+There were several reasons you came here:
+</br> - your mom starts on a new job in this city
+</br> - you apply for studying on the local facility
+</br>
+You are just an average girl that just turned 18. </br>
+There is </br>
+<a0 id='cooking' onclick='(function ( $event ) { alert($event.id); })(this);'>Your cooking skill is slightly improved.</a>
+
+[[Next|Bedroom]]
+</article>
 
 :: Bedroom {"position":"1033,470","size":"100,100"}
 <section> 
 <aside id="sidebar"></aside>
-<article>
-You are in your room.
-<img src="https://twinery.org/homepage/img/logo.svg" width="256" height="256">
+<article><%=window.story.render("CenterDialogs") %>
+This is your Bedroom. There is a large bed for sleeping with a nightstand aside. 
+A desk with a wooden chair is setup as workingplace. 
+Above the desk is a window facing toward the backside of the house.
+
 <%
 //initialise game state
-//s is window.story.state from snowman!
-s.banana = s.banana| 0;
 
-if (!s.vars) { // not working ??  s.vars = s.vars | {cabinetkey : false};
-	s.vars = {
-    cabinetkey : true,
-    time : 100
-  }; 
-}
-if (!s.player) { 
-	s.player = {
-  location : "",
-	money : 5,
-	health : 55}; 
-}
+s.banana = s.banana| 0;
 %>
 <%
 s.vars.time+=20;
@@ -125,7 +92,7 @@ Where do you want to go ? </br>
 <script>
  // Render the passage named HUD into the element 
 $(document).one('sm.passage.shown', function (ev) {
-	renderToSelector("#sidebar", "footer");
+	renderToSelector("#sidebar", "sidebar");
   });
 </script>
 </section>
@@ -151,7 +118,7 @@ $(function() {
   $('.key-item').click(function() {
     s.vars.cabinetkey = true;
     $(this).replaceWith('<span>You got a key.</span>');
-	renderToSelector("#footer", "footer"); //redraw on itemchange
+	renderToSelector("#footer", "sidebar"); //redraw on itemchange
   });
 });
 %>
@@ -168,147 +135,10 @@ You have key.
 <script>
  // Render the passage named HUD into the element 
 $(document).one('sm.passage.shown', function (ev) {
-	renderToSelector("#sidebar", "footer");
+	renderToSelector("#sidebar", "sidebar");
   });
 </script>
 </section>
-
-
-:: Unbenannter Abschnitt {"position":"671,629.1000061035156","size":"100,100"}
-<%
-// Use or create window.setup
-window.setup = window.setup || {};
-// Create global function
-window.setup.showCurrentTime = function() {
-    return new Date();
-}
-%>
-The current time is <%=setup.showCurrentTime() %>
-
-
-:: UI {"position":"552,630.1000061035156","size":"100,100"}
-<h3>Player</h3>
-<img src="https://twinery.org/homepage/img/logo.svg" width="256" height="256">
-
-<ul>
-    <li><%=s.player.location%> <%=s.vars.time%></li>
-    <li>Health <%=s.player.health%><%= '<meter value="' + s.player.health + '" min="0" max="100">"Health ' + s.player.health + '"</meter>'%></li>
-	
-</ul>
-<ul>
-    <li>Money: <%=s.player.money %></li>
-	<li>Bananas: <%=s.banana %></li>
-    <li>Key: <%=s.vars.cabinetkey %></li>
-</ul>
-<form>
-<label>Info:
-    <output></output>
-  </label></br>
-<button type="button" id="save">save</button>
-<button type="button" id="load">load</button>
-<button type="button" id="wait">wait</button>
-</form>
-
-<script>
-document.querySelector('#save').addEventListener('click', window.storage.saveBrowser);
-document.querySelector('#load').addEventListener('click', window.storage.loadBrowser);
-document.querySelector('#wait').addEventListener('click', function() {window.gm.addTime(60)});
-  
-</script>
-
-
-:: css test {"position":"670,516.3000030517578","size":"100,100"}
-<section> 
-    <h2>Unsere wahnsinnig überteuerten Leistungen:</h2>
-<aside id="angebot">
-      <h3>Angebot</h3>
-      <p>Nächste Woche 10% auf alles!</p>
-    </aside>
-<ul id="leistungen">
-  <li>Möbel nach Ihren Wünschen
-    <ul>
-      <li>Küchenmöbel</li>
-      <li>Regale und Schrankwände</li>
-      <li>Badezimmermöbel</li>
-     </ul>
-  </li>
-  <li>Haustüren</li>
-  <li>Gartenzäune</li>
-  <li>Reparaturen</li>
-</ul>
-
-    
-</section>
-
-
-:: Start {"position":"512,202.3000030517578","size":"100,100"}
-Select a Link:
-<ul>
-    <li>[[_SuperSimpleStory_]]</li>
-	  <li>[[_ImagesAndOtherMedia_]]</li>
-    <li>[[_VariablesAndScript_]]</li>
-    <li>[[_Inventory_]]</li>
-    <li>[[_SaveAndRestore_]]</li>
-</ul>
-
-
-:: _SaveLoad_
-<%
-  if(window.storage.ok()) { %>
-  Window storage works!
-<% } %>  
-<%
-  if(window.storage.restore()) { %>
-  There is a session saved!
-<% } %>
-
-[[Bedroom]]
-
-[[Get hash]]
-
-[[Save the session hash?]]
-
-[[Restore from previous session?]]
-
-[[Delete previous session?]]
-
-
-:: Save the session hash? {"position":"538,364.1000061035156","size":"100,100"}
-<% s.hash = window.story.save()%>
-The hash is <%=s.hash  %>. It has been saved!
-
-<% if(window.storage.ok()) {
-  window.storage.save(s.hash);
-  //return "Saved";
-} else {
- //return "save failed";
-}
-
-%>
-
-[[Go back?|Start]]
-
-
-:: Restore from previous session? {"position":"746,211.3000030517578","size":"100,100"}
-<% if(window.storage.ok()) {
-  if(window.story.restore(window.storage.restore()) ) { %>
-  The restore was successful!
-<% }
-}
-%>
-[[Go back?|Start]]
-
-
-:: Delete previous session? {"position":"723,356.3000030517578","size":"100,100"}
-<% window.storage.delete() %>
-
-[[Go back?|Start]]
-
-
-:: Get hash {"position":"418,353.3000030517578","size":"100,100"}
-The hash is <%= window.story.save() %>. It has been saved!
-
-[[Go back?|Start]]
 
 
 :: Living_Room {"position":"964,599.3000030517578","size":"100,100"}
@@ -321,7 +151,7 @@ The hash is <%= window.story.save() %>. It has been saved!
 <% } else { %>
 *Locked Door*
 <% } %>
-<a0 onclick="getMoney(this,5)">Get much money</a>   <a0 onclick="toggleDialog()">info</a>
+<a0 onclick="getMoney(this,5)">Get much money</a>   <a0 onclick='toggleDialog("dialog")'>info</a>
 
 <div id="display"></div>
 <dialog role="dialog" aria-labelledby="dialog-heading">
@@ -331,15 +161,14 @@ The hash is <%= window.story.save() %>. It has been saved!
 </dialog>
 [[Kitchen]]
 [[Bedroom]]
-
 </article>
 
 <script>
  // Render the passage named HUD into the element 
 $(document).one('sm.passage.shown', function (ev) {
-	renderToSelector("#sidebar", "footer");
+	renderToSelector("#sidebar", "sidebar");
   });
- function toggleDialog(){ 
+ function toggleDialoXXXX(){ 
 	var dialog = document.querySelector('dialog'),
     	closebutton = document.getElementById('close-dialog'),
     	pagebackground = document.querySelector('body');
@@ -377,28 +206,22 @@ var link = $("<a href='#'>Get some money</a>")
 </section>
 
 
-:: footer {"position":"551,513.3000030517578","size":"100,100"}
-<%=window.story.render("UI") %>
-
-
-
-:: PassageTemplate [template] {"position":"253,496.5","size":"100,100"}
-The page should be setup like this:
-
+:: Cabinet {"position":"960,752.3000030517578","size":"100,100"}
 <section> 
 <aside id="sidebar"></aside>
 <article>
+There is nothing here
 
-content here !
-
+[[Living_Room]]
 </article>
-
 <script>
  // Render the passage named HUD into the element 
 $(document).one('sm.passage.shown', function (ev) {
-	renderToSelector("#sidebar", "footer");
+	renderToSelector("#sidebar", "sidebar");
   });
 </script>
 </section>
+
+
 
 

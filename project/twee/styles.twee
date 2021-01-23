@@ -4,7 +4,7 @@ a:hover {
     text-decoration-color: #008929;
 }
 #sidebar {
-  background-color: firebrick;
+  background-color: #ffede0;
   margin: 1em 1em;
   padding: 1em;
   width: 10em;
@@ -45,7 +45,7 @@ dialog::backdrop, #backdrop {
 @media (min-width: 30em) { 
   section {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 0.5fr 1fr 1fr 1fr;
   }
 
   section h2 {

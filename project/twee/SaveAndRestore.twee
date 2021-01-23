@@ -30,6 +30,4 @@ function refresh(slot){
 <button type="button" id="save4">save 4</button><button type="button" id="load4">load 4</button>
 <button type="button" id="delete4">delete 4</button><label>Info:<output4></output4></label></br>
 </form>
-
-
 [[Start]]

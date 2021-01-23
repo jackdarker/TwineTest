@@ -1,16 +1,57 @@
-:: Cabinet {"position":"960,752.3000030517578","size":"100,100"}
-<section> 
-<aside id="sidebar"></aside>
-<article>
-There is nothing here
+:: _SaveLoad_
+<%
+  if(window.storage.ok()) { %>
+  Window storage works!
+<% } %>  
+<%
+  if(window.storage.restore()) { %>
+  There is a session saved!
+<% } %>
 
-[[Living_Room]]
-</article>
+[[Bedroom]]
 
-<script>
- // Render the passage named HUD into the element 
-$(document).one('sm.passage.shown', function (ev) {
-	renderToSelector("#sidebar", "footer");
-  });
-</script>
-</section>
+[[Get hash]]
+
+[[Save the session hash?]]
+
+[[Restore from previous session?]]
+
+[[Delete previous session?]]
+
+
+:: Save the session hash? {"position":"538,364.1000061035156","size":"100,100"}
+<% s.hash = window.story.save()%>
+The hash is <%=s.hash  %>. It has been saved!
+
+<% if(window.storage.ok()) {
+  window.storage.save(s.hash);
+  //return "Saved";
+} else {
+ //return "save failed";
+}
+
+%>
+
+[[Go back?|Start]]
+
+
+:: Restore from previous session? {"position":"746,211.3000030517578","size":"100,100"}
+<% if(window.storage.ok()) {
+  if(window.story.restore(window.storage.restore()) ) { %>
+  The restore was successful!
+<% }
+}
+%>
+[[Go back?|Start]]
+
+
+:: Delete previous session? {"position":"723,356.3000030517578","size":"100,100"}
+<% window.storage.delete() %>
+
+[[Go back?|Start]]
+
+
+:: Get hash {"position":"418,353.3000030517578","size":"100,100"}
+The hash is <%= window.story.save() %>. It has been saved!
+
+[[Go back?|Start]]

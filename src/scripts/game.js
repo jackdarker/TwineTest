@@ -22,51 +22,101 @@ window.storage = {
           storage.length !== 0;
         }
     },
-    save: function(slot,hash) {
-      window.localStorage.setItem(slot, hash);
-    },
-    restore: function(slot) {
-      return window.localStorage.getItem(slot);
-    },
     delete: function(slot) {
       window.localStorage.removeItem(slot);
+      window.localStorage.removeItem(slot.concat('info'));
     },
       getSaveInfo: function(slot) {
-          var _blob;
+          var info=null;
         if(window.storage.ok()) {
-            _blob =window.storage.restore(slot);		
+            info =window.localStorage.getItem(slot.concat('info'));		
         }
-      if(!_blob.info) {
-          return('??');
-        } else {
-            return(_blob.info);
-        }
+      if(!info) {
+        return('');
+      }
+      return(info);
         
     },
       saveBrowser: function(slot) {
-      var hash =window.story.save();	
-      var info = new Date().toString();	
-      var _blob={info:new Date().toString(),
-        hash:window.story.save()};		
-      document.querySelector("output").textContent = hash;
-          window.storage.save(slot,_blob);
+        //var hash= window.story.save();    this call somehow messes up html and I had to copy the following from snowman script
+        var hash = LZString.compressToBase64(JSON.stringify({state:window.story.state,
+            history:window.story.history,checkpointName:window.story.checkpointName}));          
+        
+        var info=new Date().toString();
+        window.localStorage.setItem(slot.concat('info'),info);
+        window.localStorage.setItem(slot,hash);
+        //document.querySelector("output").textContent = info;  //causes problems because page reset to start-Index.html??
+        return(info);
     },
       loadBrowser: function(slot) {
-          var _blob;
-          if(window.storage.ok()) {
-              _blob=window.storage.restore(slot);	
-              window.story.restore(hash) ; 
-              document.querySelector("output").textContent = _blob.info;
-          }
+        var hash,info;
+        if(window.storage.ok()) {
+            //not possible to save object {info,hash} ??
+            hash=window.localStorage.getItem(slot);
+            info=window.storage.getSaveInfo(slot);
+            window.story.restore(hash) ; 
+            //document.querySelector("output").textContent = (info);
+        }
+        return(info);
     }
   };
-  window.gm = {
-      addTime: function(min) {
-      window.story.state.vars.time += min;
-      document.querySelector("output").textContent = window.story.state.vars.time;
-    },
-    dropBanana: function() {
-      window.story.state.vars.bananas -=1;
-      return(window.story.state.vars.bananas);
-      }
-  };
+window.gm = {
+getSaveVersion: function(){
+    return('1.0.0');
+},
+initGame: function() {
+    var s = window.story.state; //s in template is window.story.state from snowman!
+    if (!s.vars) { // not working ??  s.vars = s.vars | {cabinetkey : false};
+        s.vars = {
+        cabinetkey : true,
+        time : 700, 
+        day : 1
+        }; 
+    }
+    if (!s.player) { 
+        s.player = {
+        location : "",
+        money : 5,
+        energy : 55,
+        maxEnergy : 100,
+
+        }; 
+    }
+},
+    addTime: function(min) {
+    window.story.state.vars.time += min;
+    if(window.story.state.vars.time>2400){
+    window.story.state.vars.time -= 2400;
+    window.story.state.vars.day += 1;
+    }
+    document.querySelector("output").textContent = window.story.state.vars.time;
+},
+dropBanana: function() {
+    window.story.state.vars.bananas -=1;
+    return(window.story.state.vars.bananas);
+},
+///show/hides a dialog defined in body
+toggleDialog: function(id){ 
+    const _id = id;
+	var dialog = document.querySelector(id),
+    	closebutton = document.getElementById('close-dialog'),
+    	pagebackground = document.querySelector('body');
+    var div;
+	if (!dialog.hasAttribute('open')) {
+		// show the dialog 
+		div = document.createElement('div');
+		div.id = 'backdrop';
+		document.body.appendChild(div); 
+		dialog.setAttribute('open','open');
+		// after displaying the dialog, focus the closebutton inside it
+		closebutton.focus();
+		closebutton.addEventListener('click',function() {window.gm.toggleDialog(_id);});
+	}
+	else {		
+ 		dialog.removeAttribute('open');  
+		div = document.querySelector('#backdrop');
+		div.parentNode.removeChild(div);
+		//??lastFocus.focus();
+	}
+}
+};

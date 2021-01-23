@@ -82,6 +82,8 @@ You droped a banana and have now <%-window.gm.dropBanana()%>. </br>
 
 <mark>This is a empty link that is used to trigger a function that is defined in the page-script </br></mark>
 <a0 onclick=getBanana(this,5)>Get more banana</a> </br>
+<mark>or calling a anonymous function (take notice how alert-string is escaped):</br></mark>
+<a0 id='money' onclick='(function ( $event ) { alert("alert ".concat($event.id)); })(this);'>Get much money</a>
 <mark>Press refreh to update page display </br></mark>
 [[Refresh|_VariablesAndScript_]] </br>
 [[Start]]
