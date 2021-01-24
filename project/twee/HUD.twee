@@ -1,39 +1,31 @@
 :: sidebar {"position":"551,513.3000030517578","size":"100,100"}
 <h3>Player</h3>
 <img src="https://twinery.org/homepage/img/logo.svg" width="256" height="256">
-
-<ul>
-    <li><%=s.player.location%> <%=s.vars.time%></li>
-    <li>Health <%=s.player.health%><%= '<meter value="' + s.player.health + '" min="0" max="100">"Health ' + s.player.health + '"</meter>'%></li>
-	
-</ul>
-<ul>
-    <li>Money: <%=s.player.money %></li>
-	<li>Bananas: <%=s.banana %></li>
-    <li>Key: <%=s.vars.cabinetkey %></li>
-</ul>
+<div><%=s.player.location%></br>Time <%=window.gm.getTimeString()%> <%=window.gm.getDateString()%>></br>
+Money: <%=s.player.money %></br>
+</div>
 
 <form>
 <label>Info:
     <output></output>
   </label></br>
-<button type="button" id="save">save</button>
-<button type="button" id="load">load</button>
+<button type="button" id="save">save/load</button>
+<button type="button" id="load">settings</button>
 <button type="button" id="wait">wait</button>
 </form>
 
 <script>
 document.querySelector('#save').addEventListener('click', function(){window.gm.toggleDialog('dialog');});
-document.querySelector('#load').addEventListener('click', window.storage.loadBrowser);
-document.querySelector('#wait').addEventListener('click', function(){window.gm.addTime(60);}); 
+document.querySelector('#load').addEventListener('click', function(){});
+document.querySelector('#wait').addEventListener('click', function(){window.gm.addTime(43);}); 
 </script>
 
 :: CenterDialogs
-<%=window.story.render("SaveDialog") %>
+<%=window.story.render("SaveDialog") %></br>
 
 :: SaveDialog
 <script>
-var infodisp = 'dialog form label output'; //Url to output according nesting node classes; see dialog below
+var infodisp = 'dialog form label output'; //Url to output according nesting node classes; see structure of dialog below
 var x = 1; 
 var maxSlots = 4; //number saveslots available; has to fit form below
  do {

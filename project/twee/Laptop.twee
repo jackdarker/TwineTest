@@ -1,0 +1,11 @@
+:: _Laptop_
+<section><article>
+You seat yourself in front of your laptop. </br>
+<%if(s.vars.qLaptop==0){%>
+The powerconverter is missing. You need to get a new one.</br>
+<%}if(s.vars.qLaptop==100){%>
+After pushing the powerbutton the pc doesnt start. Something seems broken.</br>
+<%}%>
+[[Back|<%=s.player.location%>]]
+
+</article></section>

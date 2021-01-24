@@ -1,4 +1,9 @@
 :: Story Stylesheet [stylesheet]
+a {
+    background-color: transparent;
+    color:initial;
+    text-decoration-color: initial;
+}
 a:hover {
     color: #008929;
     text-decoration-color: #008929;
@@ -18,10 +23,10 @@ a:hover {
 }
 
 #sidebar p {
-  color: white;
+  color: black;
 }
 tw-story {
-  max-width: 100em;
+  max-width: 70em;
     margin: 0 auto;
     line-height: 100%;
     display: block;
@@ -42,6 +47,8 @@ dialog::backdrop, #backdrop {
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);    
 }
+.div_hidden { visibility: hidden; }
+.div { visibility: visible; }
 @media (min-width: 30em) { 
   section {
     display: grid;

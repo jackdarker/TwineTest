@@ -1,0 +1,57 @@
+:: StartPage
+<article>
+
+<h1 align="center">Teyt <%-window.gm.getSaveVersion()%></h1>
+<h1 align="center">DISCLAIMER</h1>
+<h2 align="center">Warning: Adult content! Fetishes!</h2>
+<hr>
+<div align="center">This is a work of fiction; any resemblance to actual persons, places, or events is unintended. All characters in the game are fictional too. All coincidence with reality is random.
+All characters in this game are fictional and any similarities to any persons living or dead are purely coincidental.
+All explicit images are performed by consenting adults aged 18 or older. Images are for illustrative purposes only.</div>
+<hr><hr>
+<div align="center">Are you 21+ years old and want to play?</div>
+<div align="center">[[Yes!|Intro]] | [[No|StartPage]]</div>
+<hr><hr>
+This game is powered by twine and tweego.</br> 
+<img src="https://twinery.org/homepage/img/logo.svg" width="256" height="256">
+</article>
+
+:: Intro
+<script>
+function unlockPerk(id){
+	window.story.state.player[id] += 1;
+	window.story.state.player.skillPoints -=1;
+	//alert(id + window.story.state.player[id].toString());
+	window.story.show(window.passage.name);
+}
+function resetStart(){
+	window.gm.initGame(true);
+	window.story.show(window.passage.name);
+}
+
+function getBanana(elmnt,val) {
+    window.story.state.vars.bananas +=val;
+    //window.story.show(window.passage.name); this would reload the passage but would overwrite the elmnt-replace
+    elmnt.replaceWith("took bananas "+val); //replace the calling link with simple text to it a one-timer. But it will be restored if passage is reloaded 
+}
+</script>
+<article>
+<%window.gm.initGame();s.player.location=window.passage.name;%>
+Welcome to your new home. </br>
+Together with your mom you have moved to #todo into an old but spacious house. </br>
+There were several reasons you came here:
+</br> - your mom starts on a new job in this city
+</br> - you apply for studying on the local facility
+</br>
+You are just an average girl that recently turned 18. </br>
+</br>Select up to 2 perks below and press [[Next|Bedroom]] to start the game. </br>
+Or press <a0 id='reset' onclick='(function ( $event ) { resetStart(); })(this);'>Reset</a> to reset your selection.  </br></br>
+
+<%=window.gm.printUnlockPerk('skCook','Your cooking skill is slightly improved.')%>
+<%=window.gm.printUnlockPerk('skSporty','You are sporty.')%>
+<%=window.gm.printUnlockPerk('skTechy','You are technic-affine.')%>
+<%=window.gm.printUnlockPerk('skSlacker','You know how to avoid work.')%>
+<%=window.gm.printUnlockPerk('skMoneymaker','get rich.faster.')%>
+<%=window.gm.printUnlockPerk('skSlacker','You know how to avoid work.')%>
+
+</article>
