@@ -1,53 +1,6 @@
 "use strict";
-// modded version of simple-inventory.min.js for SugarCube 2 by Chapel
-!function(){
-  var c={
-      tryGlobal:!0,
-      defaultStrings:{empty:"The inventory is empty...",listDrop:"Discard",separator:"\n"}
-  };
-  function s(i,r,t,n){
-    $(document).trigger({type:"initialized"===n?":inventory-init":":inventory-update",instance:i,receiving:r,moved:t,context:n})
-  }
-  function a(i){
-      if(i=i?(i=[].slice.call(arguments)).flatten():[],!(this instanceof a))
-        return new a(i);
-      this.inv=i,s(this,null,i=i.length?i:null,"initialized")
-  }
-  Object.assign(a,{
-  is:function(i){return i instanceof a},
-  log:function(i){return a.is(i)?"Inventory.log() -> "+i.toArray().join(" - "):"Inventory.log() -> object is not an inventory..."},
-  removeDuplicates:function(i){if(a.is(i)){var r,t=i.toArray();return r=[],t.forEach(function(i){r.includes(i)||r.push(i)}),r}}}),
-  
-  Object.assign(a.prototype,{
-  transfer:function(i){if(arguments.length<2)return this;if(!a.is(i))return this;for(var r=[].slice.call(arguments),t=[],n=0,e=(r=r.slice(1).flatten()).length;n<e;n++)this.inv.includes(r[n])&&(this.inv.delete(r[n]),t.push(r[n]));return t.length&&(i.inv=i.inv.concat(t),s(this,i,t,"transfer")),this}
-  ,has:function(){var i=[].slice.call(arguments).flatten();return!(!i||!i.length)&&this.inv.includesAny(i)}
-  ,hasAll:function(){var i=[].slice.call(arguments).flatten();return!(!i||!i.length)&&this.inv.includesAll(i)}
-  ,pickUp:function(i){var r,t=[].slice.call(arguments).flatten(),n=this;return t&&t.length&&("unique"!==i&&"unique"!==t[0]||(t=t.splice(1),r=[],t.forEach(function(i){n.inv.includes(i)||r.includes(i)||r.push(i)}),t=r),this.inv=this.inv.concat(t),s(this,null,t,"pickup")),this}
-  ,drop:function(){var r,i=[].slice.call(arguments).flatten(),t=this;if(i&&i.length){var n=[];i.forEach(function(i){t.has(i)&&(n.push(i),r=t.inv.indexOf(i),t.inv.deleteAt(r))}),s(this,null,n,"drop")}return this}
-  ,sort:function(){return this.inv=this.inv.sort(),s(this,null,null,"sort"),this}
-  ,show:function(i){return i&&"string"==typeof i||(i=c.defaultStrings.separator),this.inv.length?this.inv.join(i):c.defaultStrings.empty}
-  ,empty:function(){var i=clone(this.inv);return this.inv=[],s(this,null,i,"drop"),this}
-  ,toArray:function(){return this.inv}
-  ,count:function(r){if(r&&"string"==typeof r){var t=0;return this.toArray().forEach(function(i){i===r&&t++}),t}return this.toArray().length}
-  ,isEmpty:function(){return 0===this.toArray().length}
-  ,linkedList:function(o,l){o&&a.is(o)||(o=!1);var i=this.toArray(),h=this,u=$(document.createElement("span"));return i&&i.length?i.forEach(function(i,r,t){var n=$(document.createElement("span")),e=$(document.createElement("a")),s=l||c.defaultStrings.drop,a=function(i,r){var t=Math.random().toString(36).substring(7);return arguments.length<2&&(i=Math.random().toString(36).substring(7),r=random(99)),"simple-inv-"+r+"-"+Date.now()+"-"+i.replace(/[^A-Za-z0-9]/g,"")+"-"+t}(i,r);e.wiki(s).addClass("simple-inv drop-link"),e.ariaClick(function(){o?h.transfer(o,i):h.drop(i),$("#"+a).empty()}),n.attr("id",a).addClass("simple-inv link-listing").wiki(i+" ").append(e),r<t.length-1&&n.wiki("<br />"),u.append(n)}):u.wiki(c.defaultStrings.empty),u}
-  ,constructor:a
-  ,toJSON:function(){return JSON.reviveWrapper("new setup.Inventory("+JSON.stringify(this.inv)+")")}
-  ,clone:function(){return new a(this.inv)}}),
-  
-  setup.Inventory=a,
-  setup.simpleInv={inventory:a},
-  c.tryGlobal&&(window.Inventory=window.Inventory||a); /*,
-  Macro.add("newinventory",{handler:function(){if(this.args.length<1)return this.error("incorrect number of arguments");var i=this.args[0].trim();if("$"!==i[0]&&"_"!==i[0])return this.error('variable name "'+this.args[0]+'" is missing its sigil ($ or _)');Wikifier.setValue(i,new a(this.args.slice(1).flatten()))}}),
-  Macro.add("pickup",{handler:function(){if(this.args.length<2)return this.error("incorrect number of arguments");var i=this.args[0].trim();if("$"!==i[0]&&"_"!==i[0])return this.error('variable name "'+this.args[0]+'" is missing its sigil ($ or _)');var r=Wikifier.getValue(i);if(!a.is(r))return this.error("variable "+i+" is not an inventory!");r.pickUp(this.args.slice(1).flatten())}}),
-  Macro.add("drop",{handler:function(){if(this.args.length<2)return this.error("incorrect number of arguments");var i=this.args[0].trim();if("$"!==i[0]&&"_"!==i[0])return this.error('variable name "'+this.args[0]+'" is missing its sigil ($ or _)');var r=Wikifier.getValue(i);if(!a.is(r))return this.error("variable "+i+" is not an inventory!");r.drop(this.args.slice(1).flatten())}}),
-  Macro.add("transfer",{handler:function(){if(this.args.length<3)return this.error("incorrect number of arguments");var i=this.args[0].trim();if("$"!==i[0]&&"_"!==i[0])return this.error('variable name "'+this.args[0]+'" is missing its sigil ($ or _)');var r=Wikifier.getValue(i);if(!a.is(r))return this.error("variable "+i+" is not an inventory!");var t=this.args[1].trim();if("$"!==t[0]&&"_"!==t[0])return this.error('variable name "'+this.args[1]+'" is missing its sigil ($ or _)');var n=Wikifier.getValue(t);if(!a.is(n))return this.error("variable "+t+" is not an inventory!");r.transfer(n,this.args.slice(2).flatten())}}),
-  Macro.add("dropall",{handler:function(){if(1!==this.args.length)return this.error("incorrect number of arguments");var i=this.args[0].trim();if("$"!==i[0]&&"_"!==i[0])return this.error('variable name "'+this.args[0]+'" is missing its sigil ($ or _)');var r=Wikifier.getValue(i);if(!a.is(r))return this.error("variable "+i+" is not an inventory!");r.empty()}}),
-  Macro.add("clear","dropall",!1),Macro.add("sort",{handler:function(){if(1!==this.args.length)return this.error("incorrect number of arguments");var i=this.args[0].trim();if("$"!==i[0]&&"_"!==i[0])return this.error('variable name "'+this.args[0]+'" is missing its sigil ($ or _)');var r=Wikifier.getValue(i);if(!a.is(r))return this.error("variable "+i+" is not an inventory!");r.sort()}}),
-  Macro.add("inventory",{handler:function(){if(this.args.length<1||2<this.args.length)return this.error("incorrect number of arguments");var i=this.args[0].trim();if("$"!==i[0]&&"_"!==i[0])return this.error('variable name "'+this.args[0]+'" is missing its sigil ($ or _)');var r=Wikifier.getValue(i);if(!a.is(r))return this.error("variable "+i+" is not an inventory!");var t=$(document.createElement("span")),n=!!this.args[1]&&this.args[1];t.wiki(r.show(n)).addClass("macro-"+this.name).appendTo(this.output)}}),
-  Macro.add("linkedinventory",{handler:function(){if(this.args.length<2||3<this.args.length)return this.error("incorrect number of arguments");var i=!1,r="",t=this.args[1].trim(),n="string"==typeof this.args[0]&&this.args[0];if(!n)return this.error("first argument should be the link text");if("$"!==t[0]&&"_"!==t[0])return this.error('variable name "'+this.args[1]+'" is missing its sigil ($ or _)');var e=Util.slugify(t);e=this.name+"-"+e;var s=Wikifier.getValue(t);if(!a.is(s))return this.error("variable "+t+" is not an inventory!");if(2<this.args.length){if("$"!==(r=this.args[2].trim())[0]&&"_"!==r[0])return this.error('variable name "'+this.args[2]+'" is missing its sigil ($ or _)');if(i=Wikifier.getValue(r),!a.is(i))return this.error("variable "+r+" is not an inventory!")}s.linkedList(i,n).attr({id:e,"data-rec":r,"data-self":t,"data-action":n}).addClass("macro-"+this.name).appendTo(this.output)}})
-  */
-  };
+//import {Inventory} from 'inventory.js'; already included??
+
 window.storage = {  //operations for save/reload
     ok: function() {
       try {
@@ -111,6 +64,10 @@ window.storage = {  //operations for save/reload
     }
   };
 window.gm = { //game related operations
+libItems: { //need to add items here to bypass template-function-closure problem
+  LaptopPS: function(){return new LaptopPS();},
+  CanOfCoffee: function(){return new CanOfCoffee();},
+},
 getSaveVersion: function(){
     return('1.0.0');
 },
@@ -122,12 +79,18 @@ initGame: function(forceReset) {
         time : 700, //represented as hours*100 +minutes
         day : 1,
         //queststates
-        qLaptop : 0   // see passage _Laptop_
+        qLaptop : 0,   // see passage _Laptop_
+        qExploredCity : 0,  //see passage into city
+        qUnlockPark : 0,
+        qUnlockMall : 0,
+        qUnlockRedlight : 0,
+        qUnlockBeach : 0
         }; 
     }
     if (!s.player||forceReset) {  //
         s.player = {
         location : "",
+        inv: new Inventory(),
         money : 5,
         energy : 55,
         maxEnergy : 100,
@@ -139,7 +102,12 @@ initGame: function(forceReset) {
         skMoneymaker : 0,
         skTechy : 0
         }; 
+        s.player.inv.addItem(new LighterDad());
     }
+},
+addPS: function() {
+	alert('PA');
+	window.story.state.player.inv.addItem(new LaptopPS());
 },
 //adds MINUTES to time
 addTime: function(min) {
@@ -165,12 +133,32 @@ getDateString: function() {
   var v=window.story.state.vars;
   return v.day.toString().concat(". day");
 },
+rollExplore: function() {
+  var s=window.story.state;
+  var places=[];    
+  //todo:depending of your actual location you have a chance to find connected locations or end up in a known one
+  if(s.player.location=='Park')   places = ['Mall','Beach'];
+  if(s.player.location=='Mall')   places = ['Park','Beach','Downtown']; 
+  if(s.player.location=='Beach')   places = ['Park','Mall']; 
+  if(places.length==0) places = ['Park']; //fallback if unspeced location
+  var r = _.random(1, places.length)-1; //chances are equal
+  window.gm.addTime(20);
+  window.story.show(places[r]);
+},
 addItem(item,count) {
-  window.Inventory.pickup(item);
+  //window.Inventory.pickup(item);
 },
 dropBanana: function() {
     window.story.state.vars.bananas -=1;
     return(window.story.state.vars.bananas);
+},
+printItem: function( id,descr) {
+  var elmt='';
+  var s= window.story.state;
+  elmt +=''.concat("<a0 id='"+id+"' onclick='(function ( $event ) { alert($event.id); })(this);'>"+id+"</a>");
+  if(window.story.passage(id))  elmt +=''.concat("    [[Info|"+id+"]]");
+	elmt +=''.concat("</br>");
+	return(elmt);
 },
 printUnlockPerk: function(id, descr) {
   var elmt='';

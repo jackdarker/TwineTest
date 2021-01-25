@@ -2,21 +2,19 @@
 <h3>Player</h3>
 <img src="https://twinery.org/homepage/img/logo.svg" width="256" height="256">
 <div><%=s.player.location%></br>Time <%=window.gm.getTimeString()%> <%=window.gm.getDateString()%>></br>
-Money: <%=s.player.money %></br>
+Money: <%=s.player.money %></br>Inventory: <%=s.player.inv.count() %></br>
 </div>
-
 <form>
 <label>Info:
     <output></output>
   </label></br>
 <button type="button" id="save">save/load</button>
-<button type="button" id="load">settings</button>
+<button type="button" id="inv">settings</button>
 <button type="button" id="wait">wait</button>
 </form>
-
 <script>
-document.querySelector('#save').addEventListener('click', function(){window.gm.toggleDialog('dialog');});
-document.querySelector('#load').addEventListener('click', function(){});
+document.querySelector('#save').addEventListener('click', function(){window.gm.toggleDialog('#dialog_save');});
+document.querySelector('#inv').addEventListener('click', function(){window.story.show('Inventory');});
 document.querySelector('#wait').addEventListener('click', function(){window.gm.addTime(43);}); 
 </script>
 
@@ -54,7 +52,7 @@ function refresh(slot){
     if(out) out.textContent = ok;
 }
 </script>
-<dialog role="dialog" aria-labelledby="dialog-heading">
+<dialog role="dialog" id='dialog_save' aria-labelledby="dialog-heading">
     <button id="close-dialog">Back</button>
     <form>
     <label>Info:<output></output></label></br>
@@ -70,20 +68,60 @@ function refresh(slot){
 </dialog>
 
 
+:: FIXME_InventoryDialog
+<script>
+var infodisp = 'dialog form label output'; //Url to output according nesting node classes; see structure of dialog below
+//closebutton = document.getElementById('close-dialog');
+//closebutton.addEventListener('click', function(){window.gm.toggleDialog('#dialog_inventory');});
+</script>
+<dialog role="dialog" id='dialog_inventory' aria-labelledby="dialog-heading">
+    <button id="close-dialog" onclick="window.gm.toggleDialog('#dialog_inventory')">Back</button>
+    <form>
+    <label>Info:<output></output></label></br>
+    <%=window.gm.printItem(s.player.inv.getItemId(0),'4353')%>
+<%
+var x = 0, id=''; 
+var maxSlots = s.player.inv.count();  //has to fit form below
+do {
+  id=s.player.inv.getItemId(x);
+  %><%=window.gm.printItem(id,'')%><%
+  x = x + 1;
+} while (x < maxSlots);
+%>
+    </form>
+</dialog>
+
+
+:: Inventory
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+You have the following in your inventory: </br>
+[[Back|<%=s.player.location%>]]</br></br>
+<%
+var x = 0, id=''; 
+var maxSlots = s.player.inv.count();  //has to fit form below
+do {
+  id=s.player.inv.getItemId(x);
+  %><%=window.gm.printItem(id,s.player.inv.getItem(id).desc)%><%
+  x = x + 1;
+} while (x < maxSlots);
+%>
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar"); });
+</script>
+</section>
+
+
+
+
 :: PassageTemplate [template] {"position":"253,496.5","size":"100,100"}
 The page should be setup like this:
 <section> 
-<aside id="sidebar"></aside>
-<article><%=window.story.render("CenterDialogs") %>
-
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 content here !
-
-</article>
-
-<script>
+</article><script>
  // Render the passage named HUD into the element 
-$(document).one('sm.passage.shown', function (ev) {
-	renderToSelector("#sidebar", "sidebar");
-  });
-</script>
-</section>
+$(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar"); });
+</script></section>

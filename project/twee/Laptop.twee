@@ -1,5 +1,6 @@
 :: _Laptop_
-<section><article>
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 You seat yourself in front of your laptop. </br>
 <%if(s.vars.qLaptop==0){%>
 The powerconverter is missing. You need to get a new one.</br>
@@ -7,5 +8,8 @@ The powerconverter is missing. You need to get a new one.</br>
 After pushing the powerbutton the pc doesnt start. Something seems broken.</br>
 <%}%>
 [[Back|<%=s.player.location%>]]
-
-</article></section>
+</article><script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar");  });
+</script>
+</section>

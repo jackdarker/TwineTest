@@ -1,5 +1,6 @@
 :: Story Stylesheet [stylesheet]
 a {
+    line-height: 150%;
     background-color: transparent;
     color:initial;
     text-decoration-color: initial;

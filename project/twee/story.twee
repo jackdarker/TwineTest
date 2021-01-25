@@ -31,22 +31,19 @@ Select a Link:
 
 :: Bedroom {"position":"1033,470","size":"100,100"}
 <section> 
-<aside id="sidebar"></aside>
-<article><%=window.story.render("CenterDialogs") %>
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 This is your Bedroom. There is a large bed for sleeping with a nightstand aside. </br>
 A desk with a wooden chair is setup as workingplace. Your [[Laptop|_Laptop_]] is there. </br>
 Above the desk is a window facing toward the backside of the house.</br>
-
 <%
 //initialise game state
-window.gm.addItem('powersupply',1);
 s.banana = s.banana| 0;
 %>
 <%s.player.location=window.passage.name;%>
-<%=s.time%>
+
 Where do you want to go ? </br>
-[[Living_Room]]
-[[Start]]
+[[Living_Room]]</br>
+[[To city|Home]]</br>
 </article>
 <script>
  // Render the passage named HUD into the element 
@@ -56,22 +53,31 @@ $(document).one('sm.passage.shown', function (ev) {
 </script>
 </section>
 
+:: Home
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<%s.player.location=window.passage.name;%>
+At the doorsteps of your home. </br>
+[[Living_Room]]</br>
+[[Into the city]]</br>
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar"); });
+</script>
+</section>
 
 :: Kitchen {"position":"1231,613","size":"100,100"}
 <section> 
 <aside id="sidebar"></aside>
 <article>
-
 You are in the kitchen and grab a banana.
-<%s.vars.time+=20;
-s.banana +=1; %>
+<%s.vars.time+=20;s.banana +=1; %>
 You visited <%=window.passage.name%> <%=visited(window.passage.name)%> times.
-
 <% if (!s.vars.cabinetkey) { %>
 Items:
 - <a href="javascript:void(0)" class="key-item">Pick up key</a>
 <% } %>
-
 <%
 $(function() {
   $('.key-item').click(function() {
@@ -84,34 +90,26 @@ $(function() {
 <% if (s.vars.cabinetkey) { %>
 You have key.
 <% } %>
-<a0>This will be empty!</a>
-<div->Empty link and hidden</div>
 
 [[Living_Room]]
-
-</article>
-
-<script>
+</article><script>
  // Render the passage named HUD into the element 
-$(document).one('sm.passage.shown', function (ev) {
-	renderToSelector("#sidebar", "sidebar");
-  });
+$(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar");  });
 </script>
 </section>
 
 
-:: Living_Room {"position":"964,599.3000030517578","size":"100,100"}
+:: OLD_Living_Room
 <section> 
-<aside id="sidebar"></aside>
-<article>
-
+<aside id="sidebar"></aside><article>
+[[Front Door]]
 <% if (s.vars.cabinetkey) { %>
 [[Cabinet]]
 <% } else { %>
 *Locked Door*
 <% } %>
-<a0 onclick="getMoney(this,5)">Get much money</a>   <a0 onclick='toggleDialog("dialog")'>info</a>
-<a0 onclick=addItem(this,5)>pickup laptop-powersupply</a> </br>
+<a0 onclick="getMoney(this,5)">Get much money</a>   <a0 onclick='window.gm.toggleDialog("dialog")'>info</a></br>
+<a0 onclick="window.gm.addPS()">pickup laptop-powersupply</a></br>
 <div id="display"></div>
 <dialog role="dialog" aria-labelledby="dialog-heading">
     <button id="close-dialog">Schließen</button>	
@@ -120,50 +118,38 @@ $(document).one('sm.passage.shown', function (ev) {
 </dialog>
 [[Kitchen]]
 [[Bedroom]]
-</article>
-
-<script>
+</article><script>
  // Render the passage named HUD into the element 
 $(document).one('sm.passage.shown', function (ev) {
 	renderToSelector("#sidebar", "sidebar");
   });
- function toggleDialoXXXX(){ 
-	var dialog = document.querySelector('dialog'),
-    	closebutton = document.getElementById('close-dialog'),
-    	pagebackground = document.querySelector('body');
-			
-	if (!dialog.hasAttribute('open')) {
-		// show the dialog 
-		var div = document.createElement('div');
-		div.id = 'backdrop';
-		document.body.appendChild(div); 
-		dialog.setAttribute('open','open');
-		// after displaying the dialog, focus the closebutton inside it
-		closebutton.focus();
-		closebutton.addEventListener('click', toggleDialog);
-	}
-	else {		
- 		dialog.removeAttribute('open');  
-		var div = document.querySelector('#backdrop');
-		div.parentNode.removeChild(div);
-		//??lastFocus.focus();
-	}
+  function getMoney(elmnt,val) {
+	elmnt.replaceWith("took money "+val);
 }
- function getMoney(elmnt,val) {
- 	elmnt.replaceWith("took money "+val);
- }
-$("#display").html("");
-var link = $("<a href='#'>Get some money</a>")
-    .click(function(e) {
-        $( this ).replaceWith("<%s.playermoney+=5%>took money ");
-		//window.story.render("Show Outcome - Red") );
-      return false;
-    });
-    $("#display").append( link );
-    $("#display").append( "<br>" );
-</script>
-</section>
+</script></section>
 
+:: Living_Room
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<a0 onclick="getMoney(this,5)">Get much money</a>   <a0 onclick='window.gm.toggleDialog("dialog")'>info</a></br>
+<a0 onclick="addPS2(this,'LaptopPS')">pickup laptop-powersupply</a></br>
+<a0 onclick="window.story.state.player.inv.addItem(window.gm.libItems.CanOfCoffee())">pickup can of coffee</a></br>
+<a0 onclick="addPS2(this,'CanOfCoffee')">pickup new can of coffee</a></br>
+[[Kitchen]]	[[Bedroom]] [[Front Door]]
+</article><script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar"); });
+function getMoney(elmnt,val) {
+	elmnt.replaceWith("took money "+val);
+}
+function addPS2(elmnt,value) {
+	var _item = new window.gm.libItems[value]();
+	var _id =_item.name;
+	window.story.state.player.inv.addItem(_item);
+	_item =  window.story.state.player.inv.getItem(_id);
+	elmnt.replaceWith("took "+_item.usable()+_item.name);
+}
+</script></section>
 
 :: Cabinet {"position":"960,752.3000030517578","size":"100,100"}
 <section> 

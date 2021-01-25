@@ -1,0 +1,102 @@
+:: Into the city
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<!-- dont overwrite location -->
+You are actually at [[<%=s.player.location%>]].
+Where would you like to go from here?</br>
+<a0 onclick=window.gm.rollExplore()>Explore your surroundings</a> </br></br>
+<%  if(s.vars.qUnlockPark>0) {      %>[[Park]]</br>
+<%}; if(s.vars.qUnlockMall>0) {     %>[[Mall]]</br>
+<%};%>
+
+
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar");  });
+</script>
+</section>
+
+:: Mall
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<%s.player.location=window.passage.name;
+if(s.vars.qUnlockMall==0) {s.vars.qUnlockMall=1;%>
+You found the <%=window.passage.name%> ! </br></br>
+<%}%>
+You are actually at [[<%=s.player.location%>]].
+Where would you like to go from here?</br>
+<a0 onclick=window.gm.rollExplore()>Explore your surroundings</a> </br></br>
+[[Home]]</br>
+<%  if(s.vars.qUnlockPark>0) {      %>[[Park]]</br>
+<%}; if(s.vars.qUnlockBeach>0) {      %>[[Beach]]</br>
+<%};%>
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar");  });
+</script>
+</section>
+
+:: Park
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<%s.player.location=window.passage.name;
+if(s.vars.qUnlockPark==0) {s.vars.qUnlockPark=1;%>
+You found the <%=window.passage.name%> ! </br></br>
+<%}%>
+You are actually at [[<%=s.player.location%>]].
+Where would you like to go from here?</br>
+<a0 onclick=window.gm.rollExplore()>Explore your surroundings</a> </br></br>
+[[Home]]</br>
+<%  if(s.vars.qUnlockMall>0) {      %>[[Mall]]</br>
+<%};%>
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar");  });
+</script>
+</section>
+
+
+:: Beach
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<%s.player.location=window.passage.name;
+if(s.vars.qUnlockBeach==0) {s.vars.qUnlockBeach=1;%>
+You found the <%=window.passage.name%> ! </br></br>
+<%}%>
+You are actually at [[<%=s.player.location%>]].</br></br>
+The splashing waves are inviting but you dont have some proper swimwear with you.
+You could wander at the shoreline. Maybe you find some Strandgut.</br>
+
+</br>
+Where would you like to go from here?</br>
+<a0 onclick=window.gm.rollExplore()>Explore your surroundings</a> </br></br>
+[[Home]]</br>
+<%  if(s.vars.qUnlockMall>0) {      %>[[Mall]]</br>
+<%};%>
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar");  });
+</script>
+</section>
+
+
+:: Downtown
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<%s.player.location=window.passage.name;%>
+You are actually at [[<%=s.player.location%>]].
+Where would you like to go from here?</br>
+<a0 onclick=window.gm.rollExplore()>Explore your surroundings</a> </br></br>
+[[Home]]</br>
+<%  if(s.vars.qUnlockMall>0) {      %>[[Mall]]</br>
+<%};%>
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar");  });
+</script>
+</section>
