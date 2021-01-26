@@ -9,10 +9,9 @@ export class Item {
 };
 
 export class Inventory {
-    constructor() {
-        this.list = [];
+    constructor(externlist) {
+        this.list = externlist ? externlist : [];
     }
-
     postItemChange(inv,id,operation) {
         console.log('Inventory: '+operation+' '+id);
     }
@@ -20,7 +19,7 @@ export class Inventory {
     countItem(id) {
         var _i = this.findItemSlot(id);
         if(_i<0) return(0);
-        return(1);  //todo count
+        return(this.list[_i].count);  
     }
     findItemSlot(id) {
         for (var i = 0; i < this.count(); i++) {
@@ -32,15 +31,17 @@ export class Inventory {
         return(this.list[slot].name);
     }
     getItem(id) {
-        var _i = this.findItemSlot(id);
+        var _item = window.gm.ItemsLib[id];
+        return (window.gm.ItemsLib[id]);
+        /*var _i = this.findItemSlot(id);
         if(_i<0) return(null);
-        return(this.list[_i]);
+        return(this.list[_i]);*/
     }
-    addItem(item,count=1) {
-        var _i = this.findItemSlot(item.name);
-        if(_i<0) this.list.push(item);
+    addItem(id,count=1) {
+        var _i = this.findItemSlot(id);
+        if(_i<0) this.list.push({'name': id, 'count': count});
         //todo else this.list[_i].count+=count;
-        this.postItemChange(this,item.name,"added");
+        this.postItemChange(this,id,"added");
     }
     removeItem(id,count=1) {
         var _i = this.findItemSlot(id);
@@ -49,6 +50,13 @@ export class Inventory {
         this.postItemChange(this,id,"removed");
     }
 };
+
+window.gm.ItemsLib = { 
+    'LighterDad' : { name: 'Lighter from Dad', desc: 'I got this lighter from my real dad.', usable: function(){return ('useable');}},
+    'LaptopPS' : {name: 'Laptop-PS', desc:'Power converter for laptop.', usable: function(){return ('');}},
+    'CanOfCoffee' : {name: 'Can of coffee', desc: 'Cold coffee in a can. Tasty? Not really!', usable: function(){return ('drinkable');} }
+};
+
 
 export class LighterDad extends Item {
     constructor() {

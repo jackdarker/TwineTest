@@ -1,0 +1,103 @@
+:: Home
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<%s.player.location=window.passage.name;%>
+At the doorsteps of your home. </br>
+Where would you like to go?</br>
+[[Living_Room]]   [[Bedroom]]   [[Kitchen]]   </br>
+[[Into the city]]</br>
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar"); });
+</script>
+</section>
+
+
+:: Kitchen {"position":"1231,613","size":"100,100"}
+<section> 
+<aside id="sidebar"></aside>
+<article>
+<%s.player.location=window.passage.name;%>
+You are in the kitchen. </br>
+You visited <%=window.passage.name%> <%=visited(window.passage.name)%> times.
+
+<% if(s.mom.location==window.passage.name) { %>
+[[Mom|Info_Mom]] is here. </br>
+<%}%>
+Where would you like to go?</br>
+[[Living_Room]]   [[Hallway|Home]]</br>
+</article><script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar");  });
+</script>
+</section>
+
+
+:: Bedroom {"position":"1033,470","size":"100,100"}
+<!--your bedroom-->
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+This is your Bedroom. There is a large bed for sleeping with a nightstand aside. </br>
+A desk with a wooden chair is setup as workingplace. Your [[Laptop|_Laptop_]] is there. </br>
+Above the desk is a window facing toward the backside of the house.</br>
+<%
+//initialise game state
+s.banana = s.banana| 0;
+%>
+<%s.player.location=window.passage.name;%>
+
+Where do you want to go ? </br>
+[[Hallway|Home]]</br>
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar");  });
+</script></section>
+
+
+:: Living_Room
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+The living room that you share with your mom is sparsely decorated (until now).</br>
+An old wooden table with 4 chairs rests on a wornout green carpet.</br>
+Some money is laying on the table. Maybe mom forgot it there.</br>
+There is a brown couch with a television in front of it. A smaller table with a lamp on it is close by.</br>
+<a0 onclick="getMoney(this,5)">Get much money</a>   <a0 onclick='window.gm.toggleDialog("dialog")'>info</a></br>
+
+<%=window.gm.printPickupAndClear('LaptopPS','pickup laptop-powersupply from table',1-window.gm.playerInv.countItem('LaptopPS'))%>
+<a0 onclick="window.gm.playerInv.addItem('CanOfCoffee')">pickup can of coffee</a></br>
+<a0 onclick="addPS2(this,'CanOfCoffee')">pickup new can of coffee</a></br>
+Where would you like to go?</br>
+[[Kitchen]]   [[Bedroom]]   [[Hallway|Home]] </br>
+</article><script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar"); });
+function getMoney(elmnt,val) {
+	elmnt.replaceWith("took money "+val);
+}
+function addPS2(elmnt,value) {
+	//var _item = new window.gm.libItems[value]();
+	//var _id =_item.name;
+	window.gm.playerInv.addItem(value);
+	_item =  window.gm.playerInv.getItem(value);
+	elmnt.replaceWith("took "+_item.usable.call()+_item.name);
+}
+</script></section>
+
+:: Cabinet {"position":"960,752.3000030517578","size":"100,100"}
+<section> 
+<aside id="sidebar"></aside>
+<article>
+There is nothing here
+
+[[Living_Room]]
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {
+	renderToSelector("#sidebar", "sidebar");
+  });
+</script>
+</section>
+

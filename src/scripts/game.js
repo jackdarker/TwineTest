@@ -1,4 +1,5 @@
 "use strict";
+
 //import {Inventory} from 'inventory.js'; already included??
 
 window.storage = {  //operations for save/reload
@@ -58,7 +59,8 @@ window.storage = {  //operations for save/reload
             hash=window.localStorage.getItem(slot);
             info=window.storage.getSaveInfo(slot);
             window.story.restore(hash) ; 
-            //document.querySelector("output").textContent = (info);
+            //document.querySelector("output").textContent = (info); 
+            window.gm.playerInv = new Inventory(window.story.state.player.inv);
         }
         return(info);
     }
@@ -73,7 +75,7 @@ getSaveVersion: function(){
 },
 initGame: function(forceReset) {
     var s = window.story.state; //s in template is window.story.state from snowman!
-    if (!s.vars||forceReset) { // not working ??  s.vars = s.vars | {cabinetkey : false};
+    if (!s.vars||forceReset) { // storage of variables that doesnt fit player
         s.vars = {
         cabinetkey : true,
         time : 700, //represented as hours*100 +minutes
@@ -87,10 +89,15 @@ initGame: function(forceReset) {
         qUnlockBeach : 0
         }; 
     }
-    if (!s.player||forceReset) {  //
+    if (!s.mom||forceReset) {
+      s.mom = {
+        location : "Kitchen"
+      };
+    }
+    if (!s.player||forceReset) {  //player-related variables
         s.player = {
         location : "",
-        inv: new Inventory(),
+        inv: [],  //inventory data, needs to be mapped to Inventory-Instance
         money : 5,
         energy : 55,
         maxEnergy : 100,
@@ -100,14 +107,18 @@ initGame: function(forceReset) {
         skCook : 0,
         skSlacker : 0,
         skMoneymaker : 0,
-        skTechy : 0
+        skTechy : 0,
+        //relation to others
+        relMom : 20,
+        relJake : 0
         }; 
-        s.player.inv.addItem(new LighterDad());
+        window.gm.playerInv = new Inventory(s.player.inv);
+        window.gm.playerInv.addItem('LighterDad');
+        //window.gm.addItem(s.player.inv,'LighterDad');
     }
 },
-addPS: function() {
-	alert('PA');
-	window.story.state.player.inv.addItem(new LaptopPS());
+refreshScreen: function() {
+    window.story.show(window.passage.name);
 },
 //adds MINUTES to time
 addTime: function(min) {
@@ -145,17 +156,26 @@ rollExplore: function() {
   window.gm.addTime(20);
   window.story.show(places[r]);
 },
-addItem(item,count) {
-  //window.Inventory.pickup(item);
-},
 dropBanana: function() {
     window.story.state.vars.bananas -=1;
     return(window.story.state.vars.bananas);
 },
+//prints a link that when clicked picksup an item and places it in the inventory
+printPickupAndClear: function(itemid, desc,itemleft) {
+  var elmt='';
+  var s= window.story.state;
+  if(!(itemleft>0)) return(elmt);
+  var desc2 = desc+" ("+itemleft+" left)";
+  var msg = 'took '+itemid;
+  
+  //elmt +="<a0 onclick='(function($event){window.gm.playerInv.addItem('"+itemid+"');$event.replaceWith('"+msg+"');}(this))'>text</a></br>";
+  elmt +="<a0 id='"+itemid+"' onclick='(function($event){window.gm.playerInv.addItem(\""+itemid+"\");$event.replaceWith(\""+msg+"\");})(this);'>"+desc2+"</a></br>";
+  return(elmt);
+},
 printItem: function( id,descr) {
   var elmt='';
   var s= window.story.state;
-  elmt +=''.concat("<a0 id='"+id+"' onclick='(function ( $event ) { alert($event.id); })(this);'>"+id+"</a>");
+  elmt +=''.concat("<a0 id='"+id+"' onclick='(function( $event){ alert($event.id); })(this);'>"+id+"</a><p>"+descr+"</p>");
   if(window.story.passage(id))  elmt +=''.concat("    [[Info|"+id+"]]");
 	elmt +=''.concat("</br>");
 	return(elmt);

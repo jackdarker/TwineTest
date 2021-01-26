@@ -1,21 +1,21 @@
 :: sidebar {"position":"551,513.3000030517578","size":"100,100"}
 <h3>Player</h3>
 <img src="https://twinery.org/homepage/img/logo.svg" width="256" height="256">
-<div><%=s.player.location%></br>Time <%=window.gm.getTimeString()%> <%=window.gm.getDateString()%>></br>
-Money: <%=s.player.money %></br>Inventory: <%=s.player.inv.count() %></br>
+<div><%=s.player.location%></br>Time <%=window.gm.getTimeString()%> <%=window.gm.getDateString()%></br>
+Money: <%=s.player.money %></br>Inventory: <%=s.player.inv.length %></br>
 </div>
 <form>
 <label>Info:
     <output></output>
   </label></br>
 <button type="button" id="save">save/load</button>
-<button type="button" id="inv">settings</button>
-<button type="button" id="wait">wait</button>
+<button type="button" id="inv">inventory</button>
+<button type="button" id="wait">Rest 45min</button>
 </form>
 <script>
 document.querySelector('#save').addEventListener('click', function(){window.gm.toggleDialog('#dialog_save');});
 document.querySelector('#inv').addEventListener('click', function(){window.story.show('Inventory');});
-document.querySelector('#wait').addEventListener('click', function(){window.gm.addTime(43);}); 
+document.querySelector('#wait').addEventListener('click', function(){window.gm.addTime(45);}); 
 </script>
 
 :: CenterDialogs
@@ -99,10 +99,11 @@ You have the following in your inventory: </br>
 [[Back|<%=s.player.location%>]]</br></br>
 <%
 var x = 0, id=''; 
-var maxSlots = s.player.inv.count();  //has to fit form below
+var inv = window.gm.playerInv;
+var maxSlots = inv.count(); 
 do {
-  id=s.player.inv.getItemId(x);
-  %><%=window.gm.printItem(id,s.player.inv.getItem(id).desc)%><%
+  id=inv.getItemId(x);
+  %><%=window.gm.printItem(id,inv.getItem(id).desc+' '+inv.getItem(id).usable.call())%><%
   x = x + 1;
 } while (x < maxSlots);
 %>

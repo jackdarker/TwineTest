@@ -1,0 +1,31 @@
+:: Info_Jake
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+Jake is here.</br>
+You barely know anything about him.</br>
+
+[[Back|<%=s.player.location%>]]</br></br>
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar"); });
+</script>
+</section>
+
+
+:: Info_Mom
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+Your mom is here.</br>
+<% if(s.player.relMom>10) { %>
+She gives you a hug.
+<% }%>
+</br>
+
+[[Back|<%=s.player.location%>]]</br></br>
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar"); });
+</script>
+</section>
