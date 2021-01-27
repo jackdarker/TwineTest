@@ -58,11 +58,13 @@ Sometimes you want to show some more details/tooltips.
 - add a passage where you describe the info and create a link like that: [[Back|<%=s.player.location%>]]
 - create a link to the info-passage in the actual passage
 
+Use hidden attribut and toggle to show additional information. f.e. this creates a link that shows/hides a <p> when clicked:
+elmt +=`<a0 id='${id}' onclick='(function($event){document.querySelector(\"div#${id}\").toggleAttribute(\"hidden\");})(this);'>${id}</a><div hidden id='${id}'>${descr}</div>`;
+
 You can also use css-classchange to hide/display parts:
 //this will add class div to all <div> with class div_hidden and will therefore override visibility
 <a0 onclick='(function ( $event ) { $( "div.div_hidden" ).toggleClass("div"); })(this);'>Info</a>
 <div class="div_hidden">You are sporty<div/></br>
-
 (add in css
     .div_hidden { visibility: hidden; }
     .div { visibility: visible; }

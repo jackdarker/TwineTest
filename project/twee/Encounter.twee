@@ -2,7 +2,7 @@
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 Get ready...
-<%window.gm2.initCombat('Mole');%>
+<%window.gm.initCombat('Mole');%>
 A <%=window.story.state.enemy.name%> appears ! </br>
 [[Next|EncounterStartTurn]]
 </article>
@@ -21,7 +21,7 @@ $(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", 
 <% 
     if(s.enemy.combatState==='fleeing') {%>
         <%='You sucessfully escaped '+s.enemy.name%>
-        [[Next|<%s.player.location%>]]
+        [[Next|<%=s.player.location%>]]
     <%} else if(s.enemy.health<=0) {
         s.enemy.combatState = 'victory';
     %>

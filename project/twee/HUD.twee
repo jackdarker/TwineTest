@@ -1,8 +1,10 @@
 :: sidebar {"position":"551,513.3000030517578","size":"100,100"}
 <h3>Player</h3>
 <img src="https://twinery.org/homepage/img/logo.svg" width="256" height="256">
-<div><%=s.player.location%></br>Time <%=window.gm.getTimeString()%> <%=window.gm.getDateString()%></br>
-Money: <%=s.player.money %></br>Inventory: <%=s.player.inv.length %></br>
+<div><%=s.player.location%></br>
+<%=window.gm.getTimeString()%> <%=window.gm.getDateString()%></br>
+Energy: <%=s.player.energy%>/<%=s.player.energyMax%>   Health: <%=s.player.health%>/<%=s.player.healthMax%></br>
+Money: <%=s.player.money %></br>
 </div>
 <form>
 <label>Info:

@@ -38,21 +38,62 @@ $(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar",
 <!--your bedroom-->
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<%s.player.location=window.passage.name;%>
 This is your Bedroom. There is a large bed for sleeping with a nightstand aside. </br>
 A desk with a wooden chair is setup as workingplace. Your [[Laptop|_Laptop_]] is there. </br>
 Above the desk is a window facing toward the backside of the house.</br>
-<%
-//initialise game state
-s.banana = s.banana| 0;
-%>
-<%s.player.location=window.passage.name;%>
-
+[[Sleep 1h|SleepHour]]</br>
+<%if(window.gm.getTimeStruct().hour<11) { %>
+[[Sleep until evening|SleepUntilEvening]]</br>
+<%} else {%>
+[[Sleep until morning|SleepUntilMorning]]</br>
+<%}%>
 Where do you want to go ? </br>
 [[Hallway|Home]]</br>
 </article>
 <script>
  // Render the passage named HUD into the element 
 $(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar");  });
+</script></section>
+
+:: SleepHour
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+You slept for an hour.</br>
+<% window.gm.sleep((window.gm.getTimeStruct().hour+1)*100);%>
+<%=window.gm.clearLog()%></br>
+[[Next|<%=s.player.location%>]]</br>
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar");  });
+</script></section>
+
+:: SleepUntilMorning
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+You fall into your bedsheets and sleep until your smartphone buzzes you out of your dreams.</br>
+<%window.gm.sleep(700);%>
+<i><%=window.gm.clearLog()%></br></i>
+[[Next|<%=s.player.location%>]]</br>
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar");  });
+</script></section>
+
+:: SleepUntilEvening
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+You fall into your bedsheets and sleep until your smartphone buzzes you out of your dreams.</br>
+<%window.gm.sleep(1800);%>
+<%=window.gm.clearLog()%></br>
+[[Next|<%=s.player.location%>]]</br>
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {	
+	renderToSelector("#sidebar", "sidebar");  });
 </script></section>
 
 
