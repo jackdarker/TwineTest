@@ -3,6 +3,10 @@ While working on the game I learned several things and I would like to share my 
 <h1>Passages, Locations, Events</h1>
 Passages contains the text to display on the screen. This text can be plain text or html-code including script and style partitions.
 
+If you enter something like "[[Next|Encounter]]" it will be converted when the passage is RENDERED to 
+<a href="javascript:void(0)" data-passage="Encounter">Next</a>
+If you have to create dynamic passage links by adding them to html you cannot use [[]] but have to create the <a> on yourself.
+
 To add a comment 
 in html-code:   '<!-- Your comment -->'
 in script/ template methods:    '// your comment'

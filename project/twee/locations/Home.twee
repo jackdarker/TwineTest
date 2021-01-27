@@ -4,7 +4,7 @@
 <%s.player.location=window.passage.name;%>
 At the doorsteps of your home. </br>
 Where would you like to go?</br>
-[[Living_Room]]   [[Bedroom]]   [[Kitchen]]   </br>
+[[Living_Room]]   [[Bedroom]]   [[Kitchen]]  [[Garden]] </br>
 [[Into the city]]</br>
 </article>
 <script>
@@ -90,7 +90,6 @@ function addPS2(elmnt,value) {
 <aside id="sidebar"></aside>
 <article>
 There is nothing here
-
 [[Living_Room]]
 </article>
 <script>
@@ -101,3 +100,24 @@ $(document).one('sm.passage.shown', function (ev) {
 </script>
 </section>
 
+
+:: Garden
+<section> 
+<aside id="sidebar"></aside>
+<article>
+<%s.player.location=window.passage.name;%>
+The garden behind the house is not very large. </br>
+There are a lot of molehills on the green. You should teach their creator a lesson.</br>
+[[Whack a mole|Encounter]]
+
+<% if(s.mom.location==window.passage.name) { %>
+[[Mom|Info_Mom]] is wandering around. Maybe she is planning to setup some flower beds. </br>
+<%}%>
+
+Where would you like to go?</br>
+[[Hallway|Home]]</br>
+</article><script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar");  });
+</script>
+</section>

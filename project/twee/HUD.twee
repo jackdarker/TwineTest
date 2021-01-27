@@ -18,8 +18,15 @@ document.querySelector('#inv').addEventListener('click', function(){window.story
 document.querySelector('#wait').addEventListener('click', function(){window.gm.addTime(45);}); 
 </script>
 
+
 :: CenterDialogs
 <%=window.story.render("SaveDialog") %></br>
+
+:: playerstats
+Your health:<%=s.player.health%></br>
+
+:: enemystats
+Enemys health:<%=s.enemy.health%></br>
 
 :: SaveDialog
 <script>

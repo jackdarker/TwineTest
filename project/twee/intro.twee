@@ -44,7 +44,7 @@ There were several reasons you came here:
 </br> - you apply for studying on the local facility
 </br>
 You are just an average girl that recently turned 18. </br>
-</br>Select up to 2 perks below and press [[Next|Home]] to start the game. </br>
+</br>Select up to 2 perks below and press [[Next|Garden]] to start the game. </br>
 Or press <a0 id='reset' onclick='(function ( $event ) { resetStart(); })(this);'>Reset</a> to reset your selection.  </br></br>
 
 <%=window.gm.printUnlockPerk('skCook','Your cooking skill is slightly improved.')%>

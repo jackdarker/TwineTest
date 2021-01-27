@@ -66,10 +66,6 @@ window.storage = {  //operations for save/reload
     }
   };
 window.gm = { //game related operations
-libItems: { //need to add items here to bypass template-function-closure problem
-  LaptopPS: function(){return new LaptopPS();},
-  CanOfCoffee: function(){return new CanOfCoffee();},
-},
 getSaveVersion: function(){
     return('1.0.0');
 },
@@ -94,13 +90,24 @@ initGame: function(forceReset) {
         location : "Kitchen"
       };
     }
-    if (!s.player||forceReset) {  //player-related variables
-        s.player = {
-        location : "",
+    if (!s.enemy||forceReset) { 
+      s.enemy = { //actual enemy in combat
+        Name : "",
+        health : 10,
+        maxHealth : 10,
+        activeTurn : false,
+        combatState : ""
+      };
+    }
+    if (!s.player||forceReset) {  
+        s.player = {  //player-related variables
+        location : "Bedroom",
         inv: [],  //inventory data, needs to be mapped to Inventory-Instance
         money : 5,
         energy : 55,
         maxEnergy : 100,
+        health : 10,
+        maxHealth : 10,
         skillPoints : 2,    //no. of free skillpoints on game-start
         //skilllevels
         skSporty : 0,
@@ -156,9 +163,82 @@ rollExplore: function() {
   window.gm.addTime(20);
   window.story.show(places[r]);
 },
-dropBanana: function() {
-    window.story.state.vars.bananas -=1;
-    return(window.story.state.vars.bananas);
+
+printOutput: function(text) {
+  document.querySelector("section article div output").innerHTML = text;
+},
+printLink(label,target) {
+  return("<a href=\"javascript:void(0)\" data-passage=\""+target+"\">"+label+"</a></br>");
+},
+hideCombatOption: function() {
+  document.querySelector("#combatmenu").remove();
+},
+printCombatOption : function() { //creates a list of possible moves
+  var elmt="<form id='combatmenu'>";
+  elmt +="<a0 id='RunAway' onclick='(function($event){window.gm.triggerCombat($event.id);})(this);'>Try to flee</a></br>";  //todo replace with regex-replace
+  elmt +="<a0 id='Attack' onclick='(function($event){window.gm.triggerCombat($event.id);})(this);'>Attack</a></br>";
+  //elmt +="<a0 id='Guard' onclick='(function($event){window.gm.execCombatCmd($event.id);"+next+"})(this);'>Guard</a></br>";
+  //elmt +="<a0 id='showItems' onclick='(function($event){window.gm.execCombatCmd($event.id);"+next+"})(this);'>Item</a></br>";
+  elmt +="</form>";
+  return(elmt);
+
+},
+triggerCombat: function(id) {
+  window.gm.hideCombatOption();
+  var msg=window.gm.execCombatCmd(id);
+  window.gm.printOutput(msg+window.gm.printLink("Next","EncounterStartTurn"));
+  window.gm.printCombatHud();
+},
+calcEnemyCombat: function() {
+  var rnd = _.random(1,100);
+  var enemy = window.story.state.enemy;
+  var msg = '';
+  if(rnd>30) {
+    msg +=enemy.name+" try to attack you.</br>";
+    msg +=window.gm.execCombatCmd('Attack');
+  } else {
+    msg +=enemy.name+" takes a defensive stance.</br>";
+    msg +=window.gm.execCombatCmd('Guard');
+  }
+  return(msg+"</br>");
+},
+execCombatCmd : function(id) { //setup enemy for encounter
+  var enemy = window.story.state.enemy;
+  var player = window.story.state.player;
+  var rnd = _.random(1,100);
+  var msg = '';
+  if(enemy.activeTurn) {
+    if(id ==='Attack') {
+      if(rnd > 30) {
+        msg += enemy.name +" hits you in the face.";
+        player.health -=2;
+      } else {
+        msg += enemy.name +"s attack missed.";
+      }
+    }
+  } else {
+    if(id ==='Attack') {
+      if(rnd > 30) {
+        msg += "You hit your foe.";
+        enemy.health -=2;
+      } else {
+        msg += enemy.name +" evaded your attack.";
+      }
+    } else if(id === 'RunAway') {
+      if(rnd >40) {
+        msg += "You escaped the fight.";
+        enemy.combatState = 'fleeing';  //just setting the flag, you have to take care of handling!
+      } else {
+        msg += "Your attempts to escape failed.";
+      }
+    }
+  }
+  enemy.activeTurn =!enemy.activeTurn;  //toggle whos turn
+  return(msg+"</br>");
+},
+printCombatHud: function() {
+    renderToSelector("#playerstats", "playerstats");
+    renderToSelector("#enemystats", "enemystats");
 },
 //prints a link that when clicked picksup an item and places it in the inventory
 printPickupAndClear: function(itemid, desc,itemleft) {

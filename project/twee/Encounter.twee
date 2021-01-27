@@ -1,0 +1,58 @@
+:: Encounter
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+Get ready...
+<%window.gm2.initCombat('Mole');%>
+A <%=window.story.state.enemy.name%> appears ! </br>
+[[Next|EncounterStartTurn]]
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar");  });
+</script>
+</section>
+
+:: EncounterStartTurn
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<!--filled by printCombatHud-->
+<div id="playerstats">you</div> 
+<div id="enemystats">tey</div>
+<% 
+    if(s.enemy.combatState==='fleeing') {%>
+        <%='You sucessfully escaped '+s.enemy.name%>
+        [[Next|<%s.player.location%>]]
+    <%} else if(s.enemy.health<=0) {
+        s.enemy.combatState = 'victory';
+    %>
+    <%='You defeated '+s.enemy.name%>
+    [[Next|<%s.player.location%>]]
+    
+<% }else if(s.player.health<=0){ 
+    s.enemy.combatState = 'defeat';    
+%>
+    <%='You were defeated by '+s.enemy.name%>
+    [[GameOver]]
+<% }else{ %>
+   <% if(s.enemy.activeTurn) {%>
+   [[Next|EncounterStartTurn]]
+    <%=window.gm.calcEnemyCombat()%>
+    
+    <% }else{ %>
+    <%=window.gm.printCombatOption()%>
+    
+<%}}%>
+
+<div><output></output></div></br>   <!--message is rendered here-->
+</article>
+<script>
+ // Render the passage named HUD into the element 
+$(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar");
+window.gm.printCombatHud(); });
+</script>
+</section>
+
+:: GameOver
+Game Over. I hope you learned something.</br>
+</br>
+[[New Game|Start]]
