@@ -6,7 +6,7 @@ At the doorsteps of your home. </br>
 Where would you like to go?</br>
 [[Living_Room]]   [[Bedroom]]   [[Kitchen]]  [[Garden]] </br>
 [[Into the city]]</br>
-</article>
+</article><%=window.story.render("LogPanel")%>
 <script>
  // Render the passage named HUD into the element 
 $(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar"); });
@@ -20,14 +20,20 @@ $(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", 
 <article>
 <%s.player.location=window.passage.name;%>
 You are in the kitchen. </br>
-You visited <%=window.passage.name%> <%=visited(window.passage.name)%> times.
 
-<% if(s.mom.location==window.passage.name) { %>
+<%=window.gm.printPickupAndClear('CanOfCoffee','get a can of ice-coffee from the fridge',s.mom.coffeeStore)%>
+<%=window.gm.printPickupAndClear('SimpleFood','eat some food mom prepared',s.mom.foodStore,function(){window.story.state.mom.foodStore=Math.max(0,--window.story.state.mom.foodStore);})%>
+Mom will take care to resupply the fridge. But she might be disappointed if you plunder heir fridge without giving something back.</br>
+<% if(s.mom.location===window.passage.name && s.mom.foodStore===0) { %>
+'Sorry hun' , mom responds on your greeetings, 'but if you eat all of the food, cant you take care to get some resupply?' </br>
+<% window.gm.gainRelation('Mom',-2);
+}%>
+<% if(s.mom.location===window.passage.name) { %>
 [[Mom|Info_Mom]] is here. </br>
 <%}%>
 Where would you like to go?</br>
 [[Living_Room]]   [[Hallway|Home]]</br>
-</article><script>
+</article><%=window.story.render("LogPanel")%><script>
  // Render the passage named HUD into the element 
 $(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar");  });
 </script>
@@ -39,6 +45,7 @@ $(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar",
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 <%s.player.location=window.passage.name;%>
+
 This is your Bedroom. There is a large bed for sleeping with a nightstand aside. </br>
 A desk with a wooden chair is setup as workingplace. Your [[Laptop|_Laptop_]] is there. </br>
 Above the desk is a window facing toward the backside of the house.</br>
@@ -50,21 +57,16 @@ Above the desk is a window facing toward the backside of the house.</br>
 <%}%>
 Where do you want to go ? </br>
 [[Hallway|Home]]</br>
-</article>
-<script>
- // Render the passage named HUD into the element 
-$(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar");  });
-</script></section>
+</article><%=window.story.render("LogPanel")%>
+</section>
 
 :: SleepHour
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 You slept for an hour.</br>
 <% window.gm.sleep((window.gm.getTimeStruct().hour+1)*100);%>
-<%=window.gm.clearLog()%></br>
 [[Next|<%=s.player.location%>]]</br>
-</article>
-<script>
+</article><%=window.story.render("LogPanel")%><script>
  // Render the passage named HUD into the element 
 $(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar");  });
 </script></section>
@@ -74,23 +76,24 @@ $(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar",
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 You fall into your bedsheets and sleep until your smartphone buzzes you out of your dreams.</br>
 <%window.gm.sleep(700);%>
-<i><%=window.gm.clearLog()%></br></i>
 [[Next|<%=s.player.location%>]]</br>
-</article>
-<script>
+</article><%=window.story.render("LogPanel")%><script>
  // Render the passage named HUD into the element 
 $(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar");  });
 </script></section>
+
 
 :: SleepUntilEvening
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 You fall into your bedsheets and sleep until your smartphone buzzes you out of your dreams.</br>
 <%window.gm.sleep(1800);%>
-<%=window.gm.clearLog()%></br>
 [[Next|<%=s.player.location%>]]</br>
-</article>
-<script>
+</article><%=window.story.render("LogPanel")%><script>
+$(document).one('sm.passage.showing', function(event, passage) {
+  $("tw-passage").hide(0).fadeIn(2000);});	//fade -in
+  $(document).one('sm.passage.hidden', function(event, passage) {
+  $("tw-passage").fadeOut(2000);});	//fade -in
  // Render the passage named HUD into the element 
 $(document).one('sm.passage.shown', function (ev) {	
 	renderToSelector("#sidebar", "sidebar");  });
@@ -111,7 +114,7 @@ There is a brown couch with a television in front of it. A smaller table with a 
 <a0 onclick="addPS2(this,'CanOfCoffee')">pickup new can of coffee</a></br>
 Where would you like to go?</br>
 [[Kitchen]]   [[Bedroom]]   [[Hallway|Home]] </br>
-</article><script>
+</article><%=window.story.render("LogPanel")%><script>
  // Render the passage named HUD into the element 
 $(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar"); });
 function getMoney(elmnt,val) {
@@ -132,7 +135,7 @@ function addPS2(elmnt,value) {
 <article>
 There is nothing here
 [[Living_Room]]
-</article>
+</article><%=window.story.render("LogPanel")%>
 <script>
  // Render the passage named HUD into the element 
 $(document).one('sm.passage.shown', function (ev) {
@@ -157,7 +160,7 @@ There are a lot of molehills on the green. You should teach their creator a less
 
 Where would you like to go?</br>
 [[Hallway|Home]]</br>
-</article><script>
+</article><%=window.story.render("LogPanel")%><script>
  // Render the passage named HUD into the element 
 $(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar");  });
 </script>

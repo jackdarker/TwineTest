@@ -30,6 +30,17 @@ Your health:<%=s.player.health%></br>
 :: enemystats
 Enemys health:<%=s.enemy.health%></br>
 
+
+:: LogPanel
+<article class='logpanel'>
+<div class="scroll"><%=window.gm.getLog()%></br></br>
+</div><button type="button" id="toggleview" onclick=toggleview()>toggle View</button>
+</article>
+<script>function toggleview(){
+  document.querySelector("section").classList.toggle("section_swap");
+}
+</script>
+
 :: SaveDialog
 <script>
 var infodisp = 'dialog form label output'; //Url to output according nesting node classes; see structure of dialog below
@@ -131,7 +142,7 @@ The page should be setup like this:
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 content here !
-</article><script>
+</article><script><%=window.story.render("LogPanel")%>
  // Render the passage named HUD into the element 
 $(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar"); });
 </script></section>

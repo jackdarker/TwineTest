@@ -11,6 +11,33 @@ To add a comment
 in html-code:   '<!-- Your comment -->'
 in script/ template methods:    '// your comment'
 
+Snowman supports this style-markup:
+            *Emphasis* or _Emphasis_.
+            **Strong emphasis** or __Strong emphasis__.
+            ~~Strikethrough~~
+            1. First ordered list item
+            2. Another item
+
+            # H1
+            ## H2
+            ### H3
+            #### H4
+            ##### H5
+            ###### H6
+
+            Escaped code line.
+            Another line of code.
+
+            |    Tables     |    Are        |     Cool      |
+            | ------------- |:-------------:| -------------:|
+            | col 3         |   is          | right-aligned |
+            | col 2         |   is          |   centered    |
+            | col 1         |   is          |  left-aligned |
+
+            > Blockquotes are useful.
+            > This line is part of the same quote.
+
+
 <h1>Running code</h1>
 Template-method from snowman to be used inside html-code:
 Use <% foo(); bar(); %> to execute code

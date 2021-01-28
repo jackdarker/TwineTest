@@ -192,3 +192,58 @@ Obj.createFromJSON = function(json){
    return obj; // we finally return the instance
 };
 */
+
+----------------------------------------------------------------------------------------
+generic function to use Object.assign to rebuild a nested object/array
+
+example:
+function Msg(data) {
+    //... your init code
+    this.data = data //can be another object or an array of objects of custom types. 
+                     //If those objects defines `this.__type', their types will be assigned automatically as well
+    this.__type = "Msg"; // <- store the object's type to assign it automatically
+}
+
+Msg.prototype = {
+    createErrorMsg: function(errorMsg){
+        return new Msg(0, null, errorMsg)
+    },
+    isSuccess: function(){
+        return this.errorMsg == null;
+    }
+}
+
+var responseMsg = //json string of Msg object received;
+responseMsg = assignType(responseMsg);
+
+if(responseMsg.isSuccess()){ // isSuccess() is now available
+      //furhter logic
+      //...
+}
+
+you need this:
+function assignType(object){
+    if(object && typeof(object) === 'object' && window[object.__type]) {
+        object = assignTypeRecursion(object.__type, object);
+    }
+    return object;
+}
+
+function assignTypeRecursion(type, object){
+    for (var key in object) {
+        if (object.hasOwnProperty(key)) {
+            var obj = object[key];
+            if(Array.isArray(obj)){
+                 for(var i = 0; i < obj.length; ++i){
+                     var arrItem = obj[i];
+                     if(arrItem && typeof(arrItem) === 'object' && window[arrItem.__type]) {
+                         obj[i] = assignTypeRecursion(arrItem.__type, arrItem);
+                     }
+                 }
+            } else  if(obj && typeof(obj) === 'object' && window[obj.__type]) {
+                object[key] = assignTypeRecursion(obj.__type, obj);
+            }
+        }
+    }
+    return Object.assign(new window[type](), object);
+}

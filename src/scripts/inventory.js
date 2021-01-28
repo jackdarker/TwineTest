@@ -50,14 +50,15 @@ export class Inventory {
         this.postItemChange(this,id,"removed");
     }
 };
-
+//this is a lookuptable for items
 window.gm.ItemsLib = { 
     'LighterDad' : { name: 'Lighter from Dad', desc: 'I got this lighter from my real dad.', usable: function(){return ('useable');}},
     'LaptopPS' : {name: 'Laptop-PS', desc:'Power converter for laptop.', usable: function(){return ('');}},
-    'CanOfCoffee' : {name: 'Can of coffee', desc: 'Cold coffee in a can. Tasty? Not really!', usable: function(){return ('drinkable');} }
+    'CanOfCoffee' : {name: 'Can of coffee', desc: 'Cold coffee in a can. Tasty? Not really!', usable: function(){return ('drinkable');} },
+    'SimpleFood' : {name: 'food ration', desc: 'You can eat this.', usable: function(){return ('eatable');} }
 };
 
-
+/*
 export class LighterDad extends Item {
     constructor() {
         super('Lighter from Dad');
@@ -83,4 +84,4 @@ export class CanOfCoffee extends Item {
     usable() {
         return ('drinkable');
     }
-};
+};*/
