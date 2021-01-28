@@ -1,0 +1,32 @@
+:: QLaptop
+<script>
+//quest milestones
+var qLaptopLib = [ [0,'Laptop PS missing'],
+    [0x100 , 'found Powersupply, Webcam broken' ],
+    [0x200 , '??'],
+    [0x300 , 'webcam fixed']
+];</script>
+
+:: qLaptop_Status
+<!--called  to print status--->
+<li><label><input type="checkbox" name="y" value="x" readonly disabled>
+<%=function(){
+    if(s.player.qLaptop===0) {
+       return('Get a powerconverter for your laptop');
+    } else {
+        return('FINISHED: Laptop working again');
+    }
+}()%>
+</label></li>
+
+
+:: _Laptop_
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+You seat yourself in front of your laptop. </br>
+<%if(s.vars.qLaptop==0){%>
+The powerconverter is missing. You need to get a new one.</br>
+<%}if(s.vars.qLaptop===0x100){%>
+After pushing the powerbutton the pc doesnt start. Something seems broken.</br>
+<%}%>
+[[Back|Bedroom]]

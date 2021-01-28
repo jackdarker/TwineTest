@@ -8,14 +8,7 @@ Where would you like to go from here?</br>
 <%  if(s.vars.qUnlockPark>0) {      %>[[Park]]</br>
 <%}; if(s.vars.qUnlockMall>0) {     %>[[Mall]]</br>
 <%};%>
-
-
-</article>
-<script>
- // Render the passage named HUD into the element 
-$(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar");  });
-</script>
-</section>
+</article><%=window.story.render("LogPanel")%></section>
 
 :: Mall
 <section> 
@@ -31,12 +24,7 @@ Where would you like to go from here?</br>
 <%  if(s.vars.qUnlockPark>0) {      %>[[Park]]</br>
 <%}; if(s.vars.qUnlockBeach>0) {      %>[[Beach]]</br>
 <%};%>
-</article>
-<script>
- // Render the passage named HUD into the element 
-$(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar");  });
-</script>
-</section>
+</article><%=window.story.render("LogPanel")%></section>
 
 :: Park
 <section> 
@@ -46,17 +34,18 @@ if(s.vars.qUnlockPark==0) {s.vars.qUnlockPark=1;%>
 You found the <%=window.passage.name%> ! </br></br>
 <%}%>
 You are actually at [[<%=s.player.location%>]].
+<%if(s.vars.qDogSit===0 && visited(window.passage.name)>=5) {%>
+    On a direction sign near the entrance of the park you spot a piece of paper that someone must have placed there.</br>
+    Would you like to check whats up with the [[Sign|Park_DogsitAd]].
+<%} else if(s.vars.qDogSit>0) {%>
+    [[DogSit-ad|Park_DogsitAd]]
+<%}%>
 Where would you like to go from here?</br>
 <a0 onclick=window.gm.rollExplore()>Explore your surroundings</a> </br></br>
 [[Home]]</br>
 <%  if(s.vars.qUnlockMall>0) {      %>[[Mall]]</br>
 <%};%>
-</article>
-<script>
- // Render the passage named HUD into the element 
-$(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar");  });
-</script>
-</section>
+</article><%=window.story.render("LogPanel")%></section>
 
 
 :: Beach
@@ -76,12 +65,7 @@ Where would you like to go from here?</br>
 [[Home]]</br>
 <%  if(s.vars.qUnlockMall>0) {      %>[[Mall]]</br>
 <%};%>
-</article>
-<script>
- // Render the passage named HUD into the element 
-$(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar");  });
-</script>
-</section>
+</article><%=window.story.render("LogPanel")%></section>
 
 
 :: Downtown
@@ -94,9 +78,4 @@ Where would you like to go from here?</br>
 [[Home]]</br>
 <%  if(s.vars.qUnlockMall>0) {      %>[[Mall]]</br>
 <%};%>
-</article>
-<script>
- // Render the passage named HUD into the element 
-$(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar");  });
-</script>
-</section>
+</article><%=window.story.render("LogPanel")%></section>

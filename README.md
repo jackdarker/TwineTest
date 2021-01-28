@@ -1,5 +1,20 @@
 This is a Twine/Twee - testgame based on the setup from ChapelR/tweego-setup.
-Its not a realgame but a testground.
+Its not a real game but a testground.
+
+It features:
+- interactive fiction where you move through locations
+- save-system (browser storage)
+- a basic inventory
+- very basic combat encounter
+- javascript code to make writing passages easier
+
+Todo:
+- save-system (file storage)
+- outfit-system
+- combat logic and calculation
+- quest tracker
+- ???
+
 
 Setting up everything
 --------------------------------

@@ -50,6 +50,11 @@ dialog::backdrop, #backdrop {
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);    
 }
+[type=checkbox], [type=radio] {
+  width:1em;
+  height: 1em;
+  margin-right:1em;
+}
 statup {
   color:green;
 }

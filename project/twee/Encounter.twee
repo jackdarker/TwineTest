@@ -5,12 +5,7 @@ Get ready...
 <%window.gm.initCombat('Mole');%>
 A <%=window.story.state.enemy.name%> appears ! </br>
 [[Next|EncounterStartTurn]]
-</article>
-<script>
- // Render the passage named HUD into the element 
-$(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar");  });
-</script>
-</section>
+</article><%=window.story.render("LogPanel")%></section>
 
 :: EncounterStartTurn
 <section> 
@@ -44,10 +39,8 @@ $(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", 
 <%}}%>
 
 <div><output></output></div></br>   <!--message is rendered here-->
-</article>
+</article><%=window.story.render("LogPanel")%>
 <script>
- // Render the passage named HUD into the element 
-$(document).one('sm.passage.shown', function (ev) {renderToSelector("#sidebar", "sidebar");
 window.gm.printCombatHud(); });
 </script>
 </section>

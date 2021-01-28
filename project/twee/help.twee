@@ -1,0 +1,60 @@
+:: Help_Index
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+Here you can find some information about the gameplay.</br>
+[[Your goal|Help_Background]]</br>
+[[Basics|Help_Basics]]</br>
+[[What should I do, where should I go|Help_Quest]]</br>
+[[Im stuck!|Help_Fixes]]</br>
+</article><%=window.story.render("LogPanel")%></section>
+
+
+:: Help_Background
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+Your goal is to - save the earth.</br>
+No, just joking. You are far from a superhero and earth has so many serious problems, you cant do much about it.</br>
+If you can make a living for yourself and find friends then you are on a good way.</br>  
+Here is a task-list for you: </br>
+1. explore your surroundings to unlock new places and events
+2. talk to others and help them to build your relationship and unlock content
+3. work on your carreer (whichever that is). Partake in schooling f.e. 
+4. find ways to earn money. Money can unlock things,you know? 
+5. dont eat yellow snow
+</br>
+[[Next|<%=s.player.location%>]]</br>
+</article><%=window.story.render("LogPanel")%></section>
+
+
+:: Help_Basics
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+For many activities you have to spend energy and time. F.e. walking into the city takes some time and effort.</br>
+Energy can be recovered by sleeping. Also some activities, food or drugs can restore energy.</br>
+Use the sleep-option in your own bedroom to rest.</br>
+</br>
+[[Next|<%=s.player.location%>]]</br>
+</article><%=window.story.render("LogPanel")%></section>
+
+
+:: Help_Quest
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+In your bedroom on your desk you can find a todo-list that gives some hint on what you should work on.</br>
+For the beginning try to explore the city.</br>
+TODO: There isnt much more content right now!</br>
+[[Next|<%=s.player.location%>]]</br>
+</article><%=window.story.render("LogPanel")%></section>
+
+
+:: Help_Fixes
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+If you are stuck on a page and you cannot escape. Press this [[Button|Home]] to get back to your Home.
+If you are even unable to get to this page because you see a weird plain textmessage in your browser:</br>
+Im sorry but no one can help you. I will try to add some debug-log that shows some more information that you can send me.</br>
+Then I might be abel to backtrack the error.</br>
+[[Next|<%=s.player.location%>]]</br>
+</article><%=window.story.render("LogPanel")%></section>
+
+

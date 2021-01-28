@@ -1,4 +1,14 @@
 While working on the game I learned several things and I would like to share my insights here.
+<h1>Links</h1>
+Some links with information to javascript/html/css:</br>
+https://developer.mozilla.org/en-US/docs/Web/Reference</br>
+https://wiki.selfhtml.org/  (german) </br>
+https://api.jquery.com/</br>
+</br>
+Some links with information to twine/tweego/snowman:</br>
+http://twinery.org/cookbook/</br>
+https://videlais.github.io/snowman/2</br>
+</br>
 
 <h1>Passages, Locations, Events</h1>
 Passages contains the text to display on the screen. This text can be plain text or html-code including script and style partitions.
@@ -6,6 +16,8 @@ Passages contains the text to display on the screen. This text can be plain text
 If you enter something like "[[Next|Encounter]]" it will be converted when the passage is RENDERED to 
 <a href="javascript:void(0)" data-passage="Encounter">Next</a>
 If you have to create dynamic passage links by adding them to html you cannot use [[]] but have to create the <a> on yourself.
+Instead of using the <a> above you could also do something like this: fadeout, the passage change (yyou have to do fadeIn on sm.passage.showing-event)
+<a href="javascript:void(0)" onclick='($("tw-passage").fadeOut(2000, function() {window.story.show("SleepUntilEvening");}));'>Sleep Until Evening</a> </br>
 
 To add a comment 
 in html-code:   '<!-- Your comment -->'

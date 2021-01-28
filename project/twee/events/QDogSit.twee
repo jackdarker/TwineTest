@@ -1,0 +1,49 @@
+:: DogSit
+<script>
+//quest milestones
+var qDogSitLib = [ [0,'unknown'],
+    [0x100 , 'found dogsit annonce' ],
+    [0x200 , 'called phone, no answer'],
+    [0x300 , 'callback received, accepted offer'],
+    [0x310 , 'callback received, delayed decision']
+];</script>
+
+:: qDogSit_Status
+<!--called  to print status--->
+
+:: Park_DogsitAd
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<% s.player.location=window.passage.name;
+if(s.vars.qDogSit===0) { s.vars.qDogSit=0x100; %>
+    A closer look on the paper reveals that it is an advertisment for an agency where you can rent people for dog-sitting.</br>
+    There is also a sidenote that new dog-sitters are hired and payed 20-100$ per hour.</br>
+    That sounds like easy money. Maybe you should call them and see if this is something for you.</br>
+    [[Call|Dogsit_FirstCall]]</br>
+<%} else {%>
+    You already got the advertisment of the dog-sitting-agency.</br>
+    [[Call Dogsit|Dogsit_NewCall]]</br>
+<% } %>
+[[Ignore the ad|Park]]</br>
+</article><%=window.story.render("LogPanel")%></section>
+
+
+:: Dogsit_FirstCall
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<% s.player.location=window.passage.name;s.vars.qDogSit=0x200;%>
+Using the qr-scanner of your phone you scan the ad and start the call.<%br>
+The ringing-sound is repeated several times but there is no one picking up the call.<%br>
+After entering the number manually (just to make sure) you again got no connection.<%br>
+Darn. Maybe they are all busy caring for dogs. </br>
+[[Ignore the ad|Park]]</br>
+</article><%=window.story.render("LogPanel")%></section>
+
+
+:: Dogsit_NewCall
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<% s.player.location=window.passage.name;%>
+Ask for a new job.
+[[Ignore the ad|Park]]</br>
+</article><%=window.story.render("LogPanel")%></section>

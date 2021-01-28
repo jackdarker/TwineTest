@@ -70,6 +70,7 @@ window.gm.getSaveVersion= function(){
     return('1.0.0');
 };
 window.gm.initGame= function(forceReset) {
+    /* this does not work because hidden is called to late
     $(window).on('sm.passage.hidden', function(event, eventObject) {
       
       if(eventObject.passage) {// No passage to hide when story starts
@@ -77,23 +78,24 @@ window.gm.initGame= function(forceReset) {
           $("tw-passage").fadeOut(2000).hide(0);
         
       }
-    });
+    });*/
     $(window).on('sm.passage.showing', function(event, eventObject) {
         // Current Passage object
-        $("tw-passage").hide(0).fadeIn(2000);
-        
+        $("tw-passage").fadeIn(500);  //fade in if was previously faded out
       console.log('showing '+eventObject.passage.name);
     });
-    // Render the passage named HUD into the element 
+    // Render the passage named HUD into the element todo replace with <%=%>??
     $(document).on('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar");  });
     var s = window.story.state; //s in template is window.story.state from snowman!
     if (!s.vars||forceReset) { // storage of variables that doesnt fit player
         s.vars = {
         log : [],
+        deffered : [],
         time : 700, //represented as hours*100 +minutes
         day : 1,
         //queststates
         qLaptop : 0,   // see passage _Laptop_
+        qDogSit : 0,   // see 
         qExploredCity : 0,  //see passage into city
         qUnlockPark : 0,
         qUnlockMall : 0,
@@ -142,9 +144,6 @@ window.gm.initGame= function(forceReset) {
         window.gm.playerInv = new Inventory(s.player.inv);
         window.gm.playerInv.addItem('LighterDad');
     }
-};
-window.gm.refreshScreen= function() {
-    window.story.show(window.passage.name);
 };
 //adds MINUTES to time
 window.gm.addTime= function(min) {
@@ -218,7 +217,7 @@ window.gm.gainStat= function(stat,val) {
   } else {
     window.gm.pushLog('<statdown>'+stat+" decreased by "+(player[stat]-old).toString()+"</statdown></br>");
   }
-}
+};
 window.gm.gainRelation= function(char,val) {
   var player = window.story.state.player;
   var stat= 'rel'+char;
@@ -229,30 +228,6 @@ window.gm.gainRelation= function(char,val) {
   } else {
     window.gm.pushLog('<statdown>Your relation to '+char+" worsend by "+(player[stat]-old).toString()+"</statdown></br>");
   }
-}
-window.gm.pushLog=function(msg) {
-  var log = window.story.state.vars.log;
-  log.unshift(msg);
-  if(log.length>10) {
-    log.splice(log.length-1,1);
-  }
-};
-window.gm.getLog=function() {
-  var log = window.story.state.vars.log;
-  var msg ='';
-  for(var i=0;i<log.length;i++) {
-    msg+=log[i];
-  }
-  return(msg);
-};
-window.gm.clearLog=function() {
-  var log = window.story.state.vars.log;
-  var msg ='';
-  for(var i=0;i<log.length;i++) {
-    msg+=log[i];
-  }
-  window.story.state.vars.log = [];
-  return(msg);
 };
 window.gm.rollExplore= function() {
   var s=window.story.state;
@@ -266,76 +241,22 @@ window.gm.rollExplore= function() {
   window.gm.addTime(20);
   window.story.show(places[r]);
 };
-window.gm.printOutput= function(text) {
-  document.querySelector("section article div output").innerHTML = text;
-};
-//prints the same kind of link like [[Next]] but can be called from code
-window.gm.printPassageLink= function(label,target) {
-  return("<a href=\"javascript:void(0)\" data-passage=\""+target+"\">"+label+"</a></br>");
+//maybe you sometimes dont want to trigger an event immediatly, 
+//f.e. if you send a email, it might take some time until you get a response-email 
+//(you can receive email at anytime on your phone, so we would have to add checks on ALL passages)
+//use this function to push a passage to a stack of deffered events; 
+//the passage will trigger under the given condition: minimum time, location-tag, at a certain time-window
+//the passage will show when a new passage is requested and will be removed from stack
+//if this passage is already pushed, only its condition will be updated
+window.gm.pushDefferedEvent=function(id) {
+  var cond = {waitTime: 6,
+              locationTags: [Home,City],      //Never trigger in Combat
+              dayTime: [1100,600]
+            },
+      cond2 = { waitTime: 60,
+                locationTags: [Letterbox],
+      }
+
+  var xcond = [cond,cond1]; //passage is executed if any of the conds is met
 };
 
-//prints a link that when clicked picksup an item and places it in the inventory
-window.gm.printPickupAndClear= function(itemid, desc,itemleft,cbAfterPickup=null) {
-  var elmt='';
-  var s= window.story.state;
-  if(!(itemleft>0)) return(elmt);
-  var desc2 = desc+" ("+itemleft+" left)";
-  var msg = 'took '+itemid;
-  elmt +="<a0 id='"+itemid+"' onclick='(function($event){window.gm.pickupAndClear(\""+itemid+"\", \""+desc+"\","+itemleft+","+cbAfterPickup+")})(this);'>"+desc2+"</a></br>";
-  //elmt +="<a0 id='"+itemid+"' onclick='(function($event){window.gm.playerInv.addItem(\""+itemid+"\");$event.replaceWith(\""+msg+"\");window.gm.pushLog(\"added "+itemid+" to inventory.</br>\");window.story.show(window.passage.name);})(this);'>"+desc2+"</a></br>";
-  return(elmt);
-};
-window.gm.pickupAndClear=function(itemid, desc,itemleft,cbAfterPickup=null) {
-  window.gm.playerInv.addItem(itemid);
-  window.gm.pushLog("added "+itemid+" to inventory.</br>");
-  if(cbAfterPickup) cbAfterPickup.call();
-  window.story.show(window.passage.name);
-};
-//prints an item with description; used in inventory
-window.gm.printItem= function( id,descr) {
-  var elmt='';
-  var s= window.story.state;
-  //elmt +=''.concat("<a0 id='"+id+"' onclick='(function($event){document.querySelector(\".div_hidden\").classList.toggle(\"div\");})(this);'>"+id+"</a><div class=\'div_hidden\' id='"+id+"'>"+descr+"</div>");
-  elmt +=`<a0 id='${id}' onclick='(function($event){document.querySelector(\"div#${id}\").toggleAttribute(\"hidden\");})(this);'>${id}</a><div hidden id='${id}'>${descr}</div>`;
-  
-  if(window.story.passage(id))  elmt +=''.concat("    [[Info|"+id+"]]");  //Todo add comands: drink,eat, use
-	elmt +=''.concat("</br>");
-	return(elmt);
-};
-//prints a list of perks for unlock
-window.gm.printUnlockPerk= function(id, descr) {
-  var elmt='';
-  var s= window.story.state;
-	if(s.player[id]==0 && s.player.skillPoints>0) {
-		elmt +=''.concat("<a0 id='"+id+"' onclick='(function ( $event ) { unlockPerk($event.id); })(this);'>"+descr+"</a>");
-    elmt +=''.concat("    [[Info|"+id+"]]");
-	} else if(s.player[id]>0) {
-		elmt +=id+": "+descr;
-	}
-	elmt +=''.concat("</br>");
-	return(elmt);
-};
-///show/hides a dialog defined in body
-window.gm.toggleDialog= function(id){ 
-    const _id = id;
-	var dialog = document.querySelector(id),
-    	closebutton = document.getElementById('close-dialog'),
-    	pagebackground = document.querySelector('body');
-    var div;
-	if (!dialog.hasAttribute('open')) {
-		// show the dialog 
-		div = document.createElement('div');
-		div.id = 'backdrop';
-		document.body.appendChild(div); 
-		dialog.setAttribute('open','open');
-		// after displaying the dialog, focus the closebutton inside it
-		closebutton.focus();
-		closebutton.addEventListener('click',function() {window.gm.toggleDialog(_id);});
-	}
-	else {		
- 		dialog.removeAttribute('open');  
-		div = document.querySelector('#backdrop');
-		div.parentNode.removeChild(div);
-		//??lastFocus.focus();
-	}
-};

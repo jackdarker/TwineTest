@@ -12,11 +12,13 @@ Money: <%=s.player.money %></br>
   </label></br>
 <button type="button" id="save">save/load</button>
 <button type="button" id="inv">inventory</button>
+<button type="button" id="help">help</button>
 <button type="button" id="wait">Rest 45min</button>
 </form>
 <script>
 document.querySelector('#save').addEventListener('click', function(){window.gm.toggleDialog('#dialog_save');});
 document.querySelector('#inv').addEventListener('click', function(){window.story.show('Inventory');});
+document.querySelector('#help').addEventListener('click', function(){window.story.show('Help_Index');}); 
 document.querySelector('#wait').addEventListener('click', function(){window.gm.addTime(45);}); 
 </script>
 
@@ -128,10 +130,6 @@ do {
 } while (x < maxSlots);
 %>
 </article>
-<script>
- // Render the passage named HUD into the element 
-$(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar"); });
-</script>
 </section>
 
 
@@ -142,7 +140,4 @@ The page should be setup like this:
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 content here !
-</article><script><%=window.story.render("LogPanel")%>
- // Render the passage named HUD into the element 
-$(document).one('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar"); });
-</script></section>
+</article><%=window.story.render("LogPanel")%></section>
