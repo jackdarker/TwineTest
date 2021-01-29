@@ -4,6 +4,8 @@ a {
     background-color: transparent;
     color:initial;
     text-decoration-color: initial;
+    margin-left:0.25em;
+    margin-right:0.25em;
 }
 a:hover {
     color: #008929;
@@ -55,6 +57,9 @@ dialog::backdrop, #backdrop {
   height: 1em;
   margin-right:1em;
 }
+button {
+  margin: 0.25em;
+}
 statup {
   color:green;
 }
@@ -65,6 +70,9 @@ statdown {
 .div { visibility: visible; }
 .red {
   color: red;
+}
+.green {
+  color: green;
 }
 .soft_border {
     border-radius: 1em;
@@ -78,7 +86,6 @@ div.scroll {
   overflow-x: hidden;
   overflow-y: auto;
 }
-
 @media (min-width: 30em) { 
   section {
     background: #ffffff;
@@ -103,4 +110,5 @@ div.scroll {
   article.logpanel {
     background: #e4e4e4;
   }
+
 }

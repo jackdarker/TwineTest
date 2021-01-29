@@ -11,7 +11,8 @@ var qLaptopLib = [ [0,'Laptop PS missing'],
 <!--called  to print status--->
 <li><label><input type="checkbox" name="y" value="x" readonly disabled>
 <%=function(){
-    if(s.player.qLaptop===0) {
+    alert("qLaptop="+s.vars.qLaptop);
+    if(s.vars.qLaptop==0) {
        return('Get a powerconverter for your laptop');
     } else {
         return('FINISHED: Laptop working again');

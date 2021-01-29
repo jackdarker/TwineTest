@@ -1,25 +1,37 @@
 :: sidebar {"position":"551,513.3000030517578","size":"100,100"}
-<h3>Player</h3>
+<h3><%=window.story.name%></h3>V<%=window.gm.getSaveVersion().toString().replaceAll(",",".")%></br>
 <img src="https://twinery.org/homepage/img/logo.svg" width="256" height="256">
-<div><%=s.player.location%></br>
+</hr>
+<div style="font-size: smaller;"><%=s.player.location%></br>
 <%=window.gm.getTimeString()%> <%=window.gm.getDateString()%></br>
 Energy: <%=s.player.energy%>/<%=s.player.energyMax%>   Health: <%=s.player.health%>/<%=s.player.healthMax%></br>
 Money: <%=s.player.money %></br>
 </div>
+</hr>
 <form>
-<label>Info:
-    <output></output>
-  </label></br>
-<button type="button" id="save">save/load</button>
-<button type="button" id="inv">inventory</button>
-<button type="button" id="help">help</button>
-<button type="button" id="wait">Rest 45min</button>
+<label>Info:    <output></output>  </label></br>
+<button type="button" id="status">Status</button>
+<button type="button" id="inv">Inventory</button>
+<button type="button" id="equip">Equipment</button>
+<button type="button" id="wait" style="width: 100%">Rest 45min</button>
+</hr>
+<button type="button" id="save" style="width: 100%">Save/load</button>
+<button type="button" id="help" style="width: 100%">Help</button>
+<button type="button" id="settings" style="width: 100%">Settings</button>
+
+<%if(s.vars.debug){%>
+<button type="button" id="debug" style="width: 100%">Debug</button>
+<script>document.querySelector('#debug').addEventListener('click', function(){window.story.show('debug');});</script>
+<%}%>
 </form>
 <script>
-document.querySelector('#save').addEventListener('click', function(){window.gm.toggleDialog('#dialog_save');});
-document.querySelector('#inv').addEventListener('click', function(){window.story.show('Inventory');});
-document.querySelector('#help').addEventListener('click', function(){window.story.show('Help_Index');}); 
 document.querySelector('#wait').addEventListener('click', function(){window.gm.addTime(45);}); 
+document.querySelector('#inv').addEventListener('click', function(){window.story.show('Inventory');});
+document.querySelector('#equip').addEventListener('click', function(){window.story.show('Equipment');});
+document.querySelector('#status').addEventListener('click', function(){window.story.show('PlayerStatus');});
+document.querySelector('#save').addEventListener('click', function(){window.gm.toggleDialog('#dialog_save');});
+document.querySelector('#help').addEventListener('click', function(){window.story.show('Help_Index');}); 
+document.querySelector('#settings').addEventListener('click', function(){window.story.show('Settings');}); 
 </script>
 
 
@@ -114,18 +126,36 @@ do {
 </dialog>
 
 
-:: Inventory
+:: Inventory [back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-You have the following in your inventory: </br>
-[[Back|<%=s.player.location%>]]</br></br>
+[[Back|_back]]</br>
+You have the following in your inventory: </br></br>
 <%
 var x = 0, id=''; 
 var inv = window.gm.playerInv;
 var maxSlots = inv.count(); 
 do {
   id=inv.getItemId(x);
-  %><%=window.gm.printItem(id,inv.getItem(id).desc+' '+inv.getItem(id).usable.call())%><%
+  %><%=window.gm.printItem(id,inv.countItem(id).toString()+'x '+inv.getItem(id).desc+' '+inv.getItem(id).usable.call())%><%
+  x = x + 1;
+} while (x < maxSlots);
+%>
+</article>
+</section>
+
+:: Wardrobe [back]
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+[[Back|_back]]</br>
+In your wardrobe you find: </br></br>
+<%
+var x = 0, id=''; 
+var inv = window.gm.playerWardrobe;
+var maxSlots = inv.count(); 
+do {
+  id=inv.getItemId(x);
+  %><%=window.gm.printItem(id,inv.getItem(id).desc)%><%
   x = x + 1;
 } while (x < maxSlots);
 %>
@@ -133,6 +163,20 @@ do {
 </section>
 
 
+:: Settings [back]
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+TODO
+[[Back|_back]]</br>
+</article><%=window.story.render("LogPanel")%></section>
+
+
+:: Status [back]
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+TODO
+[[Back|_back]]</br>
+</article><%=window.story.render("LogPanel")%></section>
 
 
 :: PassageTemplate [template] {"position":"253,496.5","size":"100,100"}
@@ -140,4 +184,11 @@ The page should be setup like this:
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 content here !
+</article><%=window.story.render("LogPanel")%></section>
+
+:: SubpanelTemplate [back]
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+If this is a subpanel you can use back-tag and _back-Link
+[[Back|_back]]</br>
 </article><%=window.story.render("LogPanel")%></section>

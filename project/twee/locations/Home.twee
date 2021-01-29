@@ -3,10 +3,11 @@
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 <%s.player.location=window.passage.name;%>
 At the doorsteps of your home. </br>
-Where would you like to go?</br>
+<div>Where would you like to go?</br>
 [[Living_Room]]   [[Bedroom]]   [[Kitchen]]  [[Garden]] </br>
-[[Into the city]]</br>
+[[Into the city]]</br></div>
 </article><%=window.story.render("LogPanel")%></section>
+
 
 
 :: Kitchen {"position":"1231,613","size":"100,100"}
@@ -35,10 +36,12 @@ Where would you like to go?</br>
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 <%s.player.location=window.passage.name;%>
-This is your Bedroom. There is a large bed for sleeping with a nightstand aside. </br>
+This is your Bedroom.
 A desk with a wooden chair is setup as workingplace. <br>
 Your [[Laptop|_Laptop_]] is placed on it and also a handwritten [[TodoList]]. </br>
 Above the desk is a window facing toward the backside of the house.</br>
+On the other side of the room is a large [[Wardrobe]].
+There is a large bed for sleeping with a nightstand aside. </br>
 [[Sleep 1h|SleepHour]]</br>
 <%if(window.gm.getTimeStruct().hour<11) { %>
 <a href="javascript:void(0)" onclick='($("tw-passage").fadeOut(1000, function() {window.story.show("SleepUntilEvening");}));'>Sleep Until Evening</a> </br>
@@ -99,6 +102,10 @@ There is a brown couch with a television in front of it. A smaller table with a 
 <%=window.gm.printPickupAndClear('LaptopPS','pickup laptop-powersupply from table',1-window.gm.playerInv.countItem('LaptopPS'))%>
 <a0 onclick="window.gm.playerInv.addItem('CanOfCoffee')">pickup can of coffee</a></br>
 <a0 onclick="addPS2(this,'CanOfCoffee')">pickup new can of coffee</a></br>
+<%if(s.vars.qDogSit==0x200) {%>
+Your phone rings with an unknown number. [[Answer call|Dogsit_FirstCallBack]] 
+<%}%>
+
 Where would you like to go?</br>
 [[Kitchen]]   [[Bedroom]]   [[Hallway|Home]] </br>
 </article><%=window.story.render("LogPanel")%><script>

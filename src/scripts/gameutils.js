@@ -59,7 +59,6 @@ window.gm.printPickupAndClear= function(itemid, desc,itemleft,cbAfterPickup=null
 window.gm.printItem= function( id,descr) {
     var elmt='';
     var s= window.story.state;
-    //elmt +=''.concat("<a0 id='"+id+"' onclick='(function($event){document.querySelector(\".div_hidden\").classList.toggle(\"div\");})(this);'>"+id+"</a><div class=\'div_hidden\' id='"+id+"'>"+descr+"</div>");
     elmt +=`<a0 id='${id}' onclick='(function($event){document.querySelector(\"div#${id}\").toggleAttribute(\"hidden\");})(this);'>${id}</a><div hidden id='${id}'>${descr}</div>`;
 
     if(window.story.passage(id))  elmt +=''.concat("    [[Info|"+id+"]]");  //Todo add comands: drink,eat, use

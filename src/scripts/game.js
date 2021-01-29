@@ -1,6 +1,6 @@
 "use strict";
-
-//import {Inventory} from 'inventory.js'; already included??
+//var window = window || {};  //to supress lint-errors
+//import {Inventory} from './inventory.js'; //already included??
 
 window.storage = {  //operations for save/reload
     ok: function() {
@@ -67,16 +67,15 @@ window.storage = {  //operations for save/reload
   };
 window.gm = window.gm || {}; //game related operations
 window.gm.getSaveVersion= function(){
-    return('1.0.0');
+  var version = [0,1,0];
+    return(version);    
 };
 window.gm.initGame= function(forceReset) {
-    /* this does not work because hidden is called to late
-    $(window).on('sm.passage.hidden', function(event, eventObject) {
+    //this does not work because hidden is called to late
+    /*$(window).on('sm.passage.hidden', function(event, eventObject) {
       
       if(eventObject.passage) {// No passage to hide when story starts
-          console.log('hiding'+eventObject.passage.name);
-          $("tw-passage").fadeOut(2000).hide(0);
-        
+          console.log('hiding'+eventObject.passage.name);        
       }
     });*/
     $(window).on('sm.passage.showing', function(event, eventObject) {
@@ -85,12 +84,14 @@ window.gm.initGame= function(forceReset) {
       console.log('showing '+eventObject.passage.name);
     });
     // Render the passage named HUD into the element todo replace with <%=%>??
-    $(document).on('sm.passage.shown', function (ev) {	renderToSelector("#sidebar", "sidebar");  });
+    $(document).on('sm.passage.shown', function (ev,eventObject) {renderToSelector("#sidebar", "sidebar");  });
     var s = window.story.state; //s in template is window.story.state from snowman!
     if (!s.vars||forceReset) { // storage of variables that doesnt fit player
         s.vars = {
+        debug : true,   //TODO set to false for distribution !   
+        version : window.gm.getSaveVersion(),
         log : [],
-        deffered : [],
+        passageStack : [],
         time : 700, //represented as hours*100 +minutes
         day : 1,
         //queststates
@@ -124,6 +125,8 @@ window.gm.initGame= function(forceReset) {
         s.player = {  //player-related variables
         location : "Bedroom",
         inv: [],  //inventory data, needs to be mapped to Inventory-Instance
+        wardrobe: [],  //separate wardobe data, needs to be mapped to outfit-Instance
+        outfit: [],  // needs to be mapped to outfit-Instance
         money : 5,
         energy : 55,
         energyMax : 100,
@@ -142,9 +145,17 @@ window.gm.initGame= function(forceReset) {
         relCyril : 0
         }; 
         window.gm.playerInv = new Inventory(s.player.inv);
+        window.gm.playerWardrobe = new Inventory(s.player.wardrobe);
+        window.gm.playerOutfit = new Outfit(s.player.outfit);
+        //add some basic inventory
         window.gm.playerInv.addItem('LighterDad');
+        window.gm.playerWardrobe.addItem('Jeans');
+        window.gm.playerOutfit.addItem('Leggings');
+        window.gm.playerOutfit.addItem('Tank-shirt');
+        window.gm.playerOutfit.addItem('Pullover');
     }
 };
+
 //adds MINUTES to time
 window.gm.addTime= function(min) {
   var v=window.story.state.vars;
@@ -241,6 +252,9 @@ window.gm.rollExplore= function() {
   window.gm.addTime(20);
   window.story.show(places[r]);
 };
+
+//---------------------------------------------------------------------------------
+//TODO Deferred Event is incomplete
 //maybe you sometimes dont want to trigger an event immediatly, 
 //f.e. if you send a email, it might take some time until you get a response-email 
 //(you can receive email at anytime on your phone, so we would have to add checks on ALL passages)
@@ -250,13 +264,52 @@ window.gm.rollExplore= function() {
 //if this passage is already pushed, only its condition will be updated
 window.gm.pushDefferedEvent=function(id) {
   var cond = {waitTime: 6,
-              locationTags: [Home,City],      //Never trigger in Combat
+              locationTags: ['Home','City'],      //Never trigger in Combat
               dayTime: [1100,600]
             },
       cond2 = { waitTime: 60,
-                locationTags: [Letterbox],
-      }
+                locationTags: ['Letterbox'],
+      };
 
   var xcond = [cond,cond1]; //passage is executed if any of the conds is met
 };
-
+//when show is called the previous passage is stored if the new has [back]-tag
+//if the new has no back-tag, the stack gets cleared
+window.gm.pushPassage=function(id) {
+  if(!window.story.state.hasOwnProperty("vars")) return;  //vars exist only after initGame
+  if(window.story.state.vars.passageStack.length>0 && window.story.state.vars.passageStack[window.story.state.vars.passageStack.length-1]===id){
+    //already pushed
+  } else {
+    window.story.state.vars.passageStack.push(id);
+  }
+};
+//call on [back]-passages to get the previous passage
+window.gm.popPassage=function() {
+    var pass = window.story.state.vars.passageStack.pop();
+    if(!pass) return('nothing to pop from stack');
+    return(pass);
+};
+//overriding show:
+//- to enable back-link
+//- to intercept with deffered events
+var _origStoryShow = window.story.__proto__.show;
+window.story.__proto__.show = function(idOrName, noHistory = false) {
+  var next = idOrName;
+  if(idOrName === '_back') { //going back
+    next = window.gm.popPassage();
+  } else {  //going forward
+    var tags = window.story.passage(next).tags;
+    if(tags.indexOf('back')>=0) {
+      window.gm.pushPassage(window.passage.name);
+    } else if(window.story.state.hasOwnProperty("vars")) {
+      window.story.state.vars.passageStack.splice(0,window.story.state.vars.passageStack.length);
+    }
+}
+  //Todo
+  //before entering a new passage check if there is a defferedEvent that we should do first
+  //if so, push the normal-passage onto stack, show deffered passage
+  //after the deffered passage(s) finish, make sure to show the original passage
+  //this is a problem?how do I know the deffered passage is done? 
+  _origStoryShow.call(window.story,next, noHistory);
+};
+//---------------------------------------------------------------------------------

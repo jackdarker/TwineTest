@@ -19,7 +19,26 @@ If you have to create dynamic passage links by adding them to html you cannot us
 Instead of using the <a> above you could also do something like this: fadeout, the passage change (yyou have to do fadeIn on sm.passage.showing-event)
 <a href="javascript:void(0)" onclick='($("tw-passage").fadeOut(2000, function() {window.story.show("SleepUntilEvening");}));'>Sleep Until Evening</a> </br>
 
-To add a comment 
+If you have a choice in a passage but you dont want to add a own passage for a choice you can change the current passage in place:
+<div id="choice">
+<a href="javascript:void(0)" id="yes" onclick='choice(this,"div#choice")'>Yes I will come by.</a></br>
+<a href="javascript:void(0)" id="no" onclick='choice(this,"div#choice")'>Im not sure about this.</a></br>
+</div>
+<script>
+function choice(elmt,replaceThis) {
+	var msg ='';
+	if(elmt.id==="yes") {
+	window.story.state.vars.qDogSit=0x300;
+	msg = "You aggreed to visit them.</br>";
+	} else {
+		window.story.state.vars.qDogSit=0x300;
+		msg = "You have to think about this. You can pay them a visit anyway.</br>";
+	}
+	$(replaceThis).replaceWith(msg+window.gm.printPassageLink("Next","Kitchen"));
+}
+</script>
+
+To add a comment in passage:
 in html-code:   '<!-- Your comment -->'
 in script/ template methods:    '// your comment'
 
@@ -66,6 +85,7 @@ you have to wrap the call into anonymous function. Dont forget encasing () + par
 If you want to build content via scriptcode dont forget to add \" where necessary:
 elmt +="<a0 onclick='(function($event){$event.replaceWith(\""+msg+"\");})(this);'>"+desc2+"</a></br>";
 
+! if you add a <script>-section to passage, make sure it has no empty lines. Or you will get misleading errors in browser ! 
 
 <h1>Closure problem<h1>
 If you add scripts to .\src\scripts, they get compiled and bundled together. And inside those scripts they see each other even without import.

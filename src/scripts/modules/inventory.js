@@ -32,6 +32,7 @@ export class Inventory {
     }
     getItem(id) {
         var _item = window.gm.ItemsLib[id];
+        if(!_item) throw new Error('unknown item: '+id);
         return (window.gm.ItemsLib[id]);
         /*var _i = this.findItemSlot(id);
         if(_i<0) return(null);
@@ -55,7 +56,15 @@ window.gm.ItemsLib = {
     'LighterDad' : { name: 'Lighter from Dad', desc: 'I got this lighter from my real dad.', usable: function(){return ('useable');}},
     'LaptopPS' : {name: 'Laptop-PS', desc:'Power converter for laptop.', usable: function(){return ('');}},
     'CanOfCoffee' : {name: 'Can of coffee', desc: 'Cold coffee in a can. Tasty? Not really!', usable: function(){return ('drinkable');} },
-    'SimpleFood' : {name: 'food ration', desc: 'You can eat this.', usable: function(){return ('eatable');} }
+    'SimpleFood' : {name: 'food ration', desc: 'You can eat this.', usable: function(){return ('eatable');} },
+//Wardrobe
+    'Leggings' : { name: 'Sport-Leggings', desc: 'Spandex-leggings for sport.', tags: ['cloth'], slotUse: ['Legs'] },
+    'Tank-shirt' : {name: 'White Tank-shirt', desc:'White Tank-shirt.',tags: ['cloth'],slotUse: ['Torso','Arms'] },
+    'Jeans' : {name: 'Bluejeans', desc: 'Thight fitting blue jeans.',tags: ['cloth'], slotUse: ['Legs']  },
+    'Pullover' : {name: 'Pullover', desc: 'A warm pulloer.', tags: ['cloth'],slotUse: ['Torso','Arms'] },
+    'Crowbar'  : {name: 'Crowbar', desc: 'A durable crowbar.', tags: ['tool', 'weapon'], slotUse: ['RHand'] },
+    'Shovel'  : {name: 'Shovel', desc: 'A shovel for the dirty work.', tags: ['tool', 'weapon'], slotUse: ['RHand','LHand'] },
+    'Handcuffs' : {name: 'Handcuffs', desc: 'You cannot use your hand.', tags: ['restrain'], slotUse: ['RHand','LHand'] }
 };
 
 /*
