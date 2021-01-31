@@ -10,9 +10,9 @@ Money: <%=s.player.money %></br>
 </hr>
 <form>
 <label>Info:    <output></output>  </label></br>
-<button type="button" id="status">Status</button>
+<button type="button" id="status" >Status</button>
 <button type="button" id="inv">Inventory</button>
-<button type="button" id="equip">Equipment</button>
+<button type="button" id="equip" disabled>Equipment</button>
 <button type="button" id="wait" style="width: 100%">Rest 45min</button>
 </hr>
 <button type="button" id="save" style="width: 100%">Save/load</button>
@@ -102,30 +102,6 @@ function refresh(slot){
 </dialog>
 
 
-:: FIXME_InventoryDialog
-<script>
-var infodisp = 'dialog form label output'; //Url to output according nesting node classes; see structure of dialog below
-//closebutton = document.getElementById('close-dialog');
-//closebutton.addEventListener('click', function(){window.gm.toggleDialog('#dialog_inventory');});
-</script>
-<dialog role="dialog" id='dialog_inventory' aria-labelledby="dialog-heading">
-    <button id="close-dialog" onclick="window.gm.toggleDialog('#dialog_inventory')">Back</button>
-    <form>
-    <label>Info:<output></output></label></br>
-    <%=window.gm.printItem(s.player.inv.getItemId(0),'4353')%>
-<%
-var x = 0, id=''; 
-var maxSlots = s.player.inv.count();  //has to fit form below
-do {
-  id=s.player.inv.getItemId(x);
-  %><%=window.gm.printItem(id,'')%><%
-  x = x + 1;
-} while (x < maxSlots);
-%>
-    </form>
-</dialog>
-
-
 :: Inventory [back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
@@ -137,30 +113,34 @@ var inv = window.gm.playerInv;
 var maxSlots = inv.count(); 
 do {
   id=inv.getItemId(x);
-  %><%=window.gm.printItem(id,inv.countItem(id).toString()+'x '+inv.getItem(id).desc+' '+inv.getItem(id).usable.call())%><%
+  %><%=window.gm.printItem(id,inv.countItem(id).toString()+'x '+inv.getItem(id).desc+' '+inv.getItem(id).usable.call(id).msg)%><%
   x = x + 1;
 } while (x < maxSlots);
 %>
-</article>
-</section>
+</article><%=window.story.render("LogPanel")%></section>
+
+:: Wardrobe_equippeed
+<!--renderd into other passages-->
+
 
 :: Wardrobe [back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 [[Back|_back]]</br>
+You have equipped: <%=window.gm.printEquipmentSummary()%></br>
 In your wardrobe you find: </br></br>
+<!--assumption: every outfit item (worn or not) is present in the wardrobe-->
 <%
 var x = 0, id=''; 
 var inv = window.gm.playerWardrobe;
 var maxSlots = inv.count(); 
 do {
   id=inv.getItemId(x);
-  %><%=window.gm.printItem(id,inv.getItem(id).desc)%><%
+  %><%=window.gm.printEquipment(id,inv.getItem(id).desc)%><%
   x = x + 1;
 } while (x < maxSlots);
 %>
-</article>
-</section>
+</article><%=window.story.render("LogPanel")%></section>
 
 
 :: Settings [back]

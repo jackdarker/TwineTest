@@ -4,7 +4,7 @@
 <%s.player.location=window.passage.name;%>
 At the doorsteps of your home. </br>
 <div>Where would you like to go?</br>
-[[Living_Room]]   [[Bedroom]]   [[Kitchen]]  [[Garden]] </br>
+[[Living_Room]]   [[Your Bedroom]]  [[Moms Bedroom]] [[Kitchen]]  [[Garden]] </br>
 [[Into the city]]</br></div>
 </article><%=window.story.render("LogPanel")%></section>
 
@@ -31,8 +31,33 @@ Where would you like to go?</br>
 </article><%=window.story.render("LogPanel")%></section>
 
 
-:: Bedroom {"position":"1033,470","size":"100,100"}
-<!--your bedroom-->
+:: Moms Bedroom
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<%s.player.location=window.passage.name;%>
+This is the bedroom of your mom.
+A double bed is there with [[nightstands|moms_treasure]] on each side. <br>
+[[Hallway|Home]]</br>
+</article><%=window.story.render("LogPanel")%></section>
+
+
+:: moms_treasure [back]
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+In one of the nightstand you find some handcuffs.They look thorough but you think they just might be used for some bedplay.</br>
+<a0 onclick='useHandcuff(this)'>Play with them</a></br>
+[[Back|_back]]</br>
+</article><%=window.story.render("LogPanel")%></section>
+<script>
+function useHandcuff(elmnt) {
+	window.gm.playerWardrobe.addItem('Handcuffs');
+	window.gm.playerOutfit.addItem('Handcuffs');
+	elmnt.replaceWith("<div class='red'>Playing around with the cuffs you suddenly find yourself locked up with them. You panick as you find the locking-mechanic quite tight. You need a key and maybe some help to unlock them!</div>");
+}
+</script>
+
+
+:: Your Bedroom {"position":"1033,470","size":"100,100"}
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 <%s.player.location=window.passage.name;%>
@@ -50,7 +75,10 @@ There is a large bed for sleeping with a nightstand aside. </br>
 [[Sleep until morning|SleepUntilMorning]]</br>
 <%}%>
 Where do you want to go ? </br>
-[[Hallway|Home]]</br>
+<% if(window.gm.playerOutfit.isNaked()) { %>
+<div class="red">You should at least cover up your unmentionables before leaving your room.</div></br>
+<% } else { %>
+[[Hallway|Home]]</br> <%}%>
 </article><%=window.story.render("LogPanel")%></section>
 
 :: SleepHour
@@ -97,27 +125,17 @@ The living room that you share with your mom is sparsely decorated (until now).<
 An old wooden table with 4 chairs rests on a wornout green carpet.</br>
 Some money is laying on the table. Maybe mom forgot it there.</br>
 There is a brown couch with a television in front of it. A smaller table with a lamp on it is close by.</br>
-<a0 onclick="getMoney(this,5)">Get much money</a>   <a0 onclick='window.gm.toggleDialog("dialog")'>info</a></br>
-
+<a0 onclick="getMoney(this,5)">Get much money</a></br>
 <%=window.gm.printPickupAndClear('LaptopPS','pickup laptop-powersupply from table',1-window.gm.playerInv.countItem('LaptopPS'))%>
-<a0 onclick="window.gm.playerInv.addItem('CanOfCoffee')">pickup can of coffee</a></br>
-<a0 onclick="addPS2(this,'CanOfCoffee')">pickup new can of coffee</a></br>
 <%if(s.vars.qDogSit==0x200) {%>
 Your phone rings with an unknown number. [[Answer call|Dogsit_FirstCallBack]] 
 <%}%>
 
 Where would you like to go?</br>
-[[Kitchen]]   [[Bedroom]]   [[Hallway|Home]] </br>
+[[Kitchen]] [[Hallway|Home]] </br>
 </article><%=window.story.render("LogPanel")%><script>
 function getMoney(elmnt,val) {
-	elmnt.replaceWith("took money "+val);
-}
-function addPS2(elmnt,value) {
-	//var _item = new window.gm.libItems[value]();
-	//var _id =_item.name;
-	window.gm.playerInv.addItem(value);
-	_item =  window.gm.playerInv.getItem(value);
-	elmnt.replaceWith("took "+_item.usable.call()+_item.name);
+	elmnt.replaceWith("You shouldnt steal that money, should you?");
 }
 </script></section>
 
@@ -140,6 +158,11 @@ There are a lot of molehills on the green. You should teach their creator a less
 [[Whack a mole|Encounter]]
 <% if(s.mom.location==window.passage.name) { %>
 [[Mom|Info_Mom]] is wandering around. Maybe she is planning to setup some flower beds. </br>
+<%}%>
+<% if(window.gm.playerInv.countItem('Shovel')<=0) {%>
+<a0 id='Shovel' onclick='(function($event){window.gm.playerInv.addItem($event.id);window.gm.refreshScreen();}(this))'>take shovel</a></br>
+<%} else {%>
+You remeber that you took the shovel from here.</br>
 <%}%>
 Where would you like to go?</br>
 [[Hallway|Home]]</br>

@@ -15,29 +15,29 @@ export class Outfit {
         //create each slot
         for(var i=0; i<window.gm.OutfitSlotpLib.SLOTMAX;i++) {
             if(this.list.length-1 < i) {
-                this.list.push('');
+                this.list.push({id:''});        // {id:'Leggings'}
             }
         }
     }
-    postItemChange(inv,id,operation) {
-        console.log('Outfit: '+operation+' '+id);
+    postItemChange(inv,id,operation,msg) {
+        window.gm.pushLog('Outfit: '+operation+' '+id+' '+msg+'</br>');
     }
     count() {return(this.list.length);}
+
     countItem(id) {
         var _i = this.findItemSlot(id);
-        if(_i<0) return(0);
-        return(this.list[_i].count);  
+        return(_i.length);  
     }
     //detect which slots are used by a item
     findItemSlot(id) {
         var _idx =[];
         for (var i = 0; i < this.count(); i++) {
-            if(this.list[i].name===id) _idx.push(i);
+            if(this.list[i].id===id) _idx.push(i);
         }
         return(_idx);
     }
     getItemId(slot) {
-        return(this.list[slot].name);
+        return(this.list[slot].id);
     }
     getItem(id) {
         var _item = window.gm.ItemsLib[id];//EquipLib[id];
@@ -45,53 +45,70 @@ export class Outfit {
         return (_item);
     }
     canEquip(id) {
-        return(true);
+        return({OK:true});
     }
     canUnequipSlot(slot) {
-        return(true);
+        return({OK:true});
     }
     canUnequipItem(id, force) {
         var _idx = this.findItemSlot(id);
-        var _allowUnequip = true;
+        var _item = this.getItem(id);
+        var result = _item.canUnequip(id);
         for(var i=0; i<_idx.length;i++) {
-            _allowUnequip = _allowUnequip && this.canUnequipSlot(_idx[i]);
+            var _tmp = this.canUnequipSlot(_idx[i]);
+            if(!_tmp.OK) result.msg +=_tmp.msg+" ";
+            result.OK = result.OK && _tmp.OK;
         }
-        return(_allowUnequip);
+        return(result);
     }
     addItem(id, force) {
         var _idx = this.findItemSlot(id);
         if(_idx.length>0) return; //already equipped
         var _item = this.getItem(id);
         _idx = _item.slotUse.map((function(cv, ix, arr) { return (window.gm.OutfitSlotpLib[cv]);  }));
-        var _allowUnequip = this.canUnequipItem(id);;
-        if(!_allowUnequip) {
-            this.postItemChange(this,id,"equip_fail");
+        var result = {OK: true, msg:''};
+        for(var l=0; l< _idx.length;l++) {  //check if the current equip can be unequipped
+            var oldId = this.getItemId(_idx[l]);
+            if(oldId==='') continue;
+            var _tmp = this.canUnequipItem(oldId);
+            if(!_tmp.OK) result.msg += _tmp.msg; //todo duplicated msg if item uses multiple slots
+            result.OK = result.OK && _tmp.OK;
+        }
+        if(!result.OK) {
+            this.postItemChange(this,id,"equip_fail:",result.msg);
             return;
         }
         for(var i=0; i<_idx.length;i++) {
             this.__clearSlot(_idx[i]);
         }
         for(var k=0; k<_idx.length;k++) {
-            this.list[_idx[k]] = _item.name;
+            this.list[_idx[k]].id = id;
         }  
-        this.postItemChange(this,id,"equipped");
+        this.postItemChange(this,id,"equipped","");
     }
     //assumme that it was checked before that unequip is allowed
     __clearSlot(slot, force) {
-        this.list[slot] = '';
+        this.list[slot].id = '';
     }
     removeItem(id, force) {
         var _idx = this.findItemSlot(id);
         if(_idx.length===0) return; //already unequipped
-        var _allowUnequip = this.canUnequipItem(id);
-        if(!_allowUnequip) {
-            this.postItemChange(this,id,"unequip_fail");
+        var result =this.canUnequipItem(id);
+        if(!result.OK) {
+            this.postItemChange(this,id,"unequip_fail",result.msg);
             return;
         }
         for(var i=0; i<_idx.length;i++) {
             this.__clearSlot(_idx[i]);
         }
-        this.postItemChange(this,id,"removed");
+        this.postItemChange(this,id,"removed","");
+    }
+    isNaked() {
+        if(this.getItemId(window.gm.OutfitSlotpLib.Legs)==='' || this.getItemId(window.gm.OutfitSlotpLib.Torso)==='') 
+        {
+            return(true);
+        }
+        return(false);
     }
 }
 //this is a lookuptable
@@ -112,30 +129,3 @@ window.gm.OutfitSlotpLib = {
     SLOTMAX : 50
 };
 
-/*
-export class LighterDad extends Item {
-    constructor() {
-        super('Lighter from Dad');
-        this.desc = 'I got this lighter from my real dad.';
-    }
-};
-
-export class LaptopPS extends Item {
-    static create() {
-        return new LaptopPS();
-    }
-    constructor() {
-        super('Laptop-PS');
-        this.desc = 'Power converter for laptop.';
-    }
-};
-
-export class CanOfCoffee extends Item {
-    constructor() {
-        super('Can of coffee');
-        this.desc = 'Cold coffee in a can. Tasty? Not really!';
-    }
-    usable() {
-        return ('drinkable');
-    }
-};*/

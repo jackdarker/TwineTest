@@ -21,7 +21,7 @@ var qLaptopLib = [ [0,'Laptop PS missing'],
 </label></li>
 
 
-:: _Laptop_
+:: _Laptop_ [back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 You seat yourself in front of your laptop. </br>
@@ -30,4 +30,4 @@ The powerconverter is missing. You need to get a new one.</br>
 <%}if(s.vars.qLaptop===0x100){%>
 After pushing the powerbutton the pc doesnt start. Something seems broken.</br>
 <%}%>
-[[Back|Bedroom]]
+[[Back|_back]]

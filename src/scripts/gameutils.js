@@ -59,11 +59,43 @@ window.gm.printPickupAndClear= function(itemid, desc,itemleft,cbAfterPickup=null
 window.gm.printItem= function( id,descr) {
     var elmt='';
     var s= window.story.state;
-    elmt +=`<a0 id='${id}' onclick='(function($event){document.querySelector(\"div#${id}\").toggleAttribute(\"hidden\");})(this);'>${id}</a><div hidden id='${id}'>${descr}</div>`;
+    elmt +=`<a0 id='${id}' onclick='(function($event){document.querySelector(\"div#${id}\").toggleAttribute(\"hidden\");})(this);'>${id}</a>`;
+    //todo add equip/unequip of tools
+    elmt +=`</br><div hidden id='${id}'>${descr}</div>`;
+    if(window.story.passage(id))  elmt +=''.concat("    [[Info|"+id+"]]");  //Todo add comands: drink,eat, use
+        elmt +=''.concat("</br>");
+        return(elmt);
+};
+//prints an equipment with description; used in wardrobe
+window.gm.printEquipment= function( id,descr) {
+    var elmt='';
+    var s= window.story.state;
+    elmt +=`<a0 id='${id}' onclick='(function($event){document.querySelector(\"div#${id}\").toggleAttribute(\"hidden\");})(this);'>${id}</a>`;
+    if(window.gm.playerOutfit.countItem(id)<=0) {
+        elmt +=`<a0 id='${id}' onclick='(function($event){window.gm.playerOutfit.addItem(\"${id}\"); window.story.show(window.passage.name);}(this))'>Equip</a>`;
+    } else {
+        elmt +=`<a0 id='${id}' onclick='(function($event){window.gm.playerOutfit.removeItem(\"${id}\"); window.story.show(window.passage.name);}(this))'>Unequip</a>`;
+    }
+    elmt +=`</br><div hidden id='${id}'>${descr}</div>`;
 
     if(window.story.passage(id))  elmt +=''.concat("    [[Info|"+id+"]]");  //Todo add comands: drink,eat, use
         elmt +=''.concat("</br>");
         return(elmt);
+};
+//prints a string listing equipped items
+window.gm.printEquipmentSummary= function() {
+    var elmt='';
+    var s= window.story.state;
+    var result =''
+    var ids = [];
+    for(var i=0;i<window.gm.playerOutfit.count();i++){
+        var id = window.gm.playerOutfit.getItemId(i);
+        if(id!='' && ids.indexOf(id)<0) {
+            ids.push(id);
+            result+=id+',';
+        }
+    }
+    return(result);
 };
 //prints a list of todo quest
 window.gm.printTodoList= function() {

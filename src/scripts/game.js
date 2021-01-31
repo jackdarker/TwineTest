@@ -123,7 +123,7 @@ window.gm.initGame= function(forceReset) {
     }
     if (!s.player||forceReset) {  
         s.player = {  //player-related variables
-        location : "Bedroom",
+        location : "Home",
         inv: [],  //inventory data, needs to be mapped to Inventory-Instance
         wardrobe: [],  //separate wardobe data, needs to be mapped to outfit-Instance
         outfit: [],  // needs to be mapped to outfit-Instance
@@ -150,6 +150,9 @@ window.gm.initGame= function(forceReset) {
         //add some basic inventory
         window.gm.playerInv.addItem('LighterDad');
         window.gm.playerWardrobe.addItem('Jeans');
+        window.gm.playerWardrobe.addItem('Leggings');
+        window.gm.playerWardrobe.addItem('Tank-shirt');
+        window.gm.playerWardrobe.addItem('Pullover');
         window.gm.playerOutfit.addItem('Leggings');
         window.gm.playerOutfit.addItem('Tank-shirt');
         window.gm.playerOutfit.addItem('Pullover');
@@ -298,9 +301,10 @@ window.story.__proto__.show = function(idOrName, noHistory = false) {
   if(idOrName === '_back') { //going back
     next = window.gm.popPassage();
   } else {  //going forward
-    var tags = window.story.passage(next).tags;
-    if(tags.indexOf('back')>=0) {
-      window.gm.pushPassage(window.passage.name);
+    var tagsnext = window.story.passage(next).tags;
+    var namenext = window.story.passage(next).name;
+    if(tagsnext.indexOf('back')>=0 ) { //push on stack but only if not re-showing itself
+      if(namenext!=window.passage.name) window.gm.pushPassage(window.passage.name); 
     } else if(window.story.state.hasOwnProperty("vars")) {
       window.story.state.vars.passageStack.splice(0,window.story.state.vars.passageStack.length);
     }
