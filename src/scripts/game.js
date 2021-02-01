@@ -1,4 +1,5 @@
 "use strict";
+
 //var window = window || {};  //to supress lint-errors
 //import {Inventory} from './inventory.js'; //already included??
 
@@ -59,8 +60,12 @@ window.storage = {  //operations for save/reload
             hash=window.localStorage.getItem(slot);
             info=window.storage.getSaveInfo(slot);
             window.story.restore(hash) ; 
-            //document.querySelector("output").textContent = (info); 
-            window.gm.playerInv = new Inventory(window.story.state.player.inv);
+            //Reconnect the objects! 
+            window.gm.player = new Character(window.story.state.player);
+            //window.gm.playerInv = new Inventory(window.story.state.player,window.story.state.player.inv);
+            //window.gm.playerWardrobe = new Inventory(window.story.state.player,window.story.state.player.wardrobe);
+            //window.gm.playerOutfit = new Outfit(window.story.state.player,window.story.state.player.outfit);
+            window.gm.refreshScreen();
         }
         return(info);
     }
@@ -144,18 +149,19 @@ window.gm.initGame= function(forceReset) {
         relJake : 0,
         relCyril : 0
         }; 
-        window.gm.playerInv = new Inventory(s.player.inv);
-        window.gm.playerWardrobe = new Inventory(s.player.wardrobe);
-        window.gm.playerOutfit = new Outfit(s.player.outfit);
+        window.gm.player = new Character(s.player);
+        //window.gm.playerInv = new Inventory(s.player.inv);
+        //window.gm.playerWardrobe = new Inventory(s.player.wardrobe);
+        //window.gm.playerOutfit = new Outfit(s.player.outfit);
         //add some basic inventory
-        window.gm.playerInv.addItem('LighterDad');
-        window.gm.playerWardrobe.addItem('Jeans');
-        window.gm.playerWardrobe.addItem('Leggings');
-        window.gm.playerWardrobe.addItem('Tank-shirt');
-        window.gm.playerWardrobe.addItem('Pullover');
-        window.gm.playerOutfit.addItem('Leggings');
-        window.gm.playerOutfit.addItem('Tank-shirt');
-        window.gm.playerOutfit.addItem('Pullover');
+        window.gm.player.Inv.addItem('LighterDad');
+        window.gm.player.Wardrobe.addItem('Jeans');
+        window.gm.player.Wardrobe.addItem('Leggings');
+        window.gm.player.Wardrobe.addItem('Tank-shirt');
+        window.gm.player.Wardrobe.addItem('Pullover');
+        window.gm.player.Outfit.addItem('Leggings');
+        window.gm.player.Outfit.addItem('Tank-shirt');
+        window.gm.player.Outfit.addItem('Pullover');
     }
 };
 
@@ -222,6 +228,7 @@ window.gm.sleep=function(until) {
   window.gm.pushLog(msg);
   return(msg);
 };
+//convience method to change a player stat
 window.gm.gainStat= function(stat,val) {
   var player = window.story.state.player;
   var old = player[stat]; 
@@ -232,6 +239,7 @@ window.gm.gainStat= function(stat,val) {
     window.gm.pushLog('<statdown>'+stat+" decreased by "+(player[stat]-old).toString()+"</statdown></br>");
   }
 };
+//convience method to change a player relation
 window.gm.gainRelation= function(char,val) {
   var player = window.story.state.player;
   var stat= 'rel'+char;
@@ -243,6 +251,7 @@ window.gm.gainRelation= function(char,val) {
     window.gm.pushLog('<statdown>Your relation to '+char+" worsend by "+(player[stat]-old).toString()+"</statdown></br>");
   }
 };
+//Todo
 window.gm.rollExplore= function() {
   var s=window.story.state;
   var places=[];    

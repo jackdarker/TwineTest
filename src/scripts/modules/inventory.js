@@ -9,11 +9,12 @@ export class Item {
 };
 
 export class Inventory {
-    constructor(externlist) {
+    constructor(owner,externlist) {
+        this.parent = owner;
         this.list = externlist ? externlist : [];
     }
-    postItemChange(inv,id,operation) {
-        console.log('Inventory: '+operation+' '+id);
+    postItemChange(inv,id,operation,msg) {
+        window.gm.pushLog('Inventory: '+operation+' '+id+' '+msg+'</br>');
     }
     count() {return(this.list.length);}
     countItem(id) {
@@ -34,33 +35,54 @@ export class Inventory {
         var _item = window.gm.ItemsLib[id];
         if(!_item) throw new Error('unknown item: '+id);
         return (window.gm.ItemsLib[id]);
-        /*var _i = this.findItemSlot(id);
-        if(_i<0) return(null);
-        return(this.list[_i]);*/
     }
     addItem(id,count=1) {
         var _i = this.findItemSlot(id);
         if(_i<0) this.list.push({'name': id, 'count': count});
-        //todo else this.list[_i].count+=count;
-        this.postItemChange(this,id,"added");
+        else this.list[_i].count+=count;
+        this.postItemChange(this,id,"added","");
     }
     removeItem(id,count=1) {
         var _i = this.findItemSlot(id);
-        if(_i<0) return;
-        this.list.splice(_i,1); //todo remove count 
-        this.postItemChange(this,id,"removed");
+        if(_i<0) return; //just skip if not found
+        this.list[_i].count -=count;
+        if(this.list[_i].count<1) this.list.splice(_i,1);
+        this.postItemChange(this,id,"removed","");
+    }
+    //convience method to check if item is usable
+    usable(id) {
+        var _item = this.getItem(id);
+        return (_item.usable(this));
+    }
+    //uses an item by calling item.use
+    use(id) {
+        var _item = this.getItem(id);
+        var result = _item.use(this);
+        if(result.OK) {
+            this.postItemChange(this,id,"used",result.msg);
+        }
+        return(result);
     }
 };
-function defaultCanUse(id) {return({OK:true, msg:'usable'})};
-function defaultNoUse(id) {return({OK:false, msg:''})};
-function defaultOnUse(id) {return({OK:true, msg:'You used the item.'})};
-function defaultCanUnequip(id) {return({OK:true, msg:''});};
-function defaultNoUnequip(id) {return({OK:false, msg:'You need to find a key first to be able to remove it!'});};
+function defaultCanUse(context) {return({OK:true, msg:'usable'})};
+function defaultNoUse(context) {return({OK:false, msg:''})};
+function defaultOnUse(context) {return({OK:true, msg:'You used the item.'})};
+function defaultCanUnequip(context) {return({OK:true, msg:''});};
+function defaultNoUnequip(context) {return({OK:false, msg:'You need to find a key first to be able to remove it!'});};
+
+function canConsumeCoffee(context) {return({OK:true, msg:'drinkable'})};
+function onUseCoffee(context) { 
+    if(context instanceof Inventory) {
+        context.removeItem('CanOfCoffee');
+    }
+    return({OK:true, msg:'you gulped down a can of iced coffee'});
+};
+
 //this is a lookuptable for items
 window.gm.ItemsLib = { 
     'LighterDad' : { name: 'Lighter from Dad', desc: 'I got this lighter from my real dad.', usable:defaultCanUse, use:defaultOnUse },
     'LaptopPS' : {name: 'Laptop-PS', desc:'Power converter for laptop.', usable: function(){return ({OK: false, msg:'not usable on its own'})},use: defaultNoUse},
-    'CanOfCoffee' : {name: 'Can of coffee', desc: 'Cold coffee in a can. Tasty? Not really!', usable:defaultCanUse, use:defaultOnUse },
+    'CanOfCoffee' : {name: 'Can of coffee', desc: 'Cold coffee in a can. Tasty? Not really!', usable:canConsumeCoffee, use:onUseCoffee },
     'SimpleFood' : {name: 'food ration', desc: 'You can eat this.', usable:defaultCanUse, use:defaultOnUse },
 //.. and Wardrobe
     'Leggings' : { name: 'Sport-Leggings', desc: 'Spandex-leggings for sport.', tags: ['cloth'], slotUse: ['Legs'],canEquip:defaultCanUse, canUnequip:defaultCanUnequip },

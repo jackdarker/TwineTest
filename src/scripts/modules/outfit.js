@@ -10,7 +10,8 @@ export class Equipment {
 }
 
 export class Outfit {
-    constructor(externlist) {
+    constructor(owner,externlist) {
+        this.parent = owner;
         this.list = externlist ? externlist : [];
         //create each slot
         for(var i=0; i<window.gm.OutfitSlotpLib.SLOTMAX;i++) {

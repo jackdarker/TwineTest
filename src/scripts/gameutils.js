@@ -38,7 +38,7 @@ window.gm.printPassageLink= function(label,target) {
     return("<a href=\"javascript:void(0)\" data-passage=\""+target+"\">"+label+"</a></br>");
 };
 
-//prints a link that when clicked picksup an item and places it in the inventory
+//prints a link that when clicked picksup an item and places it in the inventory, if itemleft is <0, no link appears
 window.gm.printPickupAndClear= function(itemid, desc,itemleft,cbAfterPickup=null) {
     var elmt='';
     var s= window.story.state;
@@ -46,11 +46,10 @@ window.gm.printPickupAndClear= function(itemid, desc,itemleft,cbAfterPickup=null
     var desc2 = desc+" ("+itemleft+" left)";
     var msg = 'took '+itemid;
     elmt +="<a0 id='"+itemid+"' onclick='(function($event){window.gm.pickupAndClear(\""+itemid+"\", \""+desc+"\","+itemleft+","+cbAfterPickup+")})(this);'>"+desc2+"</a></br>";
-    //elmt +="<a0 id='"+itemid+"' onclick='(function($event){window.gm.playerInv.addItem(\""+itemid+"\");$event.replaceWith(\""+msg+"\");window.gm.pushLog(\"added "+itemid+" to inventory.</br>\");window.story.show(window.passage.name);})(this);'>"+desc2+"</a></br>";
     return(elmt);
     };
-    window.gm.pickupAndClear=function(itemid, desc,itemleft,cbAfterPickup=null) {
-    window.gm.playerInv.addItem(itemid);
+window.gm.pickupAndClear=function(itemid, desc,itemleft,cbAfterPickup=null) {
+    window.gm.player.Inv.addItem(itemid);
     window.gm.pushLog("added "+itemid+" to inventory.</br>");
     if(cbAfterPickup) cbAfterPickup.call();
     window.story.show(window.passage.name);
@@ -59,8 +58,12 @@ window.gm.printPickupAndClear= function(itemid, desc,itemleft,cbAfterPickup=null
 window.gm.printItem= function( id,descr) {
     var elmt='';
     var s= window.story.state;
-    elmt +=`<a0 id='${id}' onclick='(function($event){document.querySelector(\"div#${id}\").toggleAttribute(\"hidden\");})(this);'>${id}</a>`;
-    //todo add equip/unequip of tools
+    var _inv = window.gm.player.Inv;
+    var _count =_inv.countItem(id);
+    elmt +=`<a0 id='${id}' onclick='(function($event){document.querySelector(\"div#${id}\").toggleAttribute(\"hidden\");})(this);'>${id} (x${_count})</a>`;
+    if(_count>0 && _inv.usable(id).OK) {
+        elmt +=`<a0 id='${id}' onclick='(function($event){window.gm.player.Inv.use(\"${id}\"); window.gm.refreshScreen();}(this))'>Use</a>`;
+    }
     elmt +=`</br><div hidden id='${id}'>${descr}</div>`;
     if(window.story.passage(id))  elmt +=''.concat("    [[Info|"+id+"]]");  //Todo add comands: drink,eat, use
         elmt +=''.concat("</br>");
@@ -71,10 +74,10 @@ window.gm.printEquipment= function( id,descr) {
     var elmt='';
     var s= window.story.state;
     elmt +=`<a0 id='${id}' onclick='(function($event){document.querySelector(\"div#${id}\").toggleAttribute(\"hidden\");})(this);'>${id}</a>`;
-    if(window.gm.playerOutfit.countItem(id)<=0) {
-        elmt +=`<a0 id='${id}' onclick='(function($event){window.gm.playerOutfit.addItem(\"${id}\"); window.story.show(window.passage.name);}(this))'>Equip</a>`;
+    if(window.gm.player.Outfit.countItem(id)<=0) {
+        elmt +=`<a0 id='${id}' onclick='(function($event){window.gm.player.Outfit.addItem(\"${id}\"); window.gm.refreshScreen();}(this))'>Equip</a>`;
     } else {
-        elmt +=`<a0 id='${id}' onclick='(function($event){window.gm.playerOutfit.removeItem(\"${id}\"); window.story.show(window.passage.name);}(this))'>Unequip</a>`;
+        elmt +=`<a0 id='${id}' onclick='(function($event){window.gm.player.Outfit.removeItem(\"${id}\"); window.gm.refreshScreen();}(this))'>Unequip</a>`;
     }
     elmt +=`</br><div hidden id='${id}'>${descr}</div>`;
 
@@ -88,8 +91,8 @@ window.gm.printEquipmentSummary= function() {
     var s= window.story.state;
     var result =''
     var ids = [];
-    for(var i=0;i<window.gm.playerOutfit.count();i++){
-        var id = window.gm.playerOutfit.getItemId(i);
+    for(var i=0;i<window.gm.player.Outfit.count();i++){
+        var id = window.gm.player.Outfit.getItemId(i);
         if(id!='' && ids.indexOf(id)<0) {
             ids.push(id);
             result+=id+',';

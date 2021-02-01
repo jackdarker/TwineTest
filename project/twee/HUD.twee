@@ -109,7 +109,7 @@ function refresh(slot){
 You have the following in your inventory: </br></br>
 <%
 var x = 0, id=''; 
-var inv = window.gm.playerInv;
+var inv = window.gm.player.Inv;
 var maxSlots = inv.count(); 
 do {
   id=inv.getItemId(x);
@@ -132,7 +132,7 @@ In your wardrobe you find: </br></br>
 <!--assumption: every outfit item (worn or not) is present in the wardrobe-->
 <%
 var x = 0, id=''; 
-var inv = window.gm.playerWardrobe;
+var inv = window.gm.player.Wardrobe;
 var maxSlots = inv.count(); 
 do {
   id=inv.getItemId(x);
