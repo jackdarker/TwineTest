@@ -4,15 +4,16 @@
 </hr>
 <div style="font-size: smaller;"><%=s.player.location%></br>
 <%=window.gm.getTimeString()%> <%=window.gm.getDateString()%></br>
-Energy: <%=s.player.energy%>/<%=s.player.energyMax%>   Health: <%=s.player.health%>/<%=s.player.healthMax%></br>
+Energy: <%=window.gm.player.energy().value%>/<%=window.gm.player.energy().max%></br>
+Health: <%=window.gm.player.health().value%>/<%=window.gm.player.health().max%></br>
 Money: <%=s.player.money %></br>
 </div>
 </hr>
 <form>
 <label>Info:    <output></output>  </label></br>
-<button type="button" id="status" >Status</button>
+<button type="button" id="status">Status</button>
 <button type="button" id="inv">Inventory</button>
-<button type="button" id="equip" disabled>Equipment</button>
+<button type="button" id="dashboard">More</button>
 <button type="button" id="wait" style="width: 100%">Rest 45min</button>
 </hr>
 <button type="button" id="save" style="width: 100%">Save/load</button>
@@ -27,7 +28,7 @@ Money: <%=s.player.money %></br>
 <script>
 document.querySelector('#wait').addEventListener('click', function(){window.gm.addTime(45);}); 
 document.querySelector('#inv').addEventListener('click', function(){window.story.show('Inventory');});
-document.querySelector('#equip').addEventListener('click', function(){window.story.show('Equipment');});
+document.querySelector('#dashboard').addEventListener('click', function(){window.story.show('Player_Dashboard');});
 document.querySelector('#status').addEventListener('click', function(){window.story.show('PlayerStatus');});
 document.querySelector('#save').addEventListener('click', function(){window.gm.toggleDialog('#dialog_save');});
 document.querySelector('#help').addEventListener('click', function(){window.story.show('Help_Index');}); 
@@ -36,22 +37,30 @@ document.querySelector('#settings').addEventListener('click', function(){window.
 
 
 :: CenterDialogs
+<!--called to include important dialogs; mainly the save-Dialog because of special behaviour-->
 <%=window.story.render("SaveDialog") %></br>
 
 :: playerstats
-Your health:<%=s.player.health%></br>
+<!--called to render stats in combat-->
+Your health:<%=window.gm.player.health().value%></br>
 
 :: enemystats
-Enemys health:<%=s.enemy.health%></br>
+<!--called to render stats in combat-->
+Enemys health:<%=window.gm.enemy.health().value%></br>
 
 
 :: LogPanel
 <article class='logpanel'>
-<div class="scroll"><%=window.gm.getLog()%></br></br>
-</div><button type="button" id="toggleview" onclick=toggleview()>toggle View</button>
+<div class="scroll" style="font-size: smaller;"><%=window.gm.getLog()%></br></br></div>
+<button type="button" id="toggleview" onclick=toggleview()>toggle View</button>
+<button type="button" id="clearview" onclick=clearview()>clear View</button>
 </article>
-<script>function toggleview(){
+<script>
+function toggleview(){
   document.querySelector("section").classList.toggle("section_swap");
+}
+function clearview(){
+  window.gm.clearLog();window.gm.refreshScreen();
 }
 </script>
 
@@ -119,8 +128,29 @@ do {
 %>
 </article><%=window.story.render("LogPanel")%></section>
 
-:: Wardrobe_equippeed
-<!--renderd into other passages-->
+
+:: Relations [back]
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+[[Back|_back]]</br>
+You have the following relations: </br></br>
+<%
+var x = 0, id=''; 
+var inv = window.gm.player.Rel;
+for(var i=0; i<inv.count();i++){
+  %><%=window.gm.printItem(inv.list[i].id,inv.list[i].value.toString()+'x ')%>
+<%}%>
+</article><%=window.story.render("LogPanel")%></section>
+
+
+:: Player_Dashboard [back]
+<!--a dashboard where the player can check his other stuff-->
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+Here you can check and modify several options: </br>
+Your outfit can only be changed by using a wardrobe.</br>
+[[Close|_back]] [[Status]] [[Relations]] [[Inventory]] [[TodoList]]</br>
+</article><%=window.story.render("LogPanel")%></section>
 
 
 :: Wardrobe [back]

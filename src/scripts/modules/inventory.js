@@ -24,12 +24,12 @@ export class Inventory {
     }
     findItemSlot(id) {
         for (var i = 0; i < this.count(); i++) {
-            if(this.list[i].name===id) return(i);
+            if(this.list[i].id===id) return(i);
         }
         return(-1);
     }
     getItemId(slot) {
-        return(this.list[slot].name);
+        return(this.list[slot].id);
     }
     getItem(id) {
         var _item = window.gm.ItemsLib[id];
@@ -38,7 +38,7 @@ export class Inventory {
     }
     addItem(id,count=1) {
         var _i = this.findItemSlot(id);
-        if(_i<0) this.list.push({'name': id, 'count': count});
+        if(_i<0) this.list.push({'id': id, 'count': count});
         else this.list[_i].count+=count;
         this.postItemChange(this,id,"added","");
     }

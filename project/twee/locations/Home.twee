@@ -20,7 +20,7 @@ You are in the kitchen. </br>
 Mom will take care to resupply the fridge. But she might be disappointed if you plunder heir fridge without giving something back.</br>
 <% if(s.mom.location===window.passage.name && s.mom.foodStore===0) { %>
 'Sorry hun' , mom responds on your greeetings, 'but if you eat all of the food, cant you take care to get some resupply?' </br>
-<% window.gm.gainRelation('Mom',-2);
+<% window.gm.player.gainRelation('Mom',-2);
 }%>
 <% if(s.mom.location===window.passage.name) { %>
 [[Mom|Info_Mom]] is here. </br>

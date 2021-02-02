@@ -4,8 +4,8 @@ window.gm = window.gm || {};
 window.gm.initCombat = function(id) { //setup enemy for encounter
     var s=window.story.state;
     s.enemy.name = id;
-    s.enemy.activeTurn =false;
-    s.enemy.combatState='battling';
+    s.vars.activeTurn =false;
+    s.vars.combatState='battling';
 };
 
 window.gm.hideCombatOption= function() {
@@ -41,37 +41,38 @@ window.gm.hideCombatOption= function() {
     return(msg+"</br>");
   };
   window.gm.execCombatCmd = function(id) { //setup enemy for encounter
-    var enemy = window.story.state.enemy;
-    var player = window.story.state.player;
+    var enemy = window.gm.enemy;
+    var player = window.gm.player;
+    var s = window.story.state;
     var rnd = _.random(1,100);
     var msg = '';
-    if(enemy.activeTurn) {
+    if(s.vars.activeTurn) {
       if(id ==='Attack') {
         if(rnd > 30) {
-          msg += enemy.name +" hits you in the face.";
-          player.health -=2;
+          msg += s.enemy.name +" hits you in the face.";
+          player.health().value = player.health().value-2;
         } else {
-          msg += enemy.name +"s attack missed.";
+          msg += s.enemy.name +"s attack missed.";
         }
       }
     } else {
       if(id ==='Attack') {
         if(rnd > 30) {
           msg += "You hit your foe.";
-          enemy.health -=2;
+          enemy.health().value = enemy.health().value-2;
         } else {
-          msg += enemy.name +" evaded your attack.";
+          msg += s.enemy.name +" evaded your attack.";
         }
       } else if(id === 'RunAway') {
         if(rnd >40) {
           msg += "You escaped the fight.";
-          enemy.combatState = 'fleeing';  //just setting the flag, you have to take care of handling!
+          s.vars.combatState = 'fleeing';  //just setting the flag, you have to take care of handling!
         } else {
           msg += "Your attempts to escape failed.";
         }
       }
     }
-    enemy.activeTurn =!enemy.activeTurn;  //toggle whos turn
+    s.vars.activeTurn =!s.vars.activeTurn;  //toggle whos turn
     return(msg+"</br>");
   };
   window.gm.printCombatHud= function() {

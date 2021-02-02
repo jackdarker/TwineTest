@@ -14,34 +14,32 @@ A <%=window.story.state.enemy.name%> appears ! </br>
 <div id="playerstats">you</div> 
 <div id="enemystats">tey</div>
 <% 
-    if(s.enemy.combatState==='fleeing') {%>
-        <%='You sucessfully escaped '+s.enemy.name%>
-        [[Next|<%=s.player.location%>]]
-    <%} else if(s.enemy.health<=0) {
-        s.enemy.combatState = 'victory';
+    if(s.vars.combatState==='fleeing') {%>
+        <%='You sucessfully escaped '+s.enemy.name%></br>
+        [[Next|<%=s.player.location%>]]</br>
+    <%} else if(window.gm.enemy.health().value<=0) {
+        s.vars.combatState = 'victory';
     %>
-    <%='You defeated '+s.enemy.name%>
-    [[Next|<%s.player.location%>]]
+    <%='You defeated '+s.enemy.name%></br>
+    [[Next|<%s.player.location%>]]</br>
     
-<% }else if(s.player.health<=0){ 
-    s.enemy.combatState = 'defeat';    
+<% }else if(window.gm.player.health().value<=0){ 
+    s.vars.combatState = 'defeat';    
 %>
-    <%='You were defeated by '+s.enemy.name%>
-    [[GameOver]]
+    <%='You were defeated by '+s.enemy.name%></br>
+    [[GameOver]]</br>
 <% }else{ %>
-   <% if(s.enemy.activeTurn) {%>
-   [[Next|EncounterStartTurn]]
+   <% if(s.vars.activeTurn) {%>
     <%=window.gm.calcEnemyCombat()%>
-    
+    [[Next|EncounterStartTurn]]</br>
     <% }else{ %>
     <%=window.gm.printCombatOption()%>
-    
 <%}}%>
 
 <div><output></output></div></br>   <!--message is rendered here-->
 </article><%=window.story.render("LogPanel")%>
 <script>
-window.gm.printCombatHud(); });
+window.gm.printCombatHud();
 </script>
 </section>
 
