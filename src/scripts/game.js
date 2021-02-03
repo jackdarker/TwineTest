@@ -1,5 +1,5 @@
 "use strict";
-
+//import { saveAs } from './modules/FileSaver.js';
 //var window = window || {};  //to supress lint-errors
 //import {Inventory} from './inventory.js'; //already included??
 
@@ -41,6 +41,23 @@ window.storage = {  //operations for save/reload
       }
       return(info);
         
+    },
+    loadFile: function(input){
+        let file = input.files[0]; 
+        let fileReader = new FileReader(); 
+         
+        fileReader.onload = function() {
+          alert(fileReader.result);
+        }; 
+        fileReader.onerror = function() {
+          alert(fileReader.error);
+        }; 
+      fileReader.readAsText(file);
+      return(true);
+    },
+    saveFile: function(){
+      var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
+      saveAs(blob, "hello world.txt");
     },
       saveBrowser: function(slot) {
         //var hash= window.story.save();    this call somehow messes up html and I had to copy the following from snowman script
