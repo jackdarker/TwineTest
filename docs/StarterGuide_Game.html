@@ -1,0 +1,38 @@
+<h1>Infos to the games structure</h1>
+- data is stored in objects appended to window.story.state
+- those objects hae to be plain objects/arrays without function because of saving/restore by json (see guide)
+- see Inventory how a workaround is done around this
+
+- functions that are used through the game are appended to window.gm (gm for game)
+- you can also add more objects to window for better structuring
+
+<h1>About the styling</h1>
+- styling should be preferably done in style.twee or a .css
+- but there are some places in twee/js where style-propertie is set directly
+
+
+
+<h1>States and Attributes</h1>
+
+States can apply Modifiers to Attributes.
+
+States can be applied to Characters by:
+- Enviroment: onTick	f.e. Toxic Air -> Poisoned
+- Skills: onUse, onApply	f.e. cast Firewall -> self reduce mana over time, enemys damage over time
+- Items: onUse, onTick
+- Equipment: onEquip, onRemove, onTick
+- Perks: onGain, onLoose
+
+States are separated from their origin, f.e. Healing over time continues while the Healing-Item is already gone.
+- in this case they have to keep track on their own and remove themself
+
+States can Stack: each equipment of armor add their own modifiers to the defense. A individual modifier is removed when a single part is removed.
+- need to keep link which State caused which modifier
+- States have an ID: Boots:DefenseBonus,  HealthPotion:HealthRecover
+- Modifiers store this ID
+
+States can Mutate: a state can change itself, f.e. infected to infested after duration
+
+States can Override other States: Poison Resist also removes Poisoned
+
+

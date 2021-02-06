@@ -1,7 +1,7 @@
 {
 
     "javascript": {
-        "minify": true,
+        "minify": false,
         "transpile": true
     },
 

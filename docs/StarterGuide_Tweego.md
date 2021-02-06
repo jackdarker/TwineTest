@@ -97,7 +97,16 @@ My workaround:
 - global variable data is stored in window.story.state.player or another structure below state. This is required because snowman saves data only from window.story.state
 - create window.gm.libItems as a lookup for Item-constructors f.e. window.gm.libItems: { LaptopPS: function(){return new LaptopPS();},...}. 
 Then you can call window.gm.libItems.LaptopPS() or window.gm.libItems['LaptopPS']() from templete-methods.
-- 
+
+<h1>Adding external scripts</h1>
+Place external modules in src/modules. They will be added to <head>-section. 
+If they execute a function when loading the file, this should register them in a GlobalScope.
+F.e. functions from FileSaver.js can be called just like entering "saveAs(...);" .
+
+<h1>Debugging code</h1>
+Debugging code within Templates or even <script>-sections seems impossible. Since this data is embedded into passage sections, it is not seen by the debugger until the page is rendered. If there happens an error then, the DOM will only contain a error message without the script.
+
+You should stick to write user-scripts and call those scripts from templates. Then you can set breakpoints in this user-script like usual.
 
 <h1>Saving/restoring data<h1>
 Snowman creates a hash that is used to reconstruct the values of the variables.

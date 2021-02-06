@@ -8,11 +8,16 @@ It features:
 - very basic combat encounter
 - javascript code to make writing passages easier
 
-Todo:
+In progress:
+- outfit-system with graphical/textual presentation
 - save-system (file storage)
-- outfit-system
-- combat logic and calculation
 - quest tracker
+- States and effects
+
+Todo:
+- 
+- combat logic and calculation
+
 - ???
 
 

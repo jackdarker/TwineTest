@@ -89,7 +89,7 @@ window.gm.printEquipment= function( id,descr) {
 window.gm.printEquipmentSummary= function() {
     var elmt='';
     var s= window.story.state;
-    var result =''
+    var result ='';
     var ids = [];
     for(var i=0;i<window.gm.player.Outfit.count();i++){
         var id = window.gm.player.Outfit.getItemId(i);
@@ -97,6 +97,22 @@ window.gm.printEquipmentSummary= function() {
             ids.push(id);
             result+=id+',';
         }
+    }
+    return(result);
+};
+//prints a string listing equipped items
+window.gm.printEffectSummary= function() {
+    var elmt='';
+    var s= window.story.state;
+    var result ='';
+    var ids = [];
+    for(var i=0;i<window.gm.player.Effects.count();i++){
+        var data = window.gm.player.Effects.getData(i);
+        result+=data.id+','+data.name+','+'</br>';
+    }
+    for(var k=0;k<window.gm.player.Stats.count();k++){
+        var data = window.gm.player.Stats.get(window.gm.player.Stats.getItemId(k));
+        result+=data.id+','+data.value+'</br>';
     }
     return(result);
 };
@@ -110,7 +126,7 @@ window.gm.printTodoList= function() {
         var val = s.vars[list[i]];
         var msg ='';
         if(list[i]==='qDogSit') {       //todo we could use <%=> instead
-        if(val<=0) {  ;
+        if(val<=0) {  
         } else if(val<=0x100) {
             msg = 'There was this dogsit-ad in the park. Maybe you should call there to earn some money.';
         } else if(val<=0x200) {

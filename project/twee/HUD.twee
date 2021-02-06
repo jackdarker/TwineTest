@@ -26,10 +26,10 @@ Money: <%=s.player.money %></br>
 <%}%>
 </form>
 <script>
-document.querySelector('#wait').addEventListener('click', function(){window.gm.addTime(45);}); 
+document.querySelector('#wait').addEventListener('click', function(){window.gm.addTime(45);window.gm.refreshScreen();}); 
 document.querySelector('#inv').addEventListener('click', function(){window.story.show('Inventory');});
 document.querySelector('#dashboard').addEventListener('click', function(){window.story.show('Player_Dashboard');});
-document.querySelector('#status').addEventListener('click', function(){window.story.show('PlayerStatus');});
+document.querySelector('#status').addEventListener('click', function(){window.story.show('Status');});
 document.querySelector('#save').addEventListener('click', function(){window.gm.toggleDialog('#dialog_save');});
 document.querySelector('#help').addEventListener('click', function(){window.story.show('Help_Index');}); 
 document.querySelector('#settings').addEventListener('click', function(){window.story.show('Settings');}); 
@@ -208,7 +208,7 @@ TODO
 :: Status [back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-TODO
+<%=window.gm.printEffectSummary()%>
 [[Back|_back]]</br>
 </article><%=window.story.render("LogPanel")%></section>
 

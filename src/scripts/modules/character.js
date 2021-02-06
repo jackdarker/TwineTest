@@ -20,25 +20,27 @@ export class Character {
         this.Outfit = new Outfit(this,this._data.outfit);
         this.Inv = new Inventory(this,this._data.inv);
         this.Wardrobe = new Inventory(this,this._data.wardrobe);
-        this.Stats = new Stats(this,this._data.stats);
+        this.Stats = new StatsDictionary(this,this._data.stats);
         this.Effects = new Effects(this,this._data.effects);
-        this.Rel = new Stats(this,this._data.rel); //Todo Relation similiar to stats?
+        this.Rel = new StatsDictionary(this,this._data.rel); //Todo Relation similiar to stats?
         //create basic stats
-        var _i = this.Stats.findItemSlot('health');
-        if(_i<0) this.Stats.list.push({id: 'health', min: 0, max: 60 , value: 50});
-        _i = this.Stats.findItemSlot('energy');
-        if(_i<0) this.Stats.list.push({id: 'energy', min: 0, max: 100 , value: 80});
-    }
+        stHealth.setup(this.Stats,50,60),stEnergy.setup(this.Stats,30,100);
 
+        this.Effects.addItem('Tired',window.gm.EffectLib.NotTired);
+    }
+    get name() {
+        return(this._data.name);    
+    }
     health() {
-        var val = this.Stats.get('health');
-        return(val);
+        return({value:this.Stats.get('health').value, max:this.Stats.get('healthMax').value, min:0});
     }
     energy() {
-        var val = this.Stats.get('energy');
-        return(val);
+        return({value:this.Stats.get('energy').value, max:this.Stats.get('energyMax').value, min:0});
     }
 
+    addEffect(id,effect) {
+        this.Effects.addItem(id,effect);   // CanOfCoffee:Energyzed,Energyzed
+    }
     gainStat(id,val) {
         var _x = this.Stats.get(id);
         var old = _x.value; 
@@ -52,7 +54,7 @@ export class Character {
     }
 
     gainRelation(char,val) {
-        this.Rel.addItem(char)
+        this.Rel.addItem(char);
         var _x = this.Rel.get(char);
         var old = _x.value; 
         var _new = Math.max(_x.min,Math.min(_x.max,old+val));

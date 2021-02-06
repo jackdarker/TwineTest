@@ -1,6 +1,6 @@
 "use strict";
-//import { saveAs } from './modules/FileSaver.js';
 //var window = window || {};  //to supress lint-errors
+//import * as con from "const.js";
 //import {Inventory} from './inventory.js'; //already included??
 
 window.storage = {  //operations for save/reload
@@ -45,19 +45,23 @@ window.storage = {  //operations for save/reload
     loadFile: function(input){
         let file = input.files[0]; 
         let fileReader = new FileReader(); 
-         
         fileReader.onload = function() {
-          alert(fileReader.result);
+          window.storage.rebuildFromSave(fileReader.result);
+          div = document.querySelector('#backdrop'); //todo promise
+          div.parentNode.removeChild(div);
         }; 
         fileReader.onerror = function() {
           alert(fileReader.error);
         }; 
       fileReader.readAsText(file);
-      return(true);
+      return(true);  //todo how to make async
     },
     saveFile: function(){
-      var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
-      saveAs(blob, "hello world.txt");
+      var hash = LZString.compressToBase64(JSON.stringify({state:window.story.state,
+        history:window.story.history,checkpointName:window.story.checkpointName}));
+      var filename= window.story.name_+"Save.dat";
+      var blob = new Blob([hash], {type: "text/plain;charset=utf-8"});
+      saveAs(blob, filename);
     },
       saveBrowser: function(slot) {
         //var hash= window.story.save();    this call somehow messes up html and I had to copy the following from snowman script
@@ -76,15 +80,15 @@ window.storage = {  //operations for save/reload
             //not possible to save object {info,hash} ??
             hash=window.localStorage.getItem(slot);
             info=window.storage.getSaveInfo(slot);
-            window.story.restore(hash) ; 
-            //Reconnect the objects! 
-            window.gm.player = new Character(window.story.state.player);
-            //window.gm.playerInv = new Inventory(window.story.state.player,window.story.state.player.inv);
-            //window.gm.playerWardrobe = new Inventory(window.story.state.player,window.story.state.player.wardrobe);
-            //window.gm.playerOutfit = new Outfit(window.story.state.player,window.story.state.player.outfit);
-            window.gm.refreshScreen();
+            window.storage.rebuildFromSave(hash);
         }
         return(info);
+    },
+    rebuildFromSave: function(hash){
+        window.story.restore(hash) ; 
+        //Reconnect the objects! 
+        window.gm.player = new Character(window.story.state.player);
+        window.gm.refreshScreen();
     }
   };
 window.gm = window.gm || {}; //game related operations
@@ -93,6 +97,7 @@ window.gm.getSaveVersion= function(){
     return(version);    
 };
 window.gm.initGame= function(forceReset) {
+  createItemLookups();
     //this does not work because hidden is called to late
     /*$(window).on('sm.passage.hidden', function(event, eventObject) {
       
@@ -165,7 +170,18 @@ window.gm.initGame= function(forceReset) {
         window.gm.player.Rel.addItem('mom');
     }
 };
-
+//returns timestamp sine start of game
+window.gm.getTime= function() {
+  return(window.story.state.vars.time+2400*window.story.state.vars.day);
+}
+//calculates timedifference for hhmm time format
+window.gm.getDeltaTime = function(a,b){
+  var m=a%100;         
+  var h=((a-m)/100);
+  var m2=b%100;         
+  var h2=((b-m2)/100);
+  return((h*60+m)-(h2*60+m2));
+}
 //adds MINUTES to time
 window.gm.addTime= function(min) {
   var v=window.story.state.vars;
@@ -179,6 +195,7 @@ window.gm.addTime= function(min) {
     window.story.state.vars.time -= 2400;
     window.story.state.vars.day += 1;
   }
+  window.gm.player.Effects.updateTime();
 };
 window.gm.getTimeString= function() {
   var c=window.gm.getTimeStruct();
