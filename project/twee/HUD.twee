@@ -146,7 +146,7 @@ var inv = window.gm.player.Inv;
 var maxSlots = inv.count(); 
 do {
   id=inv.getItemId(x);
-  %><%=window.gm.printItem(id,inv.countItem(id).toString()+'x '+inv.getItem(id).desc+' '+inv.getItem(id).usable.call(id).msg)%><%
+  %><%=window.gm.printItem(id,inv.countItem(id).toString()+'x '+inv.getItem(id).desc+' '+inv.getItem(id).usable(inv).msg)%><%
   x = x + 1;
 } while (x < maxSlots);
 %>

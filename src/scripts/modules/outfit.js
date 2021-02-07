@@ -1,13 +1,35 @@
 "use strict";
 /* a player has an outfit describing which Equipment (wardrobe,utilities,..) he has equiped
 */
-export class Equipment {
+//this is a lookuptable for the equipmentslots
+window.gm.OutfitSlotpLib = { 
+    Legs    : 1,
+    Feet    : 2,
+    Arms    : 3,
+    Torso   : 4,
+    LHand   : 5,
+    RHand   : 6,
+    UWTop   : 7,
+    UWGroin : 8,
+    UWFeet  : 9,
+    UWLegs  : 10,
+    Hat     : 11,
+    Neck    : 12,
+    Eys     : 13,
+    //insert more slots here
+    SLOTMAX : 50
+};
+export class Equipment /*extends Item*/ {
     constructor(name) {
         this.name = name;
         this.desc = name;
         this.tags = [];
         this.slotUse = [];
     }
+    //for compatibility with item
+    usable(context) {return({OK:false, msg:'Useable in wardrobe'});}
+    use(context) {return({OK:false, msg:'Cannot use.'});}
+
     canEquip(context) {return({OK:false, msg:'unusable'});}
     canUnequip(context) {return({OK:false, msg:'unusable'});}
     onEquip(context) {return({OK:true, msg:'equipped'});}
@@ -18,15 +40,15 @@ export class Leggings extends Equipment {
         super('Leggings');
         this.tags = ['cloth'];
         this.slotUse = ['Legs'];
-        this.desc = 'Spandex-leggings for sport. (Fitness+)'
+        this.desc = 'Spandex-leggings for sport. (agility+)'
     }
     canEquip(context) {return({OK:true, msg:'equipable'});}
     canUnequip(context) {return({OK:true, msg:'unequipable'});}
     onEquip(context) {
-        context.parent.Stats.addModifier('fitness',{id:'fitness:Leggings', bonus:5});
+        context.parent.Stats.addModifier('agility',{id:'agility:Leggings', bonus:5});
         return({OK:true, msg:'equipped'});}
     onUnequip(context) {
-        context.parent.Stats.removeModifier('fitness',{id:'fitness:Leggings'});
+        context.parent.Stats.removeModifier('agility',{id:'agility:Leggings'});
         return({OK:true, msg:'unequipped'});}
 }
 export class Jeans extends Equipment {
@@ -56,6 +78,33 @@ export class Pullover extends Equipment {
     canEquip(context) {return({OK:true, msg:'equipable'});}
     canUnequip(context) {return({OK:true, msg:'unequipable'});}
 }
+export class Crowbar extends Equipment {
+    constructor() {
+        super('Crowbar');
+        this.desc = 'A durable crowbar.';
+        this.tags = ['tool', 'weapon'];
+        this.slotUse = ['RHand'];
+    }
+    usable(context) {return(this.canEquip(context));}
+    use(context) { //context her is inventory not outfit
+        if(context.parent.Outfit.findItemSlot(this.name).length>0) {  
+            context.parent.Outfit.removeItem(this.name); 
+            return( {OK:true, msg:''}); //todo
+        } else {
+            context.parent.Outfit.addItem(this.name); 
+            return( {OK:true, msg:''}); //todo
+        }
+    }
+    canEquip(context) {return({OK:true, msg:'equipable'});}
+    canUnequip(context) {return({OK:true, msg:'unequipable'});}
+    onEquip(context) {
+        context.parent.Stats.addModifier('pAttack',{id:'pAttack:Crowbar', bonus:2});
+        return({OK:true, msg:'equipped'});}
+    onUnequip(context) {
+        context.parent.Stats.removeModifier('pAttack',{id:'pAttack:Crowbar'});
+        return({OK:true, msg:'unequipped'});}
+}
+//a kind of special inventory for worn equipment
 export class Outfit {
     constructor(owner,externlist) {
         this.parent = owner;
@@ -171,21 +220,6 @@ export class Outfit {
         return(false);
     }
 }
-//this is a lookuptable
-window.gm.OutfitSlotpLib = { 
-    Legs    : 1,
-    Feet    : 2,
-    Arms    : 3,
-    Torso   : 4,
-    LHand   : 5,
-    RHand   : 6,
-    UWTop   : 7,
-    UWGroin : 8,
-    UWFeet  : 9,
-    UWLegs  : 10,
-    Hat     : 11,
-    Neck    : 12,
-    Eys     : 13,
-    SLOTMAX : 50
-};
+
+
 

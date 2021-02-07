@@ -71,17 +71,17 @@ export class StatsDictionary extends Inventory {  //Todo a collection of Stats i
         Stat.Calc(this,id);
     }
 }
+//class for an Attribute
 class Stat {
-    static dataPrototype() {
+    static dataPrototype() {    
         return({id: '', base: 0,value: 0, limits: [],modifier:[], modifys:[]});
         //limit = {id: min: max:}   limit to apply to value and base
         //modifier {id: calc:}      Stat that modifys value, calc is function(context,data)=> newvalue
         //modifys {id:}         point to the Stats that have modifiers from this stat
     }
-
+    //this is called to update value of the stat and will trigger calculation of dependend stats 
     static Calc(context, id) {
         var attr = context.getRaw(id);
-        
         var min = -99999;
         var max = 99999;
         //get limits
@@ -140,29 +140,75 @@ class stEnergy {
     }
     static updateModifier(context) {};
 }
-class stFitness {
-    static setup(context, base,max) {
-        
+class stAgility {
+    static setup(context, base,max) { 
         var _n = Stat.dataPrototype();
-        _n.id='fitness',_n.base=base, _n.value=base, _n.modifys=[{id:'healthMax'}];
+        _n.id='agility',_n.base=base, _n.value=base, _n.modifys=[{id:'energyMax'}];
         if(context.findItemSlot(_n.id)<0)  context.list.push(_n);
-        stFitness.Calc(context);
+        stAgility.Calc(context);
     }
     /*static modify(context, data) {
         var bonus =0;
         if(data.id==='healthMax') {
-            bonus = context.get('fitness').value;
+            bonus = context.get('agility').value;
         }
         return (data.value+bonus);
     }*/
-    static Calc(context) {
-        Stat.Calc(context,'fitness','');
-    }
+    static Calc(context) { Stat.Calc(context,'agility');  }
     static updateModifier(context) {
-        context.addModifier('energyMax',{id:'fitness', bonus:context.get('fitness').value});
+        context.addModifier('energyMax',{id:'agility', bonus:context.get('agility').value});
     };
 }
-
+class stStrength {
+    static setup(context, base,max) { 
+        var _n = Stat.dataPrototype();
+        _n.id='strength',_n.base=base, _n.value=base, _n.modifys=[{id:'healthMax'},{id:'pAttack'}];
+        if(context.findItemSlot(_n.id)<0)  context.list.push(_n);
+        stStrength.Calc(context);
+    }
+    static Calc(context) { Stat.Calc(context,'strength');  }
+    static updateModifier(context) {
+        context.addModifier('healthMax',{id:'strength', bonus:context.get('strength').value});
+        context.addModifier('pAttack',{id:'strength', bonus:context.get('strength').value});
+    };
+}
+class stEndurance {
+    static setup(context, base,max) { 
+        var _n = Stat.dataPrototype();
+        _n.id='endurance',_n.base=base, _n.value=base, _n.modifys=[{id:'healthMax'},{id:'pDefense'}];
+        if(context.findItemSlot(_n.id)<0)  context.list.push(_n);
+        stEndurance.Calc(context);
+    }
+    static Calc(context) { Stat.Calc(context,'endurance');  }
+    static updateModifier(context) {
+        context.addModifier('healthMax',{id:'endurance', bonus:context.get('endurance').value});
+        context.addModifier('pDefense',{id:'strength', bonus:context.get('endurance').value});
+    };
+}
+class stPAttack {   //physical attack
+    static setup(context, base,max) {
+        var _n = Stat.dataPrototype();
+        _n.id='pAttack',_n.base=base, _n.value=base;
+        if(context.findItemSlot(_n.id)<0) context.list.push(_n);
+        stPAttack.Calc(context);
+    }
+    static Calc(context) {
+        Stat.Calc(context,'pAttack');
+    }
+    static updateModifier(context) {};
+}
+class stPDefense {   //physical defense
+    static setup(context, base,max) {
+        var _n = Stat.dataPrototype();
+        _n.id='pDefense',_n.base=base, _n.value=base;
+        if(context.findItemSlot(_n.id)<0) context.list.push(_n);
+        stPAttack.Calc(context);
+    }
+    static Calc(context) {
+        Stat.Calc(context,'pDefense');
+    }
+    static updateModifier(context) {};
+}
 
 /////////////////////////////////////////////////////////////////////////
 export class Effects extends Inventory {  //Todo a collection of Stats is similiar to Inventory?

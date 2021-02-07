@@ -19,14 +19,22 @@ function createItemLookups(){
     window.gm.ItemsLib['Jeans'] = new Jeans();// {name: 'Bluejeans', desc: 'Thight fitting blue jeans.',tags: ['cloth'], slotUse: ['Legs'],canEquip:defaultCanUse, canUnequip:defaultCanUnequip  };
     window.gm.ItemsLib['Pullover'] = new Pullover();//{name: 'Pullover', desc: 'A warm pulloer.', tags: ['cloth'],slotUse: ['Torso','Arms'],canEquip:defaultCanUse, canUnequip:defaultCanUnequip };
     //special wardrobe-item combination
-    window.gm.ItemsLib['Crowbar']  = {name: 'Crowbar', desc: 'A durable crowbar.', tags: ['tool', 'weapon'], slotUse: ['RHand'],usable:defaultCanUse, use:defaultOnUse,canEquip:defaultCanUse, canUnequip:defaultCanUnequip };
+    window.gm.ItemsLib['Crowbar']  = new Crowbar();//{name: 'Crowbar', desc: 'A durable crowbar.', tags: ['tool', 'weapon'], slotUse: ['RHand'],usable:defaultCanUse, use:defaultOnUse,canEquip:defaultCanUse, canUnequip:defaultCanUnequip };
     window.gm.ItemsLib['Shovel']  = {name: 'Shovel', desc: 'A shovel for the dirty work.', tags: ['tool', 'weapon'], slotUse: ['RHand','LHand'],usable:defaultCanUse, use:defaultOnUse, canEquip:defaultCanUse, canUnequip:defaultCanUnequip };
     window.gm.ItemsLib['Handcuffs'] = {name: 'Handcuffs', desc: 'You cannot use your hand.', tags: ['restrain'], slotUse: ['RHand','LHand'],usable:defaultCanUse, use:defaultOnUse, canEquip:defaultCanUse, canUnequip:defaultNoUnequip };
     //};
 
     //lookup table 
     window.gm.StatsLib = { 
-    'fitness': stFitness,
+    'strength':stStrength,
+    //'perception':stPerception,
+    'endurance':stEndurance,
+    //'charisma':stCharisma,
+    //'intelligence':stIntelligence,
+    'agility': stAgility,
+    //'luck':stLuck,
+    'pAttack' :stPAttack,
+    'pDefense':stPDefense,
     'health': stHealth,//{name: 'Health', desc: 'How healthy you are.',onChange: defaultOnChange,onApply:defaultOnApply, onRemove:defaultOnRemove},
     'healthMax': stHealth,
     'energy': stEnergy,

@@ -24,7 +24,8 @@ export class Character {
         this.Effects = new Effects(this,this._data.effects);
         this.Rel = new StatsDictionary(this,this._data.rel); //Todo Relation similiar to stats?
         //create basic stats
-        stHealth.setup(this.Stats,50,60),stEnergy.setup(this.Stats,30,100),stFitness.setup(this.Stats,10,100);
+        stHealth.setup(this.Stats,50,60),stEnergy.setup(this.Stats,30,100),stPAttack.setup(this.Stats,10,100),stPDefense.setup(this.Stats,10,100),
+        stAgility.setup(this.Stats,10,100),stStrength.setup(this.Stats,10,100),stEndurance.setup(this.Stats,10,100);
 
         this.Effects.addItem('Tired',window.gm.EffectLib.NotTired); //depending on sleep Tired will be set to NotTired or Tired
     }

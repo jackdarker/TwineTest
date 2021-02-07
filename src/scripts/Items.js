@@ -15,16 +15,6 @@ function defaultOnUse(context) {return({OK:true, msg:'You used the item.'})}
 function defaultCanUnequip(context) {return({OK:true, msg:''});}
 function defaultNoUnequip(context) {return({OK:false, msg:'You need to find a key first to be able to remove it!'});}
 
-function canConsumeCoffee(context) {return({OK:true, msg:'drinkable'})}
-function onUseCoffee(context) { 
-    if(context instanceof Inventory) {
-        context.removeItem('CanOfCoffee');
-
-    }
-    return({OK:true, msg:'you gulped down a can of iced coffee'});
-}
-
-//TODO why do I have to define those classes here? I want them in Items !
 class LighterDad extends Item {
     constructor() {
         super('Lighter from Dad');

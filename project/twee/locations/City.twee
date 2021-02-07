@@ -2,6 +2,7 @@
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 <!-- dont overwrite location -->
+<%=window.gm.printPickupAndClear('Crowbar','A crowbar is lying other there.',1)%>
 You are actually at [[<%=s.player.location%>]].
 Where would you like to go from here?</br>
 <a0 onclick=window.gm.rollExplore()>Explore your surroundings</a> </br></br>
@@ -57,7 +58,7 @@ You found the <%=window.passage.name%> ! </br></br>
 <%}%>
 You are actually at [[<%=s.player.location%>]].</br></br>
 The splashing waves are inviting but you dont have some proper swimwear with you.
-You could wander at the shoreline. Maybe you find some Strandgut.</br>
+You could wander at the shoreline. Maybe you find some jetsam.</br>
 
 </br>
 Where would you like to go from here?</br>
