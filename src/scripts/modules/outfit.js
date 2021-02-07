@@ -4,11 +4,58 @@
 export class Equipment {
     constructor(name) {
         this.name = name;
-        this.desc = '';
+        this.desc = name;
+        this.tags = [];
+        this.slotUse = [];
     }
-    usable() {return(false);}
+    canEquip(context) {return({OK:false, msg:'unusable'});}
+    canUnequip(context) {return({OK:false, msg:'unusable'});}
+    onEquip(context) {return({OK:true, msg:'equipped'});}
+    onUnequip(context) {return({OK:true, msg:'unequipped'});}
 }
-
+export class Leggings extends Equipment {
+    constructor() {
+        super('Leggings');
+        this.tags = ['cloth'];
+        this.slotUse = ['Legs'];
+        this.desc = 'Spandex-leggings for sport. (Fitness+)'
+    }
+    canEquip(context) {return({OK:true, msg:'equipable'});}
+    canUnequip(context) {return({OK:true, msg:'unequipable'});}
+    onEquip(context) {
+        context.parent.Stats.addModifier('fitness',{id:'fitness:Leggings', bonus:5});
+        return({OK:true, msg:'equipped'});}
+    onUnequip(context) {
+        context.parent.Stats.removeModifier('fitness',{id:'fitness:Leggings'});
+        return({OK:true, msg:'unequipped'});}
+}
+export class Jeans extends Equipment {
+    constructor() {
+        super('Jeans');
+        this.tags = ['cloth'];
+        this.slotUse = ['Legs'];
+    }
+    canEquip(context) {return({OK:true, msg:'equipable'});}
+    canUnequip(context) {return({OK:true, msg:'unequipable'});}
+}
+export class TankShirt extends Equipment {
+    constructor() {
+        super('Tank-shirt');
+        this.tags = ['cloth'];
+        this.slotUse = ['Torso'];
+    }
+    canEquip(context) {return({OK:true, msg:'equipable'});}
+    canUnequip(context) {return({OK:true, msg:'unequipable'});}
+}
+export class Pullover extends Equipment {
+    constructor() {
+        super('Pullover');
+        this.tags = ['cloth'];
+        this.slotUse = ['Torso','Arms'];
+    }
+    canEquip(context) {return({OK:true, msg:'equipable'});}
+    canUnequip(context) {return({OK:true, msg:'unequipable'});}
+}
 export class Outfit {
     constructor(owner,externlist) {
         this.parent = owner;
@@ -45,7 +92,7 @@ export class Outfit {
         if(!_item) throw new Error('unknown item: '+id);
         return (_item);
     }
-    canEquip(id) {
+    canEquipSlot(slot) {
         return({OK:true});
     }
     canUnequipSlot(slot) {
@@ -67,25 +114,36 @@ export class Outfit {
         if(_idx.length>0) return; //already equipped
         var _item = this.getItem(id);
         _idx = _item.slotUse.map((function(cv, ix, arr) { return (window.gm.OutfitSlotpLib[cv]);  }));
+        var _oldIDs = [];
+        var _oldSlots = [];
         var result = {OK: true, msg:''};
         for(var l=0; l< _idx.length;l++) {  //check if the current equip can be unequipped
             var oldId = this.getItemId(_idx[l]);
             if(oldId==='') continue;
+            if(_oldIDs.indexOf(oldId)<0) {
+                _oldIDs.push(oldId);
+                _oldSlots=_oldSlots.concat(this.getItem(oldId).slotUse.map((function(cv, ix, arr) { return (window.gm.OutfitSlotpLib[cv]);})));
+            }
             var _tmp = this.canUnequipItem(oldId);
             if(!_tmp.OK) result.msg += _tmp.msg; //todo duplicated msg if item uses multiple slots
             result.OK = result.OK && _tmp.OK;
+            //Todo  check if slot is available fo equip this canEquipSlot(_idx[l])
         }
         if(!result.OK) {
             this.postItemChange(this,id,"equip_fail:",result.msg);
             return;
         }
-        for(var i=0; i<_idx.length;i++) {
-            this.__clearSlot(_idx[i]);
+        for(var i=0; i<_oldSlots.length;i++) {
+            this.__clearSlot(_oldSlots[i]);
+        }
+        for(var m=0;m<_oldIDs.length;m++){
+            this.getItem(_oldIDs[m]).onUnequip(this);
         }
         for(var k=0; k<_idx.length;k++) {
             this.list[_idx[k]].id = id;
         }  
-        this.postItemChange(this,id,"equipped","");
+        result=_item.onEquip(this);
+        this.postItemChange(this,id,"equipped",result.msg);
     }
     //assumme that it was checked before that unequip is allowed
     __clearSlot(slot, force) {
@@ -99,10 +157,11 @@ export class Outfit {
             this.postItemChange(this,id,"unequip_fail",result.msg);
             return;
         }
+        result=this.getItem(id).onUnequip(this);
         for(var i=0; i<_idx.length;i++) {
             this.__clearSlot(_idx[i]);
         }
-        this.postItemChange(this,id,"removed","");
+        this.postItemChange(this,id,"removed",result.msg);
     }
     isNaked() {
         if(this.getItemId(window.gm.OutfitSlotpLib.Legs)==='' || this.getItemId(window.gm.OutfitSlotpLib.Torso)==='') 

@@ -85,6 +85,7 @@ window.gm.printEquipment= function( id,descr) {
         elmt +=''.concat("</br>");
         return(elmt);
 };
+
 //prints a string listing equipped items
 window.gm.printEquipmentSummary= function() {
     var elmt='';
@@ -101,19 +102,37 @@ window.gm.printEquipmentSummary= function() {
     return(result);
 };
 //prints a string listing equipped items
+window.gm.printRelationSummary= function() {
+    var elmt='';
+    var s= window.story.state;
+    var result ='';
+    var ids = [];
+    result+='<table>';
+    for(var k=0;k<window.gm.player.Rel.count();k++){
+        var data = window.gm.player.Rel.get(window.gm.player.Rel.getItemId(k));
+        result+='<tr><td>'+data.id+':</td><td>'+data.value+'</td></tr>';
+    }
+    result+='</table>';
+    return(result);
+};
+//prints a string listing equipped items
 window.gm.printEffectSummary= function() {
     var elmt='';
     var s= window.story.state;
     var result ='';
     var ids = [];
-    for(var i=0;i<window.gm.player.Effects.count();i++){
-        var data = window.gm.player.Effects.getData(i);
-        result+=data.id+','+data.name+','+'</br>';
-    }
+    result+='<table>';
     for(var k=0;k<window.gm.player.Stats.count();k++){
         var data = window.gm.player.Stats.get(window.gm.player.Stats.getItemId(k));
-        result+=data.id+','+data.value+'</br>';
+        result+='<tr><td>'+data.id+':</td><td>'+data.value+'</td></tr>';
     }
+    result+='</table>';
+    result+='</br>Active Effects:<table>'
+    for(var i=0;i<window.gm.player.Effects.count();i++){
+        var data = window.gm.player.Effects.getData(i);
+        result+='<tr><td>'+data.id+':</td><td>'+data.name+'</td></tr>';
+    }
+    result+='</table>';
     return(result);
 };
 //prints a list of todo quest

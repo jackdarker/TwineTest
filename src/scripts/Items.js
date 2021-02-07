@@ -49,18 +49,27 @@ class CanOfCoffee extends Item {
         if(context instanceof Inventory) {
             context.removeItem('CanOfCoffee');
             if(context.parent instanceof Character){
-                context.parent.addEffect('CanOfCoffee:Energized',window.gm.EffectLib.Energized);
-                //context.parent.gainStat('energy',10);
+                context.parent.addEffect('CanOfCoffee:Energized',window.gm.EffectLib.Energized);    //apply over-time-effect instead directly changing stat
             return({OK:true, msg:context.parent.name+' gulped down a can of iced coffee.'});
             }
-        }
-        
+        } 
     }
 };
 class SimpleFood extends Item {
     constructor() {
         super('Simple food');
         this.desc = 'Something to eat.';
+    }
+    usable(context) {return({OK:true, msg:'eatable'});}
+    use(context) { 
+        if(context instanceof Inventory) {
+            context.removeItem('Simple food');
+            if(context.parent instanceof Character){
+                context.parent.addEffect('Simple food:Energized',window.gm.EffectLib.Energized);
+            return({OK:true, msg:context.parent.name+' ate some plan foods.'});
+            }
+        }
+        
     }
 }
 

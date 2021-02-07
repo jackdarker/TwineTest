@@ -24,9 +24,9 @@ export class Character {
         this.Effects = new Effects(this,this._data.effects);
         this.Rel = new StatsDictionary(this,this._data.rel); //Todo Relation similiar to stats?
         //create basic stats
-        stHealth.setup(this.Stats,50,60),stEnergy.setup(this.Stats,30,100);
+        stHealth.setup(this.Stats,50,60),stEnergy.setup(this.Stats,30,100),stFitness.setup(this.Stats,10,100);
 
-        this.Effects.addItem('Tired',window.gm.EffectLib.NotTired);
+        this.Effects.addItem('Tired',window.gm.EffectLib.NotTired); //depending on sleep Tired will be set to NotTired or Tired
     }
     get name() {
         return(this._data.name);    
@@ -41,7 +41,7 @@ export class Character {
     addEffect(id,effect) {
         this.Effects.addItem(id,effect);   // CanOfCoffee:Energyzed,Energyzed
     }
-    gainStat(id,val) {
+    /*gainStat(id,val) {
         var _x = this.Stats.get(id);
         var old = _x.value; 
         var _new = Math.max(_x.min,Math.min(_x.max,old+val));
@@ -51,13 +51,13 @@ export class Character {
         } else {
             window.gm.pushLog('<statdown>'+id+" decreased by "+(_new-old).toString()+"</statdown></br>");
         }
-    }
+    }*/
 
     gainRelation(char,val) {
         this.Rel.addItem(char);
         var _x = this.Rel.get(char);
         var old = _x.value; 
-        var _new = Math.max(_x.min,Math.min(_x.max,old+val));
+        var _new =old+val; //Math.max(_x.min,Math.min(_x.max,old+val));
         _x.value = _new;
         var diff = _new-old;
         if(diff>0) {

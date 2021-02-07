@@ -158,12 +158,7 @@ do {
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 [[Back|_back]]</br>
 You have the following relations: </br></br>
-<%
-var x = 0, id=''; 
-var inv = window.gm.player.Rel;
-for(var i=0; i<inv.count();i++){
-  %><%=window.gm.printItem(inv.list[i].id,inv.list[i].value.toString()+'x ')%>
-<%}%>
+<%=window.gm.printRelationSummary()%>
 </article><%=window.story.render("LogPanel")%></section>
 
 
@@ -200,7 +195,20 @@ do {
 :: Settings [back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-TODO
+<button onclick='onimage("assets/bird.gif")'>test a</button>
+<button onclick='onimage("assets/favicon.png")'>test b</button>
+<canvas id="exampleCanvas" width="240" height="225">Your browser doesn't support the canvas tag.    </canvas>
+    <script>
+      function onimage(imgsrc) {
+        var canvas = document.getElementById("exampleCanvas");
+        var ctx = canvas.getContext("2d");
+        //var img = document.getElementById("photo");
+var img = new Image(); // Create new img element
+img.src = imgsrc;//'https://twinery.org/homepage/img/logo.svg';   //todo the loading o image takes a while and it will not refreh automatically
+        ctx.drawImage(img, 0, 0);
+      };
+      onimage("assets/bird.gif");
+    </script>
 [[Back|_back]]</br>
 </article><%=window.story.render("LogPanel")%></section>
 

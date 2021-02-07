@@ -57,7 +57,7 @@ window.storage = {  //operations for save/reload
       return(true);  //todo how to make async
     },
     saveFile: function(){
-      var hash = LZString.compressToBase64(JSON.stringify({state:window.story.state,
+      var hash = /*LZString.compressToBase64*/(JSON.stringify({state:window.story.state,
         history:window.story.history,checkpointName:window.story.checkpointName}));
       var filename= window.story.name_+"Save.dat";
       var blob = new Blob([hash], {type: "text/plain;charset=utf-8"});
@@ -84,7 +84,8 @@ window.storage = {  //operations for save/reload
         }
         return(info);
     },
-    rebuildFromSave: function(hash){
+    rebuildFromSave: function(hash,compressed){
+      if(!compressed) hash=LZString.compressToBase64(hash);
         window.story.restore(hash) ; 
         //Reconnect the objects! 
         window.gm.player = new Character(window.story.state.player);
@@ -164,10 +165,9 @@ window.gm.initGame= function(forceReset) {
         window.gm.player.Wardrobe.addItem('Leggings');
         window.gm.player.Wardrobe.addItem('Tank-shirt');
         window.gm.player.Wardrobe.addItem('Pullover');
-        window.gm.player.Outfit.addItem('Leggings');
+        window.gm.player.Outfit.addItem('Jeans');
         window.gm.player.Outfit.addItem('Tank-shirt');
         window.gm.player.Outfit.addItem('Pullover');
-        window.gm.player.Rel.addItem('mom');
     }
 };
 //returns timestamp sine start of game
@@ -208,11 +208,11 @@ window.gm.getTimeStruct=function() {
   var daytime = '';
   if(v.time>500 && v.time<1000) {
     daytime = 'morning';
-  } else if(v.time>1000 && v.time<1400) {
+  } else if(v.time>=1000 && v.time<1400) {
     daytime = 'noon';
-  } else if(v.time>1400 && v.time<1800) {
+  } else if(v.time>=1400 && v.time<1800) {
     daytime = 'afternoon';
-  } else if(v.time>1800 && v.time<2200) {
+  } else if(v.time>=1800 && v.time<2200) {
     daytime = 'evening';
   } else {
     daytime = 'night';
@@ -240,9 +240,9 @@ window.gm.sleep=function(until) {
   }
   msg+="</br>Slept for "+min/60+" hours.</br>";
   window.gm.addTime(min);
-  var regen = min>420 ? 999 : min/60*15;  //todo
-  window.gm.player.gainStat('health',regen);
-  window.gm.player.gainStat('energy',regen);
+  var regen = min>420 ? 999 : min/60*15;  //todo scaling of regeneration
+  window.gm.player.Stats.increment('health',regen);
+  window.gm.player.Stats.increment('energy',regen);
   window.gm.pushLog(msg);
   return(msg);
 };

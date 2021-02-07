@@ -24,6 +24,7 @@ Mom will take care to resupply the fridge. But she might be disappointed if you 
 }%>
 <% if(s.mom.location===window.passage.name) { %>
 [[Mom|Info_Mom]] is here. </br>
+<a href="javascript:void(0)" onclick="window.gm.player.gainRelation('mom',2)" >Greet her</a></br></br>
 <%}%>
 Where would you like to go?</br>
 [[Living_Room]]   [[Hallway|Home]]</br>
@@ -68,10 +69,10 @@ On the other side of the room is a large [[Wardrobe]].
 There is a large bed for sleeping with a nightstand aside. </br>
 [[Sleep 1h|SleepHour]]</br>
 <%if(window.gm.getTimeStruct().hour<11) { %>
+<!--using fadout-->
 <a href="javascript:void(0)" onclick='($("tw-passage").fadeOut(1000, function() {window.story.show("SleepUntilEvening");}));'>Sleep Until Evening</a> </br>
-[[Sleep until evening|SleepUntilEvening]]</br>
 <%} else {%>
-[[Sleep until morning|SleepUntilMorning]]</br>
+<a href="javascript:void(0)" onclick='($("tw-passage").fadeOut(1000, function() {window.story.show("SleepUntilMorning");}));'>Sleep Until Morning</a> </br>
 <%}%>
 Where do you want to go ? </br>
 <% if(window.gm.player.Outfit.isNaked()) { %>
