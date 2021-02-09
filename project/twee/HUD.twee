@@ -191,13 +191,22 @@ do {
 %>
 </article><%=window.story.render("LogPanel")%></section>
 
-
 :: Settings [back]
 <section> 
-<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-<button onclick='onimage("assets/bird.gif")'>test a</button>
+<!--<aside id="sidebar"></aside>--><article><%=window.story.render("CenterDialogs") %>
+<div id='combatCanvas' style='height:300px; background: url(<%=s.enemy.pic%>) no-repeat center,url(<%=s.combat.scenePic%>) no-repeat center;color:black;'></div>
+<button onclick='window.gm.printCombatScreen()'>test a</button>
 <button onclick='onimage("assets/favicon.png")'>test b</button>
-<canvas id="exampleCanvas" width="240" height="225">Your browser doesn't support the canvas tag.    </canvas>
+[[Back|_back]]</br>
+</article><%=window.story.render("LogPanel")%></section>
+
+:: Settings2 [back]
+<section> 
+<!--<aside id="sidebar"></aside>--><article><%=window.story.render("CenterDialogs") %>
+
+<div><canvas id="exampleCanvas" width="240" height="225">Your browser doesn't support the canvas tag.    </canvas></div>
+<button onclick='window.gm.printCombatScreen()'>test a</button>
+<button onclick='onimage("assets/favicon.png")'>test b</button>
     <script>
       function onimage(imgsrc) {
         var canvas = document.getElementById("exampleCanvas");

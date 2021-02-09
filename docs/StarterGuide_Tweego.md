@@ -137,3 +137,24 @@ You can also use css-classchange to hide/display parts:
     .div_hidden { visibility: hidden; }
     .div { visibility: visible; }
 )
+
+<h1>How to display a image scene</h1>
+If you want to display stacked images, f.e. a enemy goblin.jpg standing before his cave.jpg, you have those options:
+- use a canvas-element and let a function draw the images like this. 
+The drawback here is that images are start loading on the first execution and it might require several more executions until they show up.
+And animated gifs will not be animated.
+<canvas id="exampleCanvas" width="240" height="225"></canvas> 
+<script>
+function onimage(imgsrc) {
+    var canvas = document.getElementById("exampleCanvas");
+    var ctx = canvas.getContext("2d");
+    var img = new Image();
+    img.src = imgsrc;
+    ctx.drawImage(img, 0, 0);
+};
+onimage("assets/bird.gif");
+</script>
+
+- use background-styling; animated gifs can be used
+Note that the urls get filled out by simple template-methods - not a single line of code is necessary to show the enemy-image before a scene-image 
+<div id='combatCanvas' style='height:300px; background: url(<%=s.enemy.pic%>) no-repeat center,url(<%=s.combat.scenePic%>) no-repeat center;color:black;'></div>

@@ -9,7 +9,9 @@ A <%=window.story.state.enemy.name%> appears ! </br>
 
 :: EncounterStartTurn
 <section> 
-<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<!--<aside id="sidebar"></aside>-->
+<article><%=window.story.render("CenterDialogs") %>
+<div id='combatCanvas' style='height:300px; background: url(<%=s.enemy.pic%>) no-repeat center,url(<%=s.combat.scenePic%>) no-repeat center;color:black;'></div>
 <!--filled by printCombatHud-->
 <div id="playerstats">you</div> 
 <div id="enemystats">tey</div>
@@ -29,7 +31,7 @@ A <%=window.story.state.enemy.name%> appears ! </br>
     <%='You were defeated by '+s.enemy.name%></br>
     [[GameOver]]</br>
 <% }else{ %>
-   <% if(s.vars.activeTurn) {%>
+   <% if(s.combat.activeTurn) {%>
     <%=window.gm.calcEnemyCombat()%>
     [[Next|EncounterStartTurn]]</br>
     <% }else{ %>

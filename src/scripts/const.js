@@ -47,4 +47,8 @@ function createItemLookups(){
     'Energized':  effEnergized//{name: 'Energized', desc: 'You feel energized',onTimeChange: defaultTimeChange,onApply:defaultOnApply, onRemove:defaultOnRemove}
     };
 
+    window.gm.EnemyLib = {
+        'Mole': {name: 'Mole',pic:'assets/mole.jpg'},
+        'Mechanic' : {name: 'Mechanic-Guy',pic:'assets/mechanic.jpg'}
+    }
 }

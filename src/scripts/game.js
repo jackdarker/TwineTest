@@ -129,10 +129,7 @@ window.gm.initGame= function(forceReset) {
         qUnlockPark : 0,
         qUnlockMall : 0,
         qUnlockRedlight : 0,
-        qUnlockBeach : 0,
-        //combat related
-        activeTurn : false,
-        combatState : ""
+        qUnlockBeach : 0
         }; 
     }
     if (!s.mom||forceReset) {
@@ -145,7 +142,15 @@ window.gm.initGame= function(forceReset) {
     }
     if (!s.enemy||forceReset) { //actual/last enemy
       s.enemy = Character.defaultData();
+      s.enemy.pic = 'assets/mole.jpg';
       window.gm.enemy = new Character(s.enemy);
+    }
+    if (!s.combat||forceReset) { //see encounter & combat.js
+      s.combat = {
+        activeTurn : false, //true if enemys turn
+        combatState : ""  ,
+        scenePic : 'assets/bg_park.png'
+      }
     }
     if (!s.player||forceReset) {  
         s.player = Character.defaultData(); //get default struct and add some special data
