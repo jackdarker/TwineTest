@@ -8,6 +8,7 @@ https://api.jquery.com/</br>
 Some links with information to twine/tweego/snowman:</br>
 http://twinery.org/cookbook/</br>
 https://videlais.github.io/snowman/2</br>
+http://underscorejs.org/</br>
 </br>
 
 <h1>Passages, Locations, Events</h1>

@@ -57,23 +57,16 @@ window.gm.execCombatCmd = function(id) { //executes a combat-cmd
   var s = window.story.state;
   var rnd = _.random(1,100);
   var msg = '';
+  var result = {};
   if(s.combat.activeTurn) {
     if(id ==='Attack') {
-      if(rnd > 30) {
-        msg += s.enemy.name +" hits you in the face.";
-        player.health().value = player.health().value-2;
-      } else {
-        msg += s.enemy.name +"s attack missed.";
-      }
+      result=window.gm.calcAttack(s.combat.activeTurn);
+      msg+=result.msg;
     }
   } else {
     if(id ==='Attack') {
-      if(rnd > 30) {
-        msg += "You hit your foe.";
-        enemy.health().value = enemy.health().value-2;
-      } else {
-        msg += s.enemy.name +" evaded your attack.";
-      }
+      result=window.gm.calcAttack(s.combat.activeTurn);
+      msg+=result.msg;
     } else if(id === 'RunAway') {
       if(rnd >40) {
         msg += "You escaped the fight.";
@@ -86,6 +79,46 @@ window.gm.execCombatCmd = function(id) { //executes a combat-cmd
   s.combat.activeTurn =!s.combat.activeTurn;  //toggle whos turn
   return(msg+"</br>");
 };
+window.gm.calcAttack = function(enemysTurn) { //calculates damage of attack
+  var attacker = enemysTurn ? window.gm.enemy  :window.gm.player;
+  var defender = enemysTurn ? window.gm.player :window.gm.enemy;
+  var s = window.story.state;
+  var OK = false;
+  var msg = '';
+  var crit= false,hit=false,block=false;
+  var def = defender.Stats.get('pDefense').value;
+  var att = attacker.Stats.get('pAttack').value;
+  //GURPS-Lite ? this would means all skills are limited to 20!
+  //atacker rolls 3d6; if < Attackskill you hit; if 3or4 you have critical hit; else you missed completely
+  var rnd = window.gm.roll(3, 6);
+  if(rnd==3 || rnd==4) {
+    crit=hit=true;
+    msg+= attacker.name+' landed a critical hit.</br>';
+  } else if(rnd<= att) {
+    hit=true;
+  } else {
+    msg+= attacker.name+' missed his target.</br>';
+  }
+  //defender rolls 3d6 (no roll on critical hit); if < Defense, the hit was avoided
+  rnd = window.gm.roll(3, 6);
+  if(crit==false) {
+    if(rnd==3 || rnd==4) {
+      hit=false;
+      msg+= defender.name+' avoided beeing hit.</br>';
+    } else if(rnd<= def) {
+      block=true;
+      msg+= defender.name+' was hit but shrugged of the damage.</br>';
+    }
+  }
+  //attacker rolls dies according to weapon; damage is the result reduced by DR
+  if(hit==true && block==false) {
+    rnd = Math.max(0,rnd = window.gm.roll(1, 6)+1-0);  //todo
+    defender.Stats.increment('health',-1*rnd);
+    msg+= attacker.name+' dealt '+rnd+' damage to '+defender.name+'.</br>';
+  }
+
+  return({OK:hit&& !block , msg:msg})
+}
 window.gm.printCombatHud= function() { //prints the Stats and Effects of the Player&Enemy
     renderToSelector("#playerstats", "playerstats");
     renderToSelector("#enemystats", "enemystats");

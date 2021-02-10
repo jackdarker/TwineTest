@@ -51,4 +51,9 @@ function createItemLookups(){
         'Mole': {name: 'Mole',pic:'assets/mole.jpg'},
         'Mechanic' : {name: 'Mechanic-Guy',pic:'assets/mechanic.jpg'}
     }
+    //mapping from passage-locations to background images
+    window.gm.ScenePic = {
+        'Garden': {pic:'assets/bg_park.png'},
+        'Park' : {pic:'assets/bg_park.png'}
+    }
 }

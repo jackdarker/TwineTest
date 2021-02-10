@@ -30,6 +30,13 @@ window.gm.clearLog=function() {
     window.story.state.vars.log = [];
     return(msg);
 };
+window.gm.roll=function(n,sides) { //rolls n x dies with sides
+    var rnd = 0;
+    for(var i=0;i<n;i++) {
+        rnd += _.random(1,sides);
+    }
+    return(rnd); 
+}
 window.gm.printOutput= function(text) {
     document.querySelector("section article div output").innerHTML = text;
 };
