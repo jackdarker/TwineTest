@@ -37,8 +37,19 @@ Where would you like to go?</br>
 <%s.player.location=window.passage.name;%>
 This is the bedroom of your mom.
 A double bed is there with [[nightstands|moms_treasure]] on each side. <br>
+<a0 onclick='switchChar(this)'>Switch Char</a></br>
 [[Hallway|Home]]</br>
 </article><%=window.story.render("LogPanel")%></section>
+<script>
+function switchChar(elmnt) {
+	if(window.story.state.vars.activePlayer ==='Ratchel') {
+		window.gm.switchPlayer('Cyril');
+	} else {
+		window.gm.switchPlayer('Ratchel');
+	}
+	elmnt.outerHTML=("<div class='red'>You are now playing as "+window.story.state.vars.activePlayer+". </div>");
+}
+</script>
 
 
 :: moms_treasure [back]

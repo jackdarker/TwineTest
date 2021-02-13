@@ -139,16 +139,15 @@ var maxSlots = 8; //number saveslots available; has to fit form below
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 [[Back|_back]]</br>
-You have the following in your inventory: </br></br>
+<%=s.player.name%> inventory: </br></br>
 <%
 var x = 0, id=''; 
 var inv = window.gm.player.Inv;
 var maxSlots = inv.count(); 
-do {
-  id=inv.getItemId(x);
+for(var i=0;i<maxSlots;i++){
+  id=inv.getItemId(i);
   %><%=window.gm.printItem(id,inv.countItem(id).toString()+'x '+inv.getItem(id).desc+' '+inv.getItem(id).usable(inv).msg)%><%
-  x = x + 1;
-} while (x < maxSlots);
+} 
 %>
 </article><%=window.story.render("LogPanel")%></section>
 
@@ -157,7 +156,7 @@ do {
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 [[Back|_back]]</br>
-You have the following relations: </br></br>
+<%=s.player.name%> relations: </br></br>
 <%=window.gm.printRelationSummary()%>
 </article><%=window.story.render("LogPanel")%></section>
 
@@ -176,18 +175,17 @@ Your outfit can only be changed by using a wardrobe.</br>
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 [[Back|_back]]</br>
-You have equipped: <%=window.gm.printEquipmentSummary()%></br>
-In your wardrobe you find: </br></br>
+<%=s.player.name%> has equipped: <%=window.gm.printEquipmentSummary()%></br>
+In <%=s.player.name%> wardrobe you find: </br></br>
 <!--assumption: every outfit item (worn or not) is present in the wardrobe-->
 <%
 var x = 0, id=''; 
 var inv = window.gm.player.Wardrobe;
 var maxSlots = inv.count(); 
-do {
-  id=inv.getItemId(x);
+for(var i=0;i<maxSlots;i++){
+  id=inv.getItemId(i);
   %><%=window.gm.printEquipment(id,inv.getItem(id).desc)%><%
-  x = x + 1;
-} while (x < maxSlots);
+} 
 %>
 </article><%=window.story.render("LogPanel")%></section>
 
@@ -225,6 +223,7 @@ img.src = imgsrc;//'https://twinery.org/homepage/img/logo.svg';   //todo the loa
 :: Status [back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+Status of <%=s.player.name%>:</br> 
 <%=window.gm.printEffectSummary()%>
 [[Back|_back]]</br>
 </article><%=window.story.render("LogPanel")%></section>

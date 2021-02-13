@@ -34,7 +34,8 @@ Where would you like to go from here?</br>
 if(s.vars.qUnlockPark==0) {s.vars.qUnlockPark=1;%>
 You found the <%=window.passage.name%> ! </br></br>
 <%}%>
-You are actually at [[<%=s.player.location%>]].
+You are actually at [[<%=s.player.location%>]].</br>
+People in sportswear are jogging around the paths or doing gymnastics on the grassfield. Maybe you should also do some [[sports|Park_Jogging]] </br> 
 <%if(s.vars.qDogSit===0 && visited(window.passage.name)>=5) {%>
     On a direction sign near the entrance of the park you spot a piece of paper that someone must have placed there.</br>
     Would you like to check whats up with the [[Sign|Park_DogsitAd]].
@@ -48,6 +49,26 @@ Where would you like to go from here?</br>
 <%};%>
 </article><%=window.story.render("LogPanel")%></section>
 
+:: Park_Jogging [back]
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<%if(window.gm.player.Stats.get('energy').value<=50) {%>
+You feel you dont have enough energy left to do anything sporty. Maybe another time. </br>
+
+<%} else {%>
+After a quick warmup and stretching you take a fast pace jog around the outer paths of the park.</br>
+<p class='red'>Energy -50</p>
+<% window.gm.player.Stats.increment('energy',-50);
+  if(window.gm.player.Stats.get('endurance').value<=6 && visited(window.passage.name)%2) {%>
+    After several rounds you are exhausted. But happy.
+    This really seems to improve your fitness.
+    <p class='green'>Endurance +1</p>
+    <% window.gm.player.Stats.increment('endurance',1);
+} else {%>
+    This time you didnt feel that kind of exhausted euphoria. Maybe you have to work harder. Or you are as fit as you can get with this workout. </br> 
+<%}}%>
+</br>[[Back|_back]]</br>
+</article><%=window.story.render("LogPanel")%></section>
 
 :: Beach
 <section> 

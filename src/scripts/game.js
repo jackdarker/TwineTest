@@ -3,95 +3,7 @@
 //import * as con from "const.js";
 //import {Inventory} from './inventory.js'; //already included??
 
-window.storage = {  //operations for save/reload
-    ok: function() {
-      try {
-          var storage = window["localStorage"],
-            x = '__storage_test__';
-          storage.setItem(x, x);
-          storage.removeItem(x);
-          return true;
-        }
-        catch(e) {
-          return e instanceof DOMException && (
-          // everything except Firefox
-          e.code === 22 ||
-          // Firefox
-          e.code === 1014 ||
-          // test name field too, because code might not be present
-          // everything except Firefox
-          e.name === 'QuotaExceededError' ||
-          // Firefox
-          e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
-          // acknowledge QuotaExceededError only if there's something already stored
-          storage.length !== 0;
-        }
-    },
-    delete: function(slot) {
-      window.localStorage.removeItem(slot);
-      window.localStorage.removeItem(slot.concat('info'));
-    },
-      getSaveInfo: function(slot) {
-          var info=null;
-        if(window.storage.ok()) {
-            info =window.localStorage.getItem(slot.concat('info'));		
-        }
-      if(!info) {
-        return('');
-      }
-      return(info);
-        
-    },
-    loadFile: function(input){
-        let file = input.files[0]; 
-        let fileReader = new FileReader(); 
-        fileReader.onload = function() {
-          window.storage.rebuildFromSave(fileReader.result);
-          div = document.querySelector('#backdrop'); //todo promise
-          div.parentNode.removeChild(div);
-        }; 
-        fileReader.onerror = function() {
-          alert(fileReader.error);
-        }; 
-      fileReader.readAsText(file);
-      return(true);  //todo how to make async
-    },
-    saveFile: function(){
-      var hash = /*LZString.compressToBase64*/(JSON.stringify({state:window.story.state,
-        history:window.story.history,checkpointName:window.story.checkpointName}));
-      var filename= window.story.name_+"Save.dat";
-      var blob = new Blob([hash], {type: "text/plain;charset=utf-8"});
-      saveAs(blob, filename);
-    },
-      saveBrowser: function(slot) {
-        //var hash= window.story.save();    this call somehow messes up html and I had to copy the following from snowman script
-        var hash = LZString.compressToBase64(JSON.stringify({state:window.story.state,
-            history:window.story.history,checkpointName:window.story.checkpointName}));          
-        
-        var info=new Date().toString();
-        window.localStorage.setItem(slot.concat('info'),info);
-        window.localStorage.setItem(slot,hash);
-        //document.querySelector("output").textContent = info;  //causes problems because page reset to start-Index.html??
-        return(info);
-    },
-      loadBrowser: function(slot) {
-        var hash,info;
-        if(window.storage.ok()) {
-            //not possible to save object {info,hash} ??
-            hash=window.localStorage.getItem(slot);
-            info=window.storage.getSaveInfo(slot);
-            window.storage.rebuildFromSave(hash);
-        }
-        return(info);
-    },
-    rebuildFromSave: function(hash,compressed){
-      if(!compressed) hash=LZString.compressToBase64(hash);
-        window.story.restore(hash) ; 
-        //Reconnect the objects! 
-        window.gm.player = new Character(window.story.state.player);
-        window.gm.refreshScreen();
-    }
-  };
+
 window.gm = window.gm || {}; //game related operations
 window.gm.getSaveVersion= function(){
   var version = [0,1,0];
@@ -122,6 +34,7 @@ window.gm.initGame= function(forceReset) {
         passageStack : [],
         time : 700, //represented as hours*100 +minutes
         day : 1,
+        activePlayer : 'Ratchel', //id of the character that the player controls currently
         //queststates
         qLaptop : 0,   // see passage _Laptop_
         qDogSit : 0,   // see 
@@ -131,14 +44,6 @@ window.gm.initGame= function(forceReset) {
         qUnlockRedlight : 0,
         qUnlockBeach : 0
         }; 
-    }
-    if (!s.mom||forceReset) {
-      s.mom = {
-        location : "Kitchen",
-        coffeeStore : 5,
-        foodStore : 3,
-        foodMaxStore : 4
-      };
     }
     if (!s.enemy||forceReset) { //actual/last enemy
       s.enemy = Character.defaultData();
@@ -152,29 +57,70 @@ window.gm.initGame= function(forceReset) {
         scenePic : 'assets/bg_park.png'
       }
     }
-    if (!s.player||forceReset) {  
-        s.player = Character.defaultData(); //get default struct and add some special data
-        s.player.name = 'You',
-        s.player.skillPoints = 2,    //no. of free skillpoints on game-start
-        //perklevels ,name should match perkId
-        s.player.skSporty = 0,
-        s.player.skCook = 0,
-        s.player.skSlacker = 0,
-        s.player.skMoneymaker = 0,
-        s.player.skTechy = 0,
-
-        window.gm.player = new Character(s.player);
-        //add some basic inventory
-        window.gm.player.Inv.addItem('LighterDad');
-        window.gm.player.Wardrobe.addItem('Jeans');
-        window.gm.player.Wardrobe.addItem('Leggings');
-        window.gm.player.Wardrobe.addItem('Tank-shirt');
-        window.gm.player.Wardrobe.addItem('Pullover');
-        window.gm.player.Outfit.addItem('Jeans');
-        window.gm.player.Outfit.addItem('Tank-shirt');
-        window.gm.player.Outfit.addItem('Pullover');
+    if (!s.mom||forceReset) {
+      s.mom = {
+        location : "Kitchen",
+        coffeeStore : 5,
+        foodStore : 3,
+        foodMaxStore : 4
+      };
     }
-};
+    if (!s.Cyril||forceReset) {  //alternative player character
+      s.Cyril = Character.defaultData(); //get default struct and add some special data
+      s.Cyril.name = 'Cyril',
+      s.Cyril.skillPoints = 0,    //no. of free skillpoints on game-start
+      //perklevels ,name should match perkId
+      s.Cyril.skSporty = 0,
+      s.Cyril.skCook = 0,
+      s.Cyril.skSlacker = 0,
+      s.Cyril.skMoneymaker = 0,
+      s.Cyril.skTechy = 0,
+
+      window.gm.Cyril = new Character(s.Cyril);
+      //add some basic inventory
+      window.gm.Cyril.Wardrobe.addItem('Jeans');
+      window.gm.Cyril.Wardrobe.addItem('Tank-shirt');
+      window.gm.Cyril.Outfit.addItem('Jeans');
+      window.gm.Cyril.Outfit.addItem('Tank-shirt');
+      window.gm.Cyril.Stats.increment('strength',3);
+      //delete window.gm.Cyril;     Todo we could delete the character-object after story-data is initialized but then we cannot use object-methods on it
+    }
+    if (!s.Ratchel||forceReset) {  
+        s.Ratchel = Character.defaultData(); //get default struct and add some special data
+        s.Ratchel.name = 'Ratchel',
+        s.Ratchel.skillPoints = 2,    //no. of free skillpoints on game-start
+        //perklevels ,name should match perkId
+        s.Ratchel.skSporty = 0,
+        s.Ratchel.skCook = 0,
+        s.Ratchel.skSlacker = 0,
+        s.Ratchel.skMoneymaker = 0,
+        s.Ratchel.skTechy = 0,
+
+        window.gm.Ratchel = new Character(s.Ratchel);
+        //add some basic inventory
+        window.gm.Ratchel.Inv.addItem('LighterDad');
+        window.gm.Ratchel.Wardrobe.addItem('Jeans');
+        window.gm.Ratchel.Wardrobe.addItem('Leggings');
+        window.gm.Ratchel.Wardrobe.addItem('Tank-shirt');
+        window.gm.Ratchel.Wardrobe.addItem('Pullover');
+        window.gm.Ratchel.Outfit.addItem('Jeans');
+        window.gm.Ratchel.Outfit.addItem('Pullover');
+        //delete window.gm.Ratchel;
+    }      
+    window.gm.switchPlayer(s.Ratchel.name); //start-player
+}
+window.gm.switchPlayer = function(playername) {
+  var s = window.story.state;
+  s.player = s[playername]; 
+  window.gm.player = new Character(s.player);
+  s.vars.activePlayer = playername;
+}
+window.gm.rebuildObjects= function(){ //Reconnect the objects after load!  
+  var s = window.story.state;
+  window.gm.Ratchel = new Character(s.Ratchel);
+  window.gm.Cyril = new Character(s.Cyril);
+  window.gm.switchPlayer(s.vars.activePlayer);
+}
 //returns timestamp sine start of game
 window.gm.getTime= function() {
   return(window.story.state.vars.time+2400*window.story.state.vars.day);
