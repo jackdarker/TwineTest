@@ -9,6 +9,7 @@ window.gm.getSaveVersion= function(){
   var version = [0,1,0];
     return(version);    
 };
+
 window.gm.initGame= function(forceReset) {
   createItemLookups();
     //this does not work because hidden is called to late

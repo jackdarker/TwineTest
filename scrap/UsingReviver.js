@@ -1,3 +1,47 @@
+class Bar {
+  constructor(x) {
+    this._x=x;;
+  }
+  toJSON() {
+    return window.storage.Generic_toJSON("Bar", this);
+  };
+  static fromJSON(value) {
+    return window.storage.Generic_fromJSON(Bar, value.data);
+  };
+}
+class Foo {
+  constructor(a,b) {
+    this.a=a,this.b=b;
+    this._bar = new Bar('fooboo');
+  }
+  setA(a) {
+    this.a = -1*a;
+  }
+  toJSON() {
+    return window.storage.Generic_toJSON("Foo", this);
+  };
+  static fromJSON(value) {
+    return window.storage.Generic_fromJSON(Foo, value.data);
+  };
+  print() {console.log(this.a);}
+}
+window.gm.testsave = function() {
+  window.storage.constructors.Bar = Bar;
+  window.storage.constructors.Foo = Foo;
+  var before = {
+    foo: new Foo(21,44)
+  };
+  before.foo.print();
+ // Stringify it with a replacer:
+ var str = JSON.stringify(before);
+ // Show that
+ console.log(str);
+ // Re-create it with use of a "reviver" function
+ var after = JSON.parse(str, window.storage.Reviver);
+ after.foo.print();
+}
+
+
 // Raw
 window.onload = function() {
   

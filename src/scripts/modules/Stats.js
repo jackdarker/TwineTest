@@ -122,9 +122,7 @@ class stHealth {
         if(context.findItemSlot(_n.id)<0) context.list.push(_n);
         stHealth.Calc(context);
     }
-    static Calc(context) {
-        Stat.Calc(context,'health');
-    }
+    static Calc(context) {  Stat.Calc(context,'health');    }
     static updateModifier(context) {};
 }
 class stEnergy {
@@ -137,12 +135,11 @@ class stEnergy {
         if(context.findItemSlot(_n.id)<0) context.list.push(_n);
         stEnergy.Calc(context);
     }
-    static Calc(context) {
-        Stat.Calc(context,'energy');
-    }
+    static Calc(context) { Stat.Calc(context,'energy');  }
     static updateModifier(context) {};
 }
-class stAgility {
+
+class stAgility { // core attribute
     static setup(context, base,max) { 
         var _n = Stat.dataPrototype();
         _n.id='agility',_n.base=base, _n.value=base, _n.modifys=[{id:'energyMax'}];
@@ -161,7 +158,7 @@ class stAgility {
         context.addModifier('energyMax',{id:'agility', bonus:context.get('agility').value});
     };
 }
-class stStrength {
+class stStrength { // core attribute
     static setup(context, base,max) { 
         var _n = Stat.dataPrototype();
         _n.id='strength',_n.base=base, _n.value=base, _n.modifys=[{id:'healthMax'},{id:'pAttack'}];
@@ -174,7 +171,7 @@ class stStrength {
         context.addModifier('pAttack',{id:'strength', bonus:context.get('strength').value%4});
     };
 }
-class stEndurance {
+class stEndurance { // core attribute
     static setup(context, base,max) { 
         var _n = Stat.dataPrototype();
         _n.id='endurance',_n.base=base, _n.value=base, _n.modifys=[{id:'healthMax'},{id:'pDefense'}];

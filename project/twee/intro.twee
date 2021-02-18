@@ -35,11 +35,10 @@ You are just an average girl that recently turned 18. </br>
 </br>Select up to 2 perks below and press [[Next|Home]] to start the game. </br>
 Or press <a0 id='reset' onclick='(function ( $event ) { resetStart(); })(this);'>Reset</a> to reset your selection.  </br></br>
 
-<%=window.gm.printUnlockPerk('skCook','Your cooking skill is slightly improved.')%>
+<%=window.gm.printUnlockPerk('skCooking','Your cooking skill is slightly improved.')%>
 <%=window.gm.printUnlockPerk('skSporty','You are sporty.')%>
 <%=window.gm.printUnlockPerk('skTechy','You are technic-affine.')%>
 <%=window.gm.printUnlockPerk('skSlacker','You know how to avoid work.')%>
 <%=window.gm.printUnlockPerk('skMoneymaker','get rich.faster.')%>
-<%=window.gm.printUnlockPerk('skSlacker','You know how to avoid work.')%>
 
 </article>
