@@ -1,6 +1,7 @@
 This is a Twine/Twee - testgame based on the setup from ChapelR/tweego-setup.
 Its not a real game but a testground.   
-! See wiki for more information !
+
+!!!! >>>>   See wiki for more information <<<< !!!!
 
 It features:
 - interactive fiction where you move through locations
