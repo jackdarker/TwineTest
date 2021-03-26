@@ -1,4 +1,4 @@
-:: Info_Jake [back]
+:: Info_Jake [_back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 Jake is here.</br>
@@ -8,13 +8,15 @@ You barely know anything about him.</br>
 </article></section>
 
 
-:: Info_Mom [back]
+:: Info_Mom [_back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 Your mom is here.</br>
-<% if(window.gm.player.Rel.get('mom').value>10) { %>
+<% if(window.gm.player.Rel.get('Mom').value>10) { %>
 She gives you a hug.
-<% }%>
+<% } else { %>
+You can see a disapproving look on her face.
+<% }  %>
 </br>
 
 [[Back|_back]]</br></br>

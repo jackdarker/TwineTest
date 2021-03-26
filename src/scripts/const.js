@@ -9,8 +9,13 @@ function getVersion(){return("0,0,0,");}
 function createItemLookups(){
     window.gm.ItemsLib = {};
     //window.gm.ItemsLib = { 
+    window.gm.ItemsLib['Money'] = new Money();
     window.gm.ItemsLib['LighterDad'] = new LighterDad();// { name: 'Lighter from Dad', desc: 'I got this lighter from my real dad.', usable:defaultCanUse, use:defaultOnUse },
     window.gm.ItemsLib['LaptopPS'] = new LaptopPS();//{name: 'Laptop-PS', desc:'Power converter for laptop.', usable: function(){return ({OK: false, msg:'not usable on its own'})},use: defaultNoUse};
+    window.gm.ItemsLib['Battery'] = new Battery();
+    window.gm.ItemsLib['Dildo_small'] = new Dildo_small();
+    // consumables
+    window.gm.ItemsLib['Lube'] = new Lube();
     window.gm.ItemsLib['CanOfCoffee'] = new CanOfCoffee(); // {name: 'Can of coffee', desc: 'Cold coffee in a can. Tasty? Not really!', usable:canConsumeCoffee, use:onUseCoffee };
     window.gm.ItemsLib['SimpleFood'] = new SimpleFood(); //{name: 'food ration', desc: 'You can eat this.', usable:defaultCanUse, use:defaultOnUse };
     //.. and Wardrobe
@@ -33,22 +38,50 @@ function createItemLookups(){
     //'intelligence':stIntelligence,
     'agility': stAgility,
     //'luck':stLuck,
+    //'willpower':stWillpower,
     'pAttack' :stPAttack,
     'pDefense':stPDefense,
-    'health': stHealth,//{name: 'Health', desc: 'How healthy you are.',onChange: defaultOnChange,onApply:defaultOnApply, onRemove:defaultOnRemove},
+    'health': stHealth,
     'healthMax': stHealth,
     'energy': stEnergy,
-    'energyMax': stEnergy//{name: 'Energy', desc: 'How much energy you have.',onChange: defaultOnChange,onApply:defaultOnApply, onRemove:defaultOnRemove}
+    'energyMax': stEnergy,
+    'arousal': stArousal,
+    'arousalMin': stArousal,
+    'arousalMax': stArousal,
+    'perversion': stPerversion,
+    'perversionMax': stPerversion
 }
-    //lookup table 
-    window.gm.EffectLib = { 
-    'NotTired':  effNotTired,
-    'Tired':  effTired,//{name: 'Tired', desc: 'You feel tired',onTimeChange: defaultTimeChange,onApply:defaultOnApply, onRemove:defaultOnRemove},
-    'Energized':  effEnergized//{name: 'Energized', desc: 'You feel energized',onTimeChange: defaultTimeChange,onApply:defaultOnApply, onRemove:defaultOnRemove}
-    };
-
+    //register constructors for reviver or your loaded save will not work !
+    //...items
+    window.storage.registerConstructor(LighterDad);
+    window.storage.registerConstructor(Money);
+    window.storage.registerConstructor(LaptopPS);
+    window.storage.registerConstructor(Battery);
+    window.storage.registerConstructor(Dildo_small);
+    window.storage.registerConstructor(Lube);
+    window.storage.registerConstructor(CanOfCoffee);
+    window.storage.registerConstructor(SimpleFood);
+    // ...wardrobe
+    window.storage.registerConstructor(Leggings);
+    window.storage.registerConstructor(TankShirt);
+    window.storage.registerConstructor(Jeans);
+    window.storage.registerConstructor(Pullover);
+    window.storage.registerConstructor(Crowbar);
+    window.storage.registerConstructor(Shovel);
+    //window.storage.registerConstructor(Handcuffs);
+    //...stats
+    window.storage.registerConstructor(stHealthMax);
+    window.storage.registerConstructor(stHealth);
+    window.storage.registerConstructor(stRelation);
+    //...effects
+    window.storage.registerConstructor(effNotTired);
+    window.storage.registerConstructor(effTired);
+    window.storage.registerConstructor(effEnergized);
+    window.storage.registerConstructor(effStunned);
+    window.storage.registerConstructor(skCooking);
+  
     window.gm.EnemyLib = {
-        'Mole': {name: 'Mole',pic:'assets/mole.jpg'},
+        'Mole': {name: 'Mole',pic:'assets/mole.jpg'}, //new Mole(),
         'Mechanic' : {name: 'Mechanic-Guy',pic:'assets/mechanic.jpg'}
     }
     //mapping from passage-locations to background images

@@ -1,13 +1,22 @@
 "use strict";
-
-
-
+//an Inventory-Component to store items
 class Inventory {
-    constructor(owner,externlist) {
-        this.parent = owner;
+    constructor(externlist) {  
         this.list = externlist ? externlist : [];
+      window.storage.registerConstructor(Inventory);
     }
-    postItemChange(inv,id,operation,msg) {
+    get parent() {return this._parent();}
+    toJSON() {return window.storage.Generic_toJSON("Inventory", this); };
+    static fromJSON(value) { 
+        var _x = window.storage.Generic_fromJSON(Inventory, value.data);
+        return(_x);
+    };
+    _relinkItems() {
+        for(var i=0; i<this.list.length; i++) {
+            if(this.list[i].item) this.list[i].item._parent=window.gm.util.refToParent(this);
+        }
+    }
+    postItemChange(id,operation,msg) {
         window.gm.pushLog('Inventory: '+operation+' '+id+' '+msg+'</br>');
     }
     count() {return(this.list.length);}
@@ -26,15 +35,26 @@ class Inventory {
         return(this.list[slot].id);
     }
     getItem(id) {
-        var _item = window.gm.ItemsLib[id];
-        if(!_item) throw new Error('unknown item: '+id);
-        return (window.gm.ItemsLib[id]);
+        var _idx = this.findItemSlot(id);
+        if(_idx<0) throw new Error('no such item: '+id);
+        return(this.list[_idx].item);
     }
-    addItem(id,count=1) {
-        var _i = this.findItemSlot(id);
-        if(_i<0) this.list.push({'id': id, 'count': count});
+    //returns all Ids in list
+    getAllIds() {   
+        var ids=[];
+        for(var i=0;i<this.list.length;i++) {
+            ids.push(this.list[i].id);
+        }
+        return(ids);
+    }
+    addItem(item,count=1) {
+        var _i = this.findItemSlot(item.name);
+        if(_i<0) {
+            item._parent=window.gm.util.refToParent(this)
+            this.list.push({'id': item.name,'count': count, item:item});
+        }
         else this.list[_i].count+=count;
-        this.postItemChange(this,id,"added","");
+        this.postItemChange(item.name,"added","");
     }
     removeItem(id,count=1) {
         var _i = this.findItemSlot(id);
@@ -58,4 +78,3 @@ class Inventory {
         return(result);
     }
 }
-

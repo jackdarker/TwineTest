@@ -1,0 +1,12 @@
+:: Campus
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+This is the campus of the Institute of Technology and Development.</br>
+A lot of people are hurrying along or stand by in idle chatter.</br>
+
+
+<div>Where would you like to go?</br>
+[[Living_Room]]   [[Your Bedroom]]  [[Moms Bedroom]] [[Kitchen]]  [[Garden]] </br>
+[[Into the city]]</br></div>
+</article><article id="LogPanel"></article></section>

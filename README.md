@@ -1,5 +1,6 @@
 This is a Twine/Twee - testgame based on the setup from ChapelR/tweego-setup.
 Its not a real game but a testground.
+! See the wiki for further information about tweego/snowman !
 
 It features:
 - interactive fiction where you move through locations

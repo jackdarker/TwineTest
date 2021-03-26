@@ -1,15 +1,15 @@
 :: skCooking
 You can create tasty meals from basic ingredients. No need to rely on fastfood.
-[[Back|<%=s.player.location%>]]
+[[Back|<%=window.gm.player.location%>]]
 
 :: skSporty
 You like to do sports.
-[[Back|<%=s.player.location%>]]
+[[Back|<%=window.gm.player.location%>]]
 
 :: skTechy
 Tinkering and repairing gadgets is your thing.
-[[Back|<%=s.player.location%>]]
+[[Back|<%=window.gm.player.location%>]]
 
 :: skMoneymaker
 You often find ways to increase your profit a little bit.
-[[Back|<%=s.player.location%>]]
+[[Back|<%=window.gm.player.location%>]]

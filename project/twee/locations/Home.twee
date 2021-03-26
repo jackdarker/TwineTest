@@ -1,19 +1,18 @@
 :: Home
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-<%s.player.location=window.passage.name;%>
+<%window.gm.player.location=window.passage.name;%>
 At the doorsteps of your home. </br>
 <div>Where would you like to go?</br>
-[[Living_Room]]   [[Your Bedroom]]  [[Moms Bedroom]] [[Kitchen]]  [[Garden]] </br>
+[[Living_Room]]   [[Your Bedroom]]  [[Moms Bedroom]] [[Kitchen]]  [[Garden]] [[Cellar]] </br>
 [[Into the city]]</br></div>
-</article><%=window.story.render("LogPanel")%></section>
-
+</article><article id="LogPanel"></article></section>
 
 
 :: Kitchen {"position":"1231,613","size":"100,100"}
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-<%s.player.location=window.passage.name;%>
+<%window.gm.player.location=window.passage.name;%>
 You are in the kitchen. </br>
 <%=window.gm.printPickupAndClear('CanOfCoffee','get a can of ice-coffee from the fridge',s.mom.coffeeStore)%>
 <%=window.gm.printPickupAndClear('SimpleFood','eat some food mom prepared',s.mom.foodStore,function(){window.story.state.mom.foodStore=Math.max(0,--window.story.state.mom.foodStore);})%>
@@ -24,22 +23,23 @@ Mom will take care to resupply the fridge. But she might be disappointed if you 
 }%>
 <% if(s.mom.location===window.passage.name) { %>
 [[Mom|Info_Mom]] is here. </br>
-<a href="javascript:void(0)" onclick="window.gm.player.gainRelation('mom',2)" >Greet her</a></br></br>
+<a href="javascript:void(0)" onclick="window.gm.player.gainRelation('Mom',2);window.gm.updateOtherPanels();" >Greet her</a></br></br>
 <%}%>
 Where would you like to go?</br>
 [[Living_Room]]   [[Hallway|Home]]</br>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 
 
 :: Moms Bedroom
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-<%s.player.location=window.passage.name;%>
+<%window.gm.player.location=window.passage.name;%>
 This is the bedroom of your mom.
 A double bed is there with [[nightstands|moms_treasure]] on each side. <br>
 <a0 onclick='switchChar(this)'>Switch Char</a></br>
+<a0 onclick='window.gm.pushDeferredEvent("HairGrow")'>Hair Tonic</a></br>
 [[Hallway|Home]]</br>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 <script>
 function switchChar(elmnt) {
 	if(window.story.state.vars.activePlayer ==='Ratchel') {
@@ -52,17 +52,17 @@ function switchChar(elmnt) {
 </script>
 
 
-:: moms_treasure [back]
+:: moms_treasure [_back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 In one of the nightstand you find some handcuffs.They look thorough but you think they just might be used for some bedplay.</br>
 <a0 onclick='useHandcuff(this)'>Play with them</a></br>
 [[Back|_back]]</br>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 <script>
 function useHandcuff(elmnt) {
-	window.gm.player.Wardrobe.addItem('Handcuffs');
-	window.gm.player.Outfit.addItem('Handcuffs');
+	window.gm.player.Wardrobe.addItem(new Handcuffs());
+	window.gm.player.Outfit.addItem(new Handcuffs());
 	elmnt.replaceWith("<div class='red'>Playing around with the cuffs you suddenly find yourself locked up with them. You panick as you find the locking-mechanic quite tight. You need a key and maybe some help to unlock them!</div>");
 }
 </script>
@@ -71,53 +71,39 @@ function useHandcuff(elmnt) {
 :: Your Bedroom {"position":"1033,470","size":"100,100"}
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-<%s.player.location=window.passage.name;%>
+<%window.gm.player.location=window.passage.name;%>
 This is your Bedroom.
 A desk with a wooden chair is setup as workingplace. <br>
 Your [[Laptop|_Laptop_]] is placed on it and also a handwritten [[TodoList]]. </br>
 Above the desk is a window facing toward the backside of the house.</br>
 On the other side of the room is a large [[Wardrobe]].
 There is a large bed for sleeping with a nightstand aside. </br>
-[[Sleep 1h|SleepHour]]</br>
+<a href="javascript:void(0)" onclick='($("tw-passage").fadeOut(1000, function() {window.gm.sleep((window.gm.getTimeStruct().hour+1)*100);window.story.show("Sleep");}));'>Nap 1hour</a> </br>
 <%if(window.gm.getTimeStruct().hour<11) { %>
-<!--using fadout-->
-<a href="javascript:void(0)" onclick='($("tw-passage").fadeOut(1000, function() {window.story.show("SleepUntilEvening");}));'>Sleep Until Evening</a> </br>
+>
+<a href="javascript:void(0)" onclick='($("tw-passage").fadeOut(1000, function() {window.gm.sleep(1800);window.story.show("Sleep");}));'>Sleep Until Evening</a> </br>
 <%} else {%>
-<a href="javascript:void(0)" onclick='($("tw-passage").fadeOut(1000, function() {window.story.show("SleepUntilMorning");}));'>Sleep Until Morning</a> </br>
+<a href="javascript:void(0)" onclick='($("tw-passage").fadeOut(1000, function() {window.gm.sleep(700);window.story.show("Sleep");}));'>Sleep Until Morning</a> </br>
 <%}%>
-Where do you want to go ? </br>
+</br>
 <% if(window.gm.player.Outfit.isNaked()) { %>
 <div class="red">You should at least cover up your unmentionables before leaving your room.</div></br>
 <% } else { %>
+Where do you want to go ? </br>
 [[Hallway|Home]]</br> <%}%>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 
-:: SleepHour
-<section> 
-<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-You slept for an hour.</br>
-<% window.gm.sleep((window.gm.getTimeStruct().hour+1)*100);%>
-[[Next|<%=s.player.location%>]]</br>
-</article><%=window.story.render("LogPanel")%></section>
-
-
-:: SleepUntilMorning
+:: Sleep
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 You fall into your bedsheets and sleep until your smartphone buzzes you out of your dreams.</br>
-<%window.gm.sleep(700);%>
-[[Next|<%=s.player.location%>]]</br>
-</article><%=window.story.render("LogPanel")%></section>
-
-
-:: SleepUntilEvening
-<section> 
-<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-You fall into your bedsheets and sleep until your smartphone buzzes you out of your dreams.</br>
-<%window.gm.sleep(1800);%>
-[[Next|<%=s.player.location%>]]</br>
-</article><%=window.story.render("LogPanel")%></section>
-
+<!--deferred post sleep events-->
+<% if(window.gm.hasDeferredEvent()){ %>
+<%= window.gm.showDeferredEvent() %>
+<%} else {%>
+[[Next|<%=window.gm.player.location%>]]</br>
+<%} %>
+</article><article id="LogPanel"></article></section>
 
 :: TodoList
 <section> 
@@ -125,8 +111,8 @@ You fall into your bedsheets and sleep until your smartphone buzzes you out of y
 Picking up your Todo-List you read:</br>
 <%=window.gm.printTodoList()%>
 <%=window.story.render('qLaptop_Status')%>
-[[Next|<%=s.player.location%>]]</br>
-</article><%=window.story.render("LogPanel")%></section>
+[[Next|<%=window.gm.player.location%>]]</br>
+</article><article id="LogPanel"></article></section>
 
 
 :: Living_Room
@@ -144,35 +130,84 @@ Your phone rings with an unknown number. [[Answer call|Dogsit_FirstCallBack]]
 
 Where would you like to go?</br>
 [[Kitchen]] [[Hallway|Home]] </br>
-</article><%=window.story.render("LogPanel")%><script>
+</article><article id="LogPanel"></article><script>
 function getMoney(elmnt,val) {
 	elmnt.replaceWith("You shouldnt steal that money, should you?");
 }
 </script></section>
 
-:: Cabinet {"position":"960,752.3000030517578","size":"100,100"}
+:: Cabinet
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 There is nothing here
 [[Living_Room]]
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 
 
 :: Garden
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
-<%s.player.location=window.passage.name;%>
+<%window.gm.player.location=window.passage.name;%>
 The garden behind the house is not very large. </br>
-There are a lot of molehills on the green. You should teach their creator a lesson.</br>
-[[Whack a mole|Encounter]]
+<p class="talkplayer">There are a lot of molehills on the green. I should teach their creator a lesson.</p></br>
+<a href="javascript:void(0)" onclick='testEncounter()'>Whack a mole</a> </br>
 <% if(s.mom.location==window.passage.name) { %>
 [[Mom|Info_Mom]] is wandering around. Maybe she is planning to setup some flower beds. </br>
 <%}%>
 <% if(window.gm.player.Inv.countItem('Shovel')<=0) {%>
-<a0 id='Shovel' onclick='(function($event){window.gm.player.Inv.addItem($event.id);window.gm.refreshScreen();}(this))'>take shovel</a></br>
+<a0 id='Shovel' onclick='(function($event){window.gm.player.Inv.addItem(new window.storage.constructors[$event.id]());window.gm.refreshScreen();}(this))'>take shovel</a></br>
 <%} else {%>
 You remeber that you took the shovel from here.</br>
 <%}%>
 Where would you like to go?</br>
 [[Hallway|Home]]</br>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
+<script>
+function testEncounter() {
+  window.gm.combat.initCombat(window.gm.Mobs.Mechanic);
+  window.story.show("Encounter");
+}
+</script>
+
+:: Cellar
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<%window.gm.player.location=window.passage.name;%>
+The portal is still active. Do you dare to [[enter|Cellar_Portal]] it? </br></br>
+Where would you like to go?</br>
+[[Hallway|Home]]</br>
+</article><article id="LogPanel"></article></section>
+
+
+:: Cellar_PortalReverse
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<!--<%window.gm.player.location=window.passage.name;%>-->
+The portal spits you out in the dim light of your cellar.</br></br>
+[[Next|Cellar]]</br>
+</article><article id="LogPanel"></article></section>
+
+
+:: Cellar_Portal
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+<!--<%window.gm.player.location=window.passage.name;%>-->
+A blinding light engulfs you just for a second and then a deafening darkness.  </br></br>
+Its impossible to tell what else happens or how long the process takes.</br></br>
+As you come back to your senses you find yourself cowering on the floor, still croggy from the experience.</br>
+Time to move on.</br></br></br>
+Where would you like to go?</br>
+[[Home|Cellar_PortalReverse]] [[Mall|Mall Floor 0 (postapocalypse)]]</br>
+</article><article id="LogPanel"></article></section>
+
+
+:: HairGrow [deferred]
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
+A blinding light engulfs you just for a second and then a deafening darkness.  </br></br>
+Its impossible to tell what else happens or how long the process takes.</br></br>
+As you come back to your senses you find yourself cowering on the floor, still croggy from the experience.</br>
+Time to move on.</br></br></br>
+Where would you like to go?</br>
+[[Next|<%=window.gm.player.location%>]]</br>
+</article><article id="LogPanel"></article></section>

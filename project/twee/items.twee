@@ -1,3 +1,3 @@
 :: Laptop-PS
 A powersupply for a laptop.
-[[Back|<%=s.player.location%>]]
+[[Back|<%=window.gm.player.location%>]]

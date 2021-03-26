@@ -2,39 +2,42 @@
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 <!-- dont overwrite location -->
-<%=window.gm.printPickupAndClear('Crowbar','A crowbar is lying other there.',1)%>
-You are actually at [[<%=s.player.location%>]].
+<%=window.gm.printPickupAndClear('Crowbar','A crowbar is lying other there.',window.story.state.vars.crowBarLeft)%>
+You are actually at [[<%=window.gm.player.location%>]].
 Where would you like to go from here?</br>
 <a0 onclick=window.gm.rollExplore()>Explore your surroundings</a> </br></br>
-<%  if(s.vars.qUnlockPark>0) {      %>[[Park]]</br>
-<%}; if(s.vars.qUnlockMall>0) {     %>[[Mall]]</br>
+[[Home]] [[Pawn shop]]
+<%  if(s.vars.qUnlockPark>0) {      %>[[Park]]
+<%}; if(s.vars.qUnlockMall>0) {     %>[[Mall]]
+<%}; if(s.vars.qUnlockDowntown>0) { %>[[Downtown]]
+<%}; if(s.vars.qUnlockBeach>0) {    %>[[Beach]]
 <%};%>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 
 :: Mall
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-<%s.player.location=window.passage.name;
+<%window.gm.player.location=window.passage.name;
 if(s.vars.qUnlockMall==0) {s.vars.qUnlockMall=1;%>
 You found the <%=window.passage.name%> ! </br></br>
 <%}%>
-You are actually at [[<%=s.player.location%>]].
+You are actually at [[<%=window.gm.player.location%>]].
 Where would you like to go from here?</br>
 <a0 onclick=window.gm.rollExplore()>Explore your surroundings</a> </br></br>
-[[Home]]</br>
+[[Into the Mall|Mall Floor 0]]</br> [[Home]]</br>
 <%  if(s.vars.qUnlockPark>0) {      %>[[Park]]</br>
 <%}; if(s.vars.qUnlockBeach>0) {      %>[[Beach]]</br>
 <%};%>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 
 :: Park
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-<%s.player.location=window.passage.name;
+<%window.gm.player.location=window.passage.name;
 if(s.vars.qUnlockPark==0) {s.vars.qUnlockPark=1;%>
 You found the <%=window.passage.name%> ! </br></br>
 <%}%>
-You are actually at [[<%=s.player.location%>]].</br>
+You are actually at [[<%=window.gm.player.location%>]].</br>
 People in sportswear are jogging around the paths or doing gymnastics on the grassfield. Maybe you should also do some [[sports|Park_Jogging]] </br> 
 <%if(s.vars.qDogSit===0 && visited(window.passage.name)>=5) {%>
     On a direction sign near the entrance of the park you spot a piece of paper that someone must have placed there.</br>
@@ -47,9 +50,9 @@ Where would you like to go from here?</br>
 [[Home]]</br>
 <%  if(s.vars.qUnlockMall>0) {      %>[[Mall]]</br>
 <%};%>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 
-:: Park_Jogging [back]
+:: Park_Jogging [_back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 <%if(window.gm.player.Stats.get('energy').value<=50) {%>
@@ -68,16 +71,16 @@ After a quick warmup and stretching you take a fast pace jog around the outer pa
     This time you didnt feel that kind of exhausted euphoria. Maybe you have to work harder. Or you are as fit as you can get with this workout. </br> 
 <%}}%>
 </br>[[Back|_back]]</br>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 
 :: Beach
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-<%s.player.location=window.passage.name;
+<%window.gm.player.location=window.passage.name;
 if(s.vars.qUnlockBeach==0) {s.vars.qUnlockBeach=1;%>
 You found the <%=window.passage.name%> ! </br></br>
 <%}%>
-You are actually at [[<%=s.player.location%>]].</br></br>
+You are actually at [[<%=window.gm.player.location%>]].</br></br>
 The splashing waves are inviting but you dont have some proper swimwear with you.
 You could wander at the shoreline. Maybe you find some jetsam.</br>
 
@@ -87,17 +90,39 @@ Where would you like to go from here?</br>
 [[Home]]</br>
 <%  if(s.vars.qUnlockMall>0) {      %>[[Mall]]</br>
 <%};%>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 
 
 :: Downtown
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-<%s.player.location=window.passage.name;%>
-You are actually at [[<%=s.player.location%>]].
+<%window.gm.player.location=window.passage.name;
+if(s.vars.qUnlockDowntown==0) {s.vars.qUnlockDowntown=1;%>
+You found the <%=window.passage.name%> ! </br></br>
+<%}%>
+You are actually at [[<%=window.gm.player.location%>]].
 Where would you like to go from here?</br>
 <a0 onclick=window.gm.rollExplore()>Explore your surroundings</a> </br></br>
 [[Home]]</br>
 <%  if(s.vars.qUnlockMall>0) {      %>[[Mall]]</br>
 <%};%>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
+
+
+:: Pawn shop [_back]
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<%window.gm.player.location=window.passage.name;%>
+You are actually at [[<%=window.gm.player.location%>]].</br>
+A sign denoting "quick money - no questions" sparks your interest. It leads you to a pawn shop where you can trade in your valuables to get some money.</br>
+<div id="choice"></div></br></br>   <!--display buy message-->
+<div id="panel"></div></br></br>    <!--display wares list-->
+Where would you like to go from here?</br>
+<a0 onclick=window.gm.rollExplore()>Explore your surroundings</a> </br></br>
+[[Back|_back]]</br>
+</article><article id="LogPanel"></article></section>
+<script>
+var _Entrys = [];
+_Entrys.push({id:"Crowbar",count:1,cost:25});
+_Entrys.push({id:"Battery",count:3,cost:2});
+renderToSelector("#panel", "listsell");</script>

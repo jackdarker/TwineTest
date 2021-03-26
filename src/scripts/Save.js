@@ -2,26 +2,25 @@
 
 //operations for save/reload
 
-window.onload = function() {
-  
-  
-};
+// ??window.onload = function() {};
 
 window.storage = {  
   // A list of constructors the smart reviver should know about  
   // you need to register the class of each object that you want to serialize to this list
   // and each class also has to have a method toJSON and static method fromJSON (calling Generic_-versions, see below )
   constructors : {}, 
+  registerConstructor: function(ctor) {
+    window.storage.constructors[ctor.name] = ctor;
+  },
   // A generic "smart reviver" function.
   // Looks for object values with a `ctor` property and
   // a `data` property. If it finds them, and finds a matching
   // constructor that has a `fromJSON` property on it, it hands
   // off to that `fromJSON` fuunction, passing in the value.
   Reviver: function(key, value) {
-    console.info( 'reviver with key =' + key )
+    //console.info( 'reviver with key =' + key )
     var ctor;
-    
-    if (typeof value === "object" &&
+    if (value !==null && typeof value === "object" &&
         typeof value.ctor === "string" &&
         typeof value.data !== "undefined") {
       ctor = window.storage.constructors[value.ctor] || window[value.ctor];
@@ -32,7 +31,18 @@ window.storage = {
     }
     return value;
   },
-    
+  //this function works with Json.stringify to remove circular references
+  // unused because Reviver has even more problems with that
+  /*_replacerFunc: function(){
+    const visited = new WeakSet();
+    return (key, value) => {
+      if (value !== null && typeof value === "object") {
+        if (visited.has(value)) {  return;  }
+        visited.add(value);
+      }
+      return value;
+    };
+  },*/ 
   // A generic "toJSON" function that creates the data expected by Reviver.
   // `ctorName`  The name of the constructor to use to revive it
   // `obj`       The object being serialized
@@ -54,7 +64,7 @@ window.storage = {
     data = {};
     for (index = 0; index < keys.length; ++index) {
       key = keys[index];
-      data[key] = obj[key];
+      data[key] = obj[key];                 //TODO causes infinite loop on circular ref   Character->Inventory->Character
     }
     return {ctor: ctorName, data: data};
   },
@@ -78,7 +88,11 @@ window.storage = {
      // } else if(setter2 in obj){ // ..or...
      //   obj[setter2](data[name]); 
       } else { // if not, we set it directly
-        obj[name] = data[name];
+        if(typeof obj[name] === "object") {
+          Object.assign(obj[name], data[name]);
+        } else {
+          obj[name] = data[name];       //todo ??? obj[name] is constructed properly but will be overwritten with data[namme]; use assign ?!
+        }
       }
     }
     return obj;
@@ -121,13 +135,13 @@ window.storage = {
     return(info);
       
   },
-  compressLocalSave: false,
+  compressLocalSave: false, //this is for debugging (save file uncompressed)
   loadFile: function(input){
       let file = input.files[0]; 
       let fileReader = new FileReader(); 
       fileReader.onload = function() {
-        window.storage.rebuildFromSave(fileReader.result,compressLocalSave);
-        div = document.querySelector('#backdrop'); //todo promise
+        window.storage.rebuildFromSave(fileReader.result,window.storage.compressLocalSave);
+        div = document.querySelector('#backdrop'); //see save/load dialog
         div.parentNode.removeChild(div);
       }; 
       fileReader.onerror = function() {
@@ -139,7 +153,7 @@ window.storage = {
   saveFile: function(){
     var hash = JSON.stringify({state:window.story.state,
       history:window.story.history,checkpointName:window.story.checkpointName});
-    if(compressLocalSave) hash = LZString.compressToBase64(hash);
+    if(window.storage.compressLocalSave) hash = LZString.compressToBase64(hash);
     var filename= window.story.name+"_Save.dat";
     var blob = new Blob([hash], {type: "text/plain;charset=utf-8"});
     saveAs(blob, filename);
@@ -147,9 +161,9 @@ window.storage = {
     saveBrowser: function(slot) {
       //var hash= window.story.save();    this call somehow messes up html and I had to copy the following from snowman script
       var hash = LZString.compressToBase64(JSON.stringify({state:window.story.state,
-          history:window.story.history,checkpointName:window.story.checkpointName}));          
-      
-      var info=window.story.state.player.location +' - '+ new Date().toString();
+          history:window.story.history,checkpointName:window.story.checkpointName}));
+      var options = {year:"numeric", month:"short", day:"numeric", hour:"numeric", minute:"numeric", second:"numeric"};
+      var info=window.gm.player.location +' - '+ (new Intl.DateTimeFormat("default", options).format(new Date()));
       window.localStorage.setItem(slot.concat('info'),info);
       window.localStorage.setItem(slot,hash);
       //document.querySelector("output").textContent = info;  //causes problems because page reset to start-Index.html??
@@ -167,8 +181,89 @@ window.storage = {
   },
   rebuildFromSave: function(hash,compressed){
     if(!compressed) hash=LZString.compressToBase64(hash);
-      window.story.restore(hash) ;
-      window.gm.rebuildObjects();
-      window.gm.refreshScreen();
+      //copied from window.story.restore because reviver  //window.story.restore(hash) ;
+      var save = JSON.parse(LZString.decompressFromBase64(hash), window.storage.Reviver);
+      window.story.state = save.state;
+      window.story.history = save.history;
+      window.story.checkpointName = save.checkpointName;
+      window.gm.rebuildObjects();  // this is for handling version-upgrades
+      window.story.show(window.story.history[window.story.history.length - 1], true);      
   }
 };
+/*  //save demo
+window.gm.testsaveReviver = function () {
+  window.storage.registerConstructor(Bar);
+  window.storage.registerConstructor(Foo);
+  var before = {
+    foo: new Foo(21, 44),foo2: new Foo(100, 111),
+  };
+  before.foo.print(); // Stringify it with a replacer:
+  var str = JSON.stringify(before); // Show that
+  console.log(str); // Re-create it with use of a "reviver" function
+  var after = JSON.parse(str, window.storage.Reviver);
+  after.foo.print();after.foo2.print();
+};
+class Bar {
+  constructor(x) {
+    this.__type="Bar";
+    this._x = x;
+  }
+  get parent() {return this._parent();}
+  print() {      console.log("parent="+this.parent.a.toString()+ this._x);    };
+ toJSON() {return window.storage.Generic_toJSON("Bar", this); };
+ static fromJSON(value) { return window.storage.Generic_fromJSON(Bar, value.data);};
+}
+
+class Foo {
+  constructor(a=0, b=0) {
+    this.__type = 'Foo';
+    this.a = a, this.b = b;
+    this._bar = new Bar('fooboo'+this.a.toString());
+    this._bar2 = new Bar('ba2'+this.b.toString());
+    this._bar._parent = (function(me){ return function(){return me;}}(this));
+    this._bar2._parent = (function(me){ return function(){return me;}}(this));
+  }
+  toJSON() {return window.storage.Generic_toJSON("Foo", this); };
+  static fromJSON(value) { return window.storage.Generic_fromJSON(Foo, value.data);};
+  setA(a) {   this.a = -1 * a;  };
+  print() {console.log(this.a.toString()); this._bar.print(); this._bar2.print();  };
+}
+*/
+
+
+
+/* this should also work instead of reviver
+window.gm.testsaveAssign = function () {
+  var before = {
+    foo: new Foo(21, 44)
+  };
+  before.foo.print(); // Stringify it with a replacer:
+  var str = JSON.stringify(before); // Show that
+  console.log(str); // Re-create it with use of a "reviver" function
+  var after = window.storage.assignType(str);
+  after.foo.print();
+};*/
+/*assignType: function(object){
+    if(object && typeof(object) === 'object' && window[object.__type]) {
+        object = window.storage.assignTypeRecursion(object.__type, object);
+    }
+    return object;
+  },
+  assignTypeRecursion: function(type, object){
+    for (var key in object) {
+        if (object.hasOwnProperty(key)) {
+            var obj = object[key];
+            if(Array.isArray(obj)){
+                 for(var i = 0; i < obj.length; ++i){
+                     var arrItem = obj[i];
+                     if(arrItem && typeof(arrItem) === 'object' && window[arrItem.__type]) {
+                         obj[i] = window.storage.assignTypeRecursion(arrItem.__type, arrItem);
+                     }
+                 }
+            } else  if(obj && typeof(obj) === 'object' && window[obj.__type]) {
+                object[key] = window.storage.assignTypeRecursion(obj.__type, obj);
+            }
+        }
+    }
+    return Object.assign(new window[type](), object);
+  },*/

@@ -1,4 +1,4 @@
-:: debug [back]
+:: debug [_back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 Some things for debugging:</br>
@@ -6,11 +6,31 @@ qDogSit=0x<%=s.vars.qDogSit.toString(16)%></br>
 qLaptop=0x<%=s.vars.qLaptop.toString(16)%></br>
 [[Cheats|debug_cheat]]</br>
 [[Back|_back]]</br>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 
-:: debug_cheat [back]
+:: debug_cheat [_back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-Cheat buttons:
-[[Back|_back]]</br>
-</article><%=window.story.render("LogPanel")%></section>
+Cheat buttons:</br>
+<a href="javascript:void(0)" onclick='window.story.state.vars.debugInv.addItem(new window.storage.constructors["Money"](),200);window.gm.refreshScreen();'><%=window.story.state.vars.debugInv.countItem('Money')+"$ in stash"%></a></br>
+</br>
+<a href="javascript:void(0)" onclick='window.gm.player.Inv.addItem(new window.storage.constructors["Money"](),200);window.gm.refreshScreen();'>Get 200$</a></br>
+</br>
+<a href="javascript:void(0)" onclick='window.gm.player.Stats.increment("health",25);window.gm.refreshScreen();'>Health +25</a></br>
+<a href="javascript:void(0)" onclick='window.gm.player.Stats.increment("energy",25);window.gm.refreshScreen();'>Energy +25</a></br>
+<a href="javascript:void(0)" onclick='window.gm.player.Stats.increment("perversion",25);window.gm.refreshScreen();'>Perversion +25</a>
+<a href="javascript:void(0)" onclick='window.gm.player.Stats.increment("perversion",-25);window.gm.refreshScreen();'>Perversion -25</a></br>
+<a href="javascript:void(0)" onclick='window.gm.player.Stats.increment("arousal",25);window.gm.refreshScreen();'>Arousal +25</a>
+<a href="javascript:void(0)" onclick='window.gm.player.Stats.increment("arousal",-25);window.gm.refreshScreen();'>Arousal -25</a></br>
+<a href="javascript:void(0)" onclick='unhideStats();window.gm.refreshScreen();'>unhide player stats</a></br>
+</br>
+</br>[[Back|_back]]</br>
+</article><article id="LogPanel"></article></section>
+<script>
+function unhideStats() {
+    var ids = window.gm.player.Stats.getAllIds();
+    for(var i=0; ids.length>i;i++) {
+        window.gm.player.Stats.modifyHidden(ids[i],0);
+    }
+}
+</script>

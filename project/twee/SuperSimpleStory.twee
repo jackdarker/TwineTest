@@ -5,10 +5,10 @@ Welcome to this short story.</br></br>
 <mark>The previous part is an example how to conditional build the html output </br></mark>
 You are lying in your bed.</br>
 What would you like to do.</br>
-[[Sleep]]</br>
+[[Sleep|SleepALittle]]</br>
 [[Wakeup]] </br>
 
-:: Sleep
+:: SleepALittle
 You are sleeping some more. </br>
 <mark>The folowing is an example how to print a javascript calculation to html:</br></mark>
 It is now <%= 5*visited(window.passage.name)%> minutes later.</br>

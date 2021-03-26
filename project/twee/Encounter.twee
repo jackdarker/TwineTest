@@ -2,46 +2,47 @@
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 Get ready...
-<%window.gm.initCombat('Mole');%>
 A <%=window.story.state.enemy.name%> appears ! </br>
 [[Next|EncounterStartTurn]]
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 
 :: EncounterStartTurn
 <section> 
-<!--<aside id="sidebar"></aside>-->
+<!--hide this <aside id="sidebar"></aside>-->
 <article><%=window.story.render("CenterDialogs") %>
 <div id='combatCanvas' style='height:300px; background: url(<%=s.enemy.pic%>) no-repeat center,url(<%=s.combat.scenePic%>) no-repeat center;color:black;'></div>
 <!--filled by printCombatHud-->
-<div id="playerstats">you</div> 
-<div id="enemystats">tey</div>
+<div id="playerstats"></div> </br>  <!--TODO print side by side-->
+<div id="enemystats"></div></br>
 <% 
-    if(s.vars.combatState==='fleeing') {%>
+    if(s.vars.combatState==='fleeing') { window.gm.combat.endCombat();%>
         <%='You sucessfully escaped '+s.enemy.name%></br>
-        [[Next|<%=s.player.location%>]]</br>
-    <%} else if(window.gm.enemy.health().value<=0) {
+        [[Next|<%=window.gm.player.location%>]]</br>
+    <%} else if(s.enemy.health().value<=0) { 
+        window.gm.combat.endCombat();
         s.vars.combatState = 'victory';
     %>
     <%='You defeated '+s.enemy.name%></br>
-    [[Next|<%s.player.location%>]]</br>
+    [[Next|<%window.gm.player.location%>]]</br>
     
 <% }else if(window.gm.player.health().value<=0){ 
     s.vars.combatState = 'defeat';    
+    window.gm.combat.endCombat();
 %>
     <%='You were defeated by '+s.enemy.name%></br>
     [[GameOver]]</br>
 <% }else{ %>
-   <% if(s.combat.activeTurn) {%>
-    <%=window.gm.calcEnemyCombat()%>
+   <% if(s.combat.enemyTurn) { window.gm.combat.startRound(); %><!--todo startRound after all partys done-->
+    <%=window.gm.combat.calcEnemyCombat()%>
     [[Next|EncounterStartTurn]]</br>
     <% }else{ %>
-    <%=window.gm.printCombatOption()%>
+    <%=window.gm.combat.printCombatOption()%>
 <%}}%>
 
-<div><output></output></div></br>   <!--message is rendered here-->
-</article><%=window.story.render("LogPanel")%>
+</br><div><output></output></div></br>   <!--message is rendered here-->
+</article><article id="LogPanel"></article>
 <script>
-window.gm.printCombatHud();
+window.gm.combat.printCombatHud();
 </script>
 </section>
 

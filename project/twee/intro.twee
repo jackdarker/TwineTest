@@ -24,7 +24,7 @@ function resetStart(){
 }
 </script>
 <article>
-<%window.gm.initGame();s.player.location=window.passage.name;%>
+<%window.gm.initGame();window.gm.player.location=window.passage.name;%>
 Welcome to your new home. </br>
 Together with your mom you have moved to #todo into an old but spacious house. </br>
 There were several reasons you came here:

@@ -21,7 +21,7 @@ var qLaptopLib = [ [0,'Laptop PS missing'],
 </label></li>
 
 
-:: _Laptop_ [back]
+:: _Laptop_ [_back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 You seat yourself in front of your laptop. </br>

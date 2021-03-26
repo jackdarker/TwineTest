@@ -67,8 +67,27 @@ statup {
 statdown {
   color:red;
 }
+.talkplayer {
+  color: steelblue;
+}
+.talkfoo1 {
+  color: Brown;
+}
+@keyframes alarm {
+        0% {
+          background-color: initial;
+        }
+        50% {
+          background-color: coral;
+        }
+        100% {
+          background-color: initial;
+        }
+}
 .div_hidden { visibility: hidden; }
 .div { visibility: visible; }
+.div_alarm {animation: alarm 1s;}
+
 .red {
   color: red;
 }
@@ -108,7 +127,7 @@ div.scroll {
 	  grid-column: 2;
 	  grid-column-end: -1;
   }
-  article.logpanel {
+  #LogPanel {
     background: #e4e4e4;
   }
 

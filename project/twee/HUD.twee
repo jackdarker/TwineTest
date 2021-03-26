@@ -2,11 +2,11 @@
 <h3><%=window.story.name%></h3>V<%=window.gm.getSaveVersion().toString().replaceAll(",",".")%></br>
 <img src="https://twinery.org/homepage/img/logo.svg" width="256" height="256">
 </hr>
-<div style="font-size: smaller;"><%=s.player.location%></br>
+<div style="font-size: smaller;"><%=window.gm.player.location%></br>
 <%=window.gm.getTimeString()%> <%=window.gm.getDateString()%></br>
 Energy: <%=window.gm.player.energy().value%>/<%=window.gm.player.energy().max%></br>
 Health: <%=window.gm.player.health().value%>/<%=window.gm.player.health().max%></br>
-Money: <%=s.player.money %></br>
+Money: <%=window.gm.player.Inv.countItem('Money') %></br>
 </div>
 </hr>
 <form>
@@ -14,7 +14,7 @@ Money: <%=s.player.money %></br>
 <button type="button" id="status">Status</button>
 <button type="button" id="inv">Inventory</button>
 <button type="button" id="dashboard">More</button>
-<button type="button" id="wait" style="width: 100%">Rest 45min</button>
+<!--<button type="button" id="wait" style="width: 100%">Rest 45min</button>-->
 </hr>
 <button type="button" id="save" style="width: 100%">Save/load</button>
 <button type="button" id="help" style="width: 100%">Help</button>
@@ -26,7 +26,7 @@ Money: <%=s.player.money %></br>
 <%}%>
 </form>
 <script>
-document.querySelector('#wait').addEventListener('click', function(){window.gm.addTime(45);window.gm.refreshScreen();}); 
+//document.querySelector('#wait').addEventListener('click', function(){window.gm.addTime(45);window.gm.refreshScreen();}); 
 document.querySelector('#inv').addEventListener('click', function(){window.story.show('Inventory');});
 document.querySelector('#dashboard').addEventListener('click', function(){window.story.show('Player_Dashboard');});
 document.querySelector('#status').addEventListener('click', function(){window.story.show('Status');});
@@ -42,19 +42,27 @@ document.querySelector('#settings').addEventListener('click', function(){window.
 
 :: playerstats
 <!--called to render stats in combat-->
-Your health:<%=window.gm.player.health().value%></br>
+<table><tbody>
+<tr><td></td><td><%=window.gm.player.name%></td>
+<tr><td>Health:</td><td><%=window.gm.player.health().value%>/<%=window.gm.player.health().max%></td></tr>
+<tr><td>Arousal:</td><td><%=window.gm.player.Stats.get("arousal").value%>/<%=window.gm.player.Stats.get("arousalMax").value%></td></tr>
+<tr><td>State:</td><td><%=window.gm.combat.printCombatEffects(window.gm.player)%></td></tr>
+</tbody></table>
 
 :: enemystats
 <!--called to render stats in combat-->
-Enemys health:<%=window.gm.enemy.health().value%></br>
+<table><tbody>
+<tr><td></td><td><%=s.enemy.name%></td>
+<tr><td>Health:</td><td><%=s.enemy.health().value%>/<%=s.enemy.health().max%></td></tr>
+<tr><td>Arousal:</td><td><%=s.enemy.Stats.get("arousal").value%>/<%=s.enemy.Stats.get("arousalMax").value%></td></tr>
+<tr><td>State:</td><td><%=window.gm.combat.printCombatEffects(s.enemy)%></td></tr>
+</tbody></table>
 
 
 :: LogPanel
-<article class='logpanel'>
 <div class="scroll" style="font-size: smaller;"><%=window.gm.getLog()%></br></br></div>
 <button type="button" id="toggleview" onclick=toggleview()>toggle View</button>
 <button type="button" id="clearview" onclick=clearview()>clear View</button>
-</article>
 <script>
 function toggleview(){
   document.querySelector("section").classList.toggle("section_swap");
@@ -129,17 +137,15 @@ var maxSlots = 8; //number saveslots available; has to fit form below
     if(!OK){ 
       return;
     } //aborted by user
-    //div = document.querySelector('#backdrop');
-    //div.parentNode.removeChild(div);
-    }
+  }
 </script>
 
 
-:: Inventory [back]
+:: Inventory [_back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 [[Back|_back]]</br>
-<%=s.player.name%> inventory: </br></br>
+<%=window.gm.player.name%> inventory: </br></br>
 <%
 var x = 0, id=''; 
 var inv = window.gm.player.Inv;
@@ -149,34 +155,36 @@ for(var i=0;i<maxSlots;i++){
   %><%=window.gm.printItem(id,inv.countItem(id).toString()+'x '+inv.getItem(id).desc+' '+inv.getItem(id).usable(inv).msg)%><%
 } 
 %>
-</article><%=window.story.render("LogPanel")%></section>
+<div><output></output></div></br>
+</article><article id="LogPanel"></article></section>
 
 
-:: Relations [back]
+:: Relations [_back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 [[Back|_back]]</br>
-<%=s.player.name%> relations: </br></br>
+<%=window.gm.player.name%> relations: </br></br>
 <%=window.gm.printRelationSummary()%>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 
 
-:: Player_Dashboard [back]
+:: Player_Dashboard [_back]
 <!--a dashboard where the player can check his other stuff-->
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 Here you can check and modify several options: </br>
 Your outfit can only be changed by using a wardrobe.</br>
-[[Close|_back]] [[Status]] [[Relations]] [[Inventory]] [[TodoList]]</br>
-</article><%=window.story.render("LogPanel")%></section>
+[[Back|_back]] [[Status]] [[Relations]] [[Inventory]] [[TodoList]]</br>
+</article><article id="LogPanel"></article></section>
 
 
-:: Wardrobe [back]
+:: Wardrobe [_back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 [[Back|_back]]</br>
-<%=s.player.name%> has equipped: <%=window.gm.printEquipmentSummary()%></br>
-In <%=s.player.name%> wardrobe you find: </br></br>
+<%=window.gm.player.name%> has equipped: <%=window.gm.printEquipmentSummary()%></br></br>
+(Tools and weapons can be changed via Inventory.)</br></br>
+In <%=window.gm.player.name%> wardrobe you find: </br></br>
 <!--assumption: every outfit item (worn or not) is present in the wardrobe-->
 <%
 var x = 0, id=''; 
@@ -187,21 +195,22 @@ for(var i=0;i<maxSlots;i++){
   %><%=window.gm.printEquipment(id,inv.getItem(id).desc)%><%
 } 
 %>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 
-:: Settings [back]
+:: Settings [_back]
+<!--TODO what settings ?-->
 <section> 
 <!--<aside id="sidebar"></aside>--><article><%=window.story.render("CenterDialogs") %>
 <div id='combatCanvas' style='height:300px; background: url(<%=s.enemy.pic%>) no-repeat center,url(<%=s.combat.scenePic%>) no-repeat center;color:black;'></div>
 <button onclick='window.gm.printCombatScreen()'>test a</button>
 <button onclick='onimage("assets/favicon.png")'>test b</button>
 [[Back|_back]]</br>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 
-:: Settings2 [back]
+:: Settings2 [_back]
+<!--just test-->
 <section> 
 <!--<aside id="sidebar"></aside>--><article><%=window.story.render("CenterDialogs") %>
-
 <div><canvas id="exampleCanvas" width="240" height="225">Your browser doesn't support the canvas tag.    </canvas></div>
 <button onclick='window.gm.printCombatScreen()'>test a</button>
 <button onclick='onimage("assets/favicon.png")'>test b</button>
@@ -217,28 +226,68 @@ img.src = imgsrc;//'https://twinery.org/homepage/img/logo.svg';   //todo the loa
       onimage("assets/bird.gif");
     </script>
 [[Back|_back]]</br>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 
 
-:: Status [back]
+:: Status [_back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
-Status of <%=s.player.name%>:</br> 
+Status of <%=window.gm.player.name%>:</br> 
 <%=window.gm.printEffectSummary()%>
 [[Back|_back]]</br>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 
+
+:: listsell
+<!--this fragment can be used to setup a list of items to sell:
+add into passage: <div id="choice"></div></br></br> <div id="panel"></div></br></br>   
+in <script> define variable _Entrys and specify wares to sell
+and run renderToSelector("#panel", "listsell"); 
+-->
+<script>
+//define _Entrys in your passage lile this:
+//var _Entrys = [{id:"Crowbar",count:1,cost:25})];
+for(var i=0;_Entrys.length>i;i++) {
+    var entry=_Entrys[i];
+    let _id = entry.id;
+    let _cost=entry.cost;
+    window.gm.printShopSellEntry(_id,entry.count,
+    cbCanBuy=(function(itemid){return window.gm.defaultCanSell(itemid,_cost)}),
+    cbPostBuy=(function(itemid){window.gm.defaultPostSell(itemid,_cost)}));
+}
+</script>
+
+
+:: listbuy
+<!--this fragment can be used to setup a list of items to buy:
+add into passage: <div id="choice"></div></br></br> <div id="panel"></div></br></br>   
+in <script> define variable _Entrys and specify wares to buy
+and run renderToSelector("#panel", "listbuy"); 
+-->
+<script>
+//define _Entrys in your passage lile this:
+//var _Entrys = [{id:"Dildo_small",count:1,cost:25,costPerv:14}];
+for(var i=0;_Entrys.length>i;i++) {
+    var entry=_Entrys[i];
+    let _id = entry.id;
+    let _cost=entry.cost;
+    let _costPerv = entry.costPerv;
+    window.gm.printShopBuyEntry(_id,entry.count,
+    cbCanBuy=(function(itemid){return window.gm.cbCanBuyPerverse(itemid,_cost,_costPerv)}),
+    cbPostBuy=(function(itemid){window.gm.defaultPostBuy(itemid,_cost)}));
+}
+</script>
 
 :: PassageTemplate [template] {"position":"253,496.5","size":"100,100"}
 The page should be setup like this:
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 content here !
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
 
-:: SubpanelTemplate [back]
+:: SubpanelTemplate [_back]
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 If this is a subpanel you can use back-tag and _back-Link
 [[Back|_back]]</br>
-</article><%=window.story.render("LogPanel")%></section>
+</article><article id="LogPanel"></article></section>
