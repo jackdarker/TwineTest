@@ -6,6 +6,8 @@ export class Character {
         return({
         name: '',
         location : "Home",
+        XP: 0,  
+        level: 1,  
         inv: [],  //inventory data, needs to be mapped to Inventory-Instance
         wardrobe: [],  //separate wardobe data, needs to be mapped to outfit-Instance
         outfit: [],  // needs to be mapped to outfit-Instance
@@ -30,7 +32,8 @@ export class Character {
         this.Rel._parent = window.gm.util.refToParent(this);
         //create basic stats
         stHealth.setup(this.Stats,50,60),stEnergy.setup(this.Stats,30,100),stPAttack.setup(this.Stats,4,100),stPDefense.setup(this.Stats,4,100),
-        stAgility.setup(this.Stats,3,100),stStrength.setup(this.Stats,3,100),stEndurance.setup(this.Stats,3,100);
+        stAgility.setup(this.Stats,10,100),stIntelligence.setup(this.Stats,10,100),stLuck.setup(this.Stats,10,100);
+        stCharisma.setup(this.Stats,10,100),stPerception.setup(this.Stats,10,100),stStrength.setup(this.Stats,10,100),stEndurance.setup(this.Stats,10,100);
         stPerversion.setup(this.Stats,1,15),stArousal.setup(this.Stats,1,100);
 
         this.Effects.addItem(effNotTired.name, new effNotTired()); //depending on sleep Tired will be set to NotTired or Tired
@@ -47,6 +50,12 @@ export class Character {
         _x.Rel._relinkItems();
         return(_x);
     };
+    static calcXPToLevel(XP) {
+        return(Math.abs(Math.SQRT2(XP/100+0.25)-0.5));
+    }
+    static calcLevelToXP(lvl) {
+        return(100*lvl*(lvl+1)/2); //Gauss-Sum
+    }
     get name() {
         return(this._data.name);    
     }
@@ -55,6 +64,26 @@ export class Character {
         return(this._data.location);    
     }
     set location(name) {this._data.location=name;}
+    get level() {
+        return(this._data.level);
+    }
+    get levelPoints() {
+        //for each attribute('strength','perception','endurance','charisma','intelligence','agility','luck','willpower')
+        //we start with 10pts at lvl1 and for each lvl receive 2pts
+        return(this._data.level-1*2+7*10);
+    }
+    get canLevelUp() {
+        return(Character.calcXPToLevel(this._data.XP)!==this._data.level);
+    }
+    addXP(XP) {
+        this._data.XP+=XP;
+    }
+    //upgrade level by 1;this will increase level even if not enough XP !
+    levelUp() {
+        var reqXP=Character.calcLevelToXP(this._data.level+1);
+        this._data.XP=reqXP;
+        this._data.level+=1;
+    }
     health() {
         return({value:this.Stats.get('health').value, max:this.Stats.get('healthMax').value, min:0});
     }

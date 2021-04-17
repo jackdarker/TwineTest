@@ -2,7 +2,7 @@
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 <!-- dont overwrite location -->
-<%=window.gm.printPickupAndClear('Crowbar','A crowbar is lying other there.',window.story.state.vars.crowBarLeft)%>
+<%=window.gm.printPickupAndClear('Crowbar','A crowbar is lying other there.',window.story.state.vars.crowBarLeft,(function(){window.story.state.vars.crowBarLeft-=1;}))%>
 You are actually at [[<%=window.gm.player.location%>]].
 Where would you like to go from here?</br>
 <a0 onclick=window.gm.rollExplore()>Explore your surroundings</a> </br></br>
@@ -12,7 +12,9 @@ Where would you like to go from here?</br>
 <%}; if(s.vars.qUnlockDowntown>0) { %>[[Downtown]]
 <%}; if(s.vars.qUnlockBeach>0) {    %>[[Beach]]
 <%};%>
-</article><article id="LogPanel"></article></section>
+</article><article id="LogPanel"></article><div class="popup" onclick='(function(){var popup = document.getElementById("myPopup2"); popup.classList.toggle("show");}())'>Click me to toggle the popup!
+  <span class="popuptext" id="myPopup2">A Simple window.gm.printPickupAndClear('Crowbar','A crowbar is lying other there.',window.story.state.vars.crowBarLeft Popup!</span>
+</div></section>
 
 :: Mall
 <section> 

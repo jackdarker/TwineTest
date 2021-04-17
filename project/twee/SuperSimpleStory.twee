@@ -55,6 +55,23 @@ video with integrated and separate controls:</br>
 [[Start]]
 
 
+:: _ControlElements_
+<div id="choice">
+<p>click on image to show related text and border</p>
+<table><tbody>
+<tr>
+<td><img id="1" src="https://twinery.org/homepage/img/logo.svg" width="256" height="256" onclick='window.gm.onSelect(this,"div#choice table tbody tr td *","div#info");'></td>
+<td><img id="2" src="https://twinery.org/homepage/img/logo.svg" width="256" height="256" onclick='window.gm.onSelect(this,"div#choice table tbody tr td *","div#info");'></td>
+</tr>
+<tr>
+<td><img id="3" src="https://twinery.org/homepage/img/logo.svg" width="256" height="256" onclick='window.gm.onSelect(this,"div#choice table tbody tr td *","div#info");'></td>
+</tr>
+</tbody></table>
+</div>
+<div id="info">
+<p id="1" hidden>Text 1</p><p id="2" hidden>[[Start]]</p><p id="3" hidden>Text 3</p>
+</div>
+
 :: _VariablesAndScript_
 <script>
 function getBanana(elmnt,val) {

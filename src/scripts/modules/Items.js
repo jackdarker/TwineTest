@@ -1,21 +1,4 @@
 "use strict";
-//import {Item} from './Inventory.js';
-/* class definiton of items & Equipment */
-class Item {
-    constructor(name) {
-        this.name = name;
-        this.desc = '';
-    }
-    get parent() {return this._parent();}
-    usable(context) {return({OK:false, msg:'Cannot use.'});}
-    use(context) {return({OK:false, msg:'Cannot use.'});}
-}
-function defaultCanUse(context) {return({OK:true, msg:'usable'})}
-function defaultNoUse(context) {return({OK:false, msg:''})}
-function defaultOnUse(context) {return({OK:true, msg:'You used the item.'})}
-function defaultCanUnequip(context) {return({OK:true, msg:''});}
-function defaultNoUnequip(context) {return({OK:false, msg:'You need to find a key first to be able to remove it!'});}
-
 class LighterDad extends Item {
     constructor() {
         super('LighterDad');
@@ -85,23 +68,52 @@ class CanOfCoffee extends Item {
 };
 class SimpleFood extends Item {
     constructor() {
-        super('Simple food');
+        super('SimpleFood');
         this.desc = 'Something to eat.';
     }
     toJSON() {return window.storage.Generic_toJSON("SimpleFood", this); };
     static fromJSON(value) { return window.storage.Generic_fromJSON(SimpleFood, value.data);};
-    usable(context) {return({OK:true, msg:'eat'});}
-    use(context) { 
+    usable(context,on=null) {return({OK:true, msg:'eat'});}
+    use(context,on=null) { 
+        var _gaveAway=false;
         if(context instanceof Inventory) {
+            if(on===null) on=context.parent;
+            else _gaveAway=true;
             context.removeItem('Simple food');
-            if(context.parent instanceof Character){
-                context.parent.addEffect('Simple food:Energized',new effEnergized());
-            return({OK:true, msg:context.parent.name+' ate some plan foods.'});
+            if(on instanceof Character){
+                on.addEffect('Simple food:Energized',new effEnergized());
+            return({OK:true, msg:on.name+' ate some plain foods.'});
             }
         } else throw new Error('context is invalid');
         
     }
 }
 
+window.gm.ItemsLib = (function (ItemsLib) {
+    // Private Objekte
+    /*var privateVariable = "privat";
+    function privateFunktion () {
+        alert("privateFunktion wurde aufgerufen\n" +
+            "Private Variable: " + privateVariable);
+    }*/
+    window.storage.registerConstructor(LighterDad);
+    window.storage.registerConstructor(Money);
+    window.storage.registerConstructor(LaptopPS);
+    window.storage.registerConstructor(Battery);
+    window.storage.registerConstructor(Dildo_small);
+    window.storage.registerConstructor(Lube);
+    window.storage.registerConstructor(CanOfCoffee);
+    window.storage.registerConstructor(SimpleFood);
+    
+    ItemsLib['Money'] = function () { return new Money();};
+    ItemsLib['LighterDad'] = function () { return new LighterDad();};
+    ItemsLib['LaptopPS'] = function () { return new LaptopPS();};
+    ItemsLib['Battery'] = function () { return new Battery();};
+    ItemsLib['Dildo_small'] = function () { return new Dildo_small();};
+    // consumables
+    ItemsLib['Lube'] = function () { return new Lube();};
+    ItemsLib['CanOfCoffee'] = function () { return new CanOfCoffee(); };
+    ItemsLib['SimpleFood'] = function () { return new SimpleFood(); };
 
-
+    return ItemsLib; 
+}(window.gm.ItemsLib || {}));

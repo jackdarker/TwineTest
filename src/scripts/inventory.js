@@ -1,4 +1,14 @@
 "use strict";
+class Item {
+    constructor(name) {
+        this.name = name;
+        this.desc = '';
+    }
+    get parent() {return this._parent();}
+    //context is the owner of item (parent of inventory), on is target (character)
+    usable(context,on=null) {return({OK:false, msg:'Cannot use.'});}
+    use(context,on=null) {return({OK:false, msg:'Cannot use.'});}
+}
 //an Inventory-Component to store items
 class Inventory {
     constructor(externlist) {  
@@ -61,19 +71,19 @@ class Inventory {
         if(_i<0) return; //just skip if not found
         this.list[_i].count -=count;
         if(this.list[_i].count<1) this.list.splice(_i,1);
-        this.postItemChange(this,id,"removed","");
+        this.postItemChange(id,"removed","");
     }
     //convience method to check if item is usable
-    usable(id) {
+    usable(id,on=null) {
         var _item = this.getItem(id);
-        return (_item.usable(this));
+        return (_item.usable(this,on));
     }
     //uses an item by calling item.use
-    use(id) {
+    use(id,on=null) {
         var _item = this.getItem(id);
-        var result = _item.use(this);
+        var result = _item.use(this,on);
         if(result.OK) {
-            this.postItemChange(this,id,"used",result.msg);
+            this.postItemChange(id,"used",result.msg);
         }
         return(result);
     }

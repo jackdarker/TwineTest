@@ -16,12 +16,12 @@ Money: <%=window.gm.player.Inv.countItem('Money') %></br>
 <button type="button" id="dashboard">More</button>
 <!--<button type="button" id="wait" style="width: 100%">Rest 45min</button>-->
 </hr>
-<button type="button" id="save" style="width: 100%">Save/load</button>
-<button type="button" id="help" style="width: 100%">Help</button>
-<button type="button" id="settings" style="width: 100%">Settings</button>
-
-<%if(s.vars.debug){%>
-<button type="button" id="debug" style="width: 100%">Debug</button>
+<button type="button" id="save" style="width: 80%">Save/load</button>
+<button type="button" id="help" style="width: 80%">Help</button>
+<button type="button" id="settings" style="width: 80%">Settings</button>
+<button type="button" id="achievements" onclick='window.story.show("Achievements");' style="width: 80%">Achievements</button>
+<%if(s.vars.debug & 0x1>0){%>
+<button type="button" id="debug" style="width: 80%">Debug</button>
 <script>document.querySelector('#debug').addEventListener('click', function(){window.story.show('debug');});</script>
 <%}%>
 </form>
@@ -46,7 +46,7 @@ document.querySelector('#settings').addEventListener('click', function(){window.
 <tr><td></td><td><%=window.gm.player.name%></td>
 <tr><td>Health:</td><td><%=window.gm.player.health().value%>/<%=window.gm.player.health().max%></td></tr>
 <tr><td>Arousal:</td><td><%=window.gm.player.Stats.get("arousal").value%>/<%=window.gm.player.Stats.get("arousalMax").value%></td></tr>
-<tr><td>State:</td><td><%=window.gm.combat.printCombatEffects(window.gm.player)%></td></tr>
+<tr><td>State:</td><td><%=window.gm.Encounter.printCombatEffects(window.gm.player)%></td></tr>
 </tbody></table>
 
 :: enemystats
@@ -55,7 +55,7 @@ document.querySelector('#settings').addEventListener('click', function(){window.
 <tr><td></td><td><%=s.enemy.name%></td>
 <tr><td>Health:</td><td><%=s.enemy.health().value%>/<%=s.enemy.health().max%></td></tr>
 <tr><td>Arousal:</td><td><%=s.enemy.Stats.get("arousal").value%>/<%=s.enemy.Stats.get("arousalMax").value%></td></tr>
-<tr><td>State:</td><td><%=window.gm.combat.printCombatEffects(s.enemy)%></td></tr>
+<tr><td>State:</td><td><%=window.gm.Encounter.printCombatEffects(s.enemy)%></td></tr>
 </tbody></table>
 
 
@@ -77,6 +77,8 @@ function clearview(){
     <button id="close-dialog">Back</button>
     <form>
     <label><output></output></label></br>
+    <button type="button" id="saveAuto" hidden> </button><button type="button" id="loadAuto">load Auto</button>
+    <button type="button" id="deleteAuto">delete Auto</button><label><outputAuto></outputAuto></label></br>
     <button type="button" id="save1">save 1</button><button type="button" id="load1">load 1</button>
     <button type="button" id="delete1">delete 1</button><label><output1></output1></label></br>
     <button type="button" id="save2">save 2</button><button type="button" id="load2">load 2</button>
@@ -100,35 +102,35 @@ function clearview(){
 <script>
 var infodisp = 'dialog form label output'; //Url to output according nesting node classes; see structure of dialog below
 var x = 1; 
-var maxSlots = 8; //number saveslots available; has to fit form below
- do {
-   const _x = x;
-   const slot = 'save'.concat(x);
-  document.querySelector('#save'.concat(x)).addEventListener('click', function(){
+var _slots = ['Auto','1','2','3','4','5','6','7','8']; //number saveslots available; has to fit save form
+for(var i=0; i< _slots.length;i++) {
+  const _x = _slots[i];
+  const slot = 'save'.concat(_x);
+  document.querySelector('#save'.concat(_x)).addEventListener('click', function(){
     document.querySelector(infodisp).textContent='';
     window.storage.saveBrowser(slot);
     refresh(_x);
     document.querySelector(infodisp).textContent=slot;
     });
-  document.querySelector('#load'.concat(x)).addEventListener('click', function(){
+  document.querySelector('#load'.concat(_x)).addEventListener('click', function(){
     window.storage.loadBrowser(slot);
     div = document.querySelector('#backdrop');
     div.parentNode.removeChild(div);
     });
-  document.querySelector('#delete'.concat(x)).addEventListener('click', function(){
+  document.querySelector('#delete'.concat(_x)).addEventListener('click', function(){
       window.storage.delete(slot);
       refresh(_x);
       });
   document.querySelector(infodisp).textContent='';
-   refresh(x);
-   x = x + 1;
- } while (x <= maxSlots);
+   refresh(_x);
+}
  document.querySelector('#saveFile').addEventListener('click', function(){
     document.querySelector(infodisp).textContent='';
     window.storage.saveFile();
  });
  function refresh(slot){
-  var ok = window.storage.getSaveInfo('save'.concat(slot));
+    var ok = window.storage.getSaveInfo('save'.concat(slot));
+    document.querySelector('#load'.concat(slot)).disabled=(ok==='');
     var out = document.querySelector('dialog form output'.concat(slot));
     if(out) out.textContent = ok;
 }
@@ -167,6 +169,12 @@ for(var i=0;i<maxSlots;i++){
 <%=window.gm.printRelationSummary()%>
 </article><article id="LogPanel"></article></section>
 
+:: Achievements [_back]
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+[[Back|_back]]</br>
+<%=window.gm.printAchievements()%>
+</article><article id="LogPanel"></article></section>
 
 :: Player_Dashboard [_back]
 <!--a dashboard where the player can check his other stuff-->

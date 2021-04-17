@@ -3,7 +3,15 @@
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 Jake is here.</br>
 You barely know anything about him.</br>
+[[Back|_back]]</br></br>
+</article></section>
 
+:: Talk_Cyril [_back]
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+Cyril is here.</br>
+<a0 onclick='window.gm.giveCyrilFood()'>Give him some food</a></br>
+</br><div><output></output></div></br>   <!--message is rendered here-->
 [[Back|_back]]</br></br>
 </article></section>
 
@@ -20,4 +28,42 @@ You can see a disapproving look on her face.
 </br>
 
 [[Back|_back]]</br></br>
+</article></section>
+
+:: MutateTailCat
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+<div><output></output></div></br>   <!--message is rendered here-->
+<% if(window.gm.hasDeferredEvent()){ %>
+<%= window.gm.showDeferredEvent() %>
+<%} else {%>
+[[Next|<%=window.gm.player.location%>]]</br>
+<%}%>
+</article></section>
+<script>
+function mutate() {
+    if(window.gm.player.Outfit.countItem("TailCat")>0) {
+        var growth = window.gm.player.Outfit.getItem("TailCat").growth+=0.25;
+        var maxGrowth = 2;//window.gm.player.Outfit.getItem("TailCat").maxGrowth;
+        if(growth >= 100) {
+            window.gm.printOutput("You already changed to a cat as far as possible.</br>");
+        } else {
+            window.gm.player.Outfit.getItem("TailCat").growth=growth;
+            window.gm.printOutput("Your tail must have grown and is now "+growth*maxGrowth+" meter long.</br>");
+        }
+    } else {
+        window.gm.player.Outfit.addItem(window.gm.ItemsLib.TailCat());
+        window.gm.printOutput("You have grown a cat tail !</br>");
+    }
+}
+mutate();
+</script>
+
+:: CatHabit
+<section> 
+<aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
+You feel the urge to sit down and give yourself a good licking...</br>
+<% if(window.gm.hasDeferredEvent()){ %><%= window.gm.showDeferredEvent() %><%} else {%>
+[[Next|<%=window.gm.player.location%>]]</br>
+<%}%>
 </article></section>

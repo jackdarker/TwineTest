@@ -1,4 +1,5 @@
 :: Encounter
+<!--this passage is entry-point for combat-statemachine (use together with combat.initCombat) -->
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 Get ready...
@@ -8,45 +9,31 @@ A <%=window.story.state.enemy.name%> appears ! </br>
 
 :: EncounterStartTurn
 <section> 
-<!--hide this <aside id="sidebar"></aside>-->
+<!--hide this because could interfere with combat <aside id="sidebar"></aside>-->
 <article><%=window.story.render("CenterDialogs") %>
-<div id='combatCanvas' style='height:300px; background: url(<%=s.enemy.pic%>) no-repeat center,url(<%=s.combat.scenePic%>) no-repeat center;color:black;'></div>
+<div id='combatCanvas' style='background: url(<%=s.enemy.pic%>) no-repeat center,url(<%=s.combat.scenePic%>) no-repeat center;color:black;'></div>
 <!--filled by printCombatHud-->
 <div id="playerstats"></div> </br>  <!--TODO print side by side-->
 <div id="enemystats"></div></br>
-<% 
-    if(s.vars.combatState==='fleeing') { window.gm.combat.endCombat();%>
-        <%='You sucessfully escaped '+s.enemy.name%></br>
-        [[Next|<%=window.gm.player.location%>]]</br>
-    <%} else if(s.enemy.health().value<=0) { 
-        window.gm.combat.endCombat();
-        s.vars.combatState = 'victory';
-    %>
-    <%='You defeated '+s.enemy.name%></br>
-    [[Next|<%window.gm.player.location%>]]</br>
-    
-<% }else if(window.gm.player.health().value<=0){ 
-    s.vars.combatState = 'defeat';    
-    window.gm.combat.endCombat();
-%>
-    <%='You were defeated by '+s.enemy.name%></br>
-    [[GameOver]]</br>
-<% }else{ %>
-   <% if(s.combat.enemyTurn) { window.gm.combat.startRound(); %><!--todo startRound after all partys done-->
-    <%=window.gm.combat.calcEnemyCombat()%>
-    [[Next|EncounterStartTurn]]</br>
-    <% }else{ %>
-    <%=window.gm.combat.printCombatOption()%>
-<%}}%>
-
+<%=window.gm.Encounter.battle().msg%>
 </br><div><output></output></div></br>   <!--message is rendered here-->
 </article><article id="LogPanel"></article>
 <script>
-window.gm.combat.printCombatHud();
+window.gm.Encounter.printCombatHud();
 </script>
 </section>
 
 :: GameOver
 Game Over. I hope you learned something.</br>
-</br>
-[[New Game|Start]]
+</br>[[New Game|Start]]
+
+
+:: Mole Submit
+<section> 
+<!--hide this, we are not in a state ready to save <aside id="sidebar"></aside>-->
+<article><%=window.story.render("CenterDialogs") %>
+The mole took you down into his cave. </br>
+Which was very difficult since you are far to large - you know?</br>
+[[Return Home|Home]]
+</article><article id="LogPanel"></article>
+</section>

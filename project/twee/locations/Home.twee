@@ -3,6 +3,7 @@
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs")%>
 <%window.gm.player.location=window.passage.name;%>
 At the doorsteps of your home. </br>
+[[NewGamePlus]]
 <div>Where would you like to go?</br>
 [[Living_Room]]   [[Your Bedroom]]  [[Moms Bedroom]] [[Kitchen]]  [[Garden]] [[Cellar]] </br>
 [[Into the city]]</br></div>
@@ -36,6 +37,9 @@ Where would you like to go?</br>
 <%window.gm.player.location=window.passage.name;%>
 This is the bedroom of your mom.
 A double bed is there with [[nightstands|moms_treasure]] on each side. <br>
+<%if(window.gm.player.name!=='Cyril') {%>
+<a0 onclick='window.story.show("Talk_Cyril")'>Cyril is here</a></br>
+<%}%>
 <a0 onclick='switchChar(this)'>Switch Char</a></br>
 <a0 onclick='window.gm.pushDeferredEvent("HairGrow")'>Hair Tonic</a></br>
 [[Hallway|Home]]</br>
@@ -78,6 +82,7 @@ Your [[Laptop|_Laptop_]] is placed on it and also a handwritten [[TodoList]]. </
 Above the desk is a window facing toward the backside of the house.</br>
 On the other side of the room is a large [[Wardrobe]].
 There is a large bed for sleeping with a nightstand aside. </br>
+<a0 onclick="touchCatIdol(this)">touch cat idol</a></br>
 <a href="javascript:void(0)" onclick='($("tw-passage").fadeOut(1000, function() {window.gm.sleep((window.gm.getTimeStruct().hour+1)*100);window.story.show("Sleep");}));'>Nap 1hour</a> </br>
 <%if(window.gm.getTimeStruct().hour<11) { %>
 >
@@ -92,7 +97,12 @@ There is a large bed for sleeping with a nightstand aside. </br>
 Where do you want to go ? </br>
 [[Hallway|Home]]</br> <%}%>
 </article><article id="LogPanel"></article></section>
-
+<script>
+function touchCatIdol(elmnt) {
+	elmnt.replaceWith("There is a tickling feeling in your hand.");
+	window.gm.player.addEffect("effMutateCat",window.gm.StatsLib.effMutateCat());
+}
+</script>
 :: Sleep
 <section> 
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
@@ -150,7 +160,8 @@ There is nothing here
 <%window.gm.player.location=window.passage.name;%>
 The garden behind the house is not very large. </br>
 <p class="talkplayer">There are a lot of molehills on the green. I should teach their creator a lesson.</p></br>
-<a href="javascript:void(0)" onclick='testEncounter()'>Whack a mole</a> </br>
+<a href="javascript:void(0)" onclick='window.gm.encounters.mole(window.gm.player.location);'>Whack a mole</a> </br>
+You accidently stepped on a mole and killed it. Achievement unlocked ! <%window.gm.achievements.moleKillerGoldMedal=true;%>
 <% if(s.mom.location==window.passage.name) { %>
 [[Mom|Info_Mom]] is wandering around. Maybe she is planning to setup some flower beds. </br>
 <%}%>
@@ -162,12 +173,6 @@ You remeber that you took the shovel from here.</br>
 Where would you like to go?</br>
 [[Hallway|Home]]</br>
 </article><article id="LogPanel"></article></section>
-<script>
-function testEncounter() {
-  window.gm.combat.initCombat(window.gm.Mobs.Mechanic);
-  window.story.show("Encounter");
-}
-</script>
 
 :: Cellar
 <section> 

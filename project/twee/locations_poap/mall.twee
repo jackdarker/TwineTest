@@ -26,7 +26,7 @@ Where would you like to go from here?</br>
 <aside id="sidebar"></aside><article><%=window.story.render("CenterDialogs") %>
 <%window.gm.player.location=window.passage.name;%>
 You are on the hunt for useful resources as...
-<a href="javascript:void(0)" onclick='(window.gm.combat.initCombat(window.gm.Mobs.Mole);window.story.show("Encounter");});'>Next</a> </br>
+<a href="javascript:void(0)" onclick='window.gm.encounters.mole(window.gm.player.location);'>Next</a> </br>
 
 </article><article id="LogPanel"></article></section>
 

@@ -17,12 +17,7 @@ This game is powered by twine and tweego.</br>
 </article>
 
 :: Intro
-<script>
-function resetStart(){
-	window.gm.initGame(true);
-	window.story.show(window.passage.name);
-}
-</script>
+
 <article>
 <%window.gm.initGame();window.gm.player.location=window.passage.name;%>
 Welcome to your new home. </br>
@@ -33,12 +28,12 @@ There were several reasons you came here:
 </br>
 You are just an average girl that recently turned 18. </br>
 </br>Select up to 2 perks below and press [[Next|Home]] to start the game. </br>
-Or press <a0 id='reset' onclick='(function ( $event ) { resetStart(); })(this);'>Reset</a> to reset your selection.  </br></br>
-
+Or press <a0 id='reset' onclick='window.gm.initGame(true);window.gm.refreshScreen();'>Reset</a> to reset your selection.  </br></br>
+ <a0 onclick='iqwerty.toast.toast("Hello!");'>Toast</a></br>
+ <a0 onclick='(new Toasty()).info("Here is some information!");'>Toast2</a></br>
 <%=window.gm.printUnlockPerk('skCooking','Your cooking skill is slightly improved.')%>
 <%=window.gm.printUnlockPerk('skSporty','You are sporty.')%>
 <%=window.gm.printUnlockPerk('skTechy','You are technic-affine.')%>
 <%=window.gm.printUnlockPerk('skSlacker','You know how to avoid work.')%>
 <%=window.gm.printUnlockPerk('skMoneymaker','get rich.faster.')%>
-
 </article>

@@ -127,7 +127,7 @@ window.storage = {
     getSaveInfo: function(slot) {
         var info=null;
       if(window.storage.ok()) {
-          info =window.localStorage.getItem(slot.concat('info'));		
+          info =window.localStorage.getItem(window.story.name+slot.concat('info'));		
       }
     if(!info) {
       return('');
@@ -140,8 +140,10 @@ window.storage = {
       let file = input.files[0]; 
       let fileReader = new FileReader(); 
       fileReader.onload = function() {
-        window.storage.rebuildFromSave(fileReader.result,window.storage.compressLocalSave);
-        div = document.querySelector('#backdrop'); //see save/load dialog
+        var _blobs = fileReader.result.split("!achievements!");
+        window.storage.rebuildFromSave(_blobs[0],window.storage.compressLocalSave);
+        window.storage.rebuildAchievements(_blobs[1],window.storage.compressLocalSave)
+        var div = document.querySelector('#backdrop'); //see save/load dialog
         div.parentNode.removeChild(div);
       }; 
       fileReader.onerror = function() {
@@ -153,31 +155,40 @@ window.storage = {
   saveFile: function(){
     var hash = JSON.stringify({state:window.story.state,
       history:window.story.history,checkpointName:window.story.checkpointName});
-    if(window.storage.compressLocalSave) hash = LZString.compressToBase64(hash);
+    var ahash = window.storage.getAchievements();
+    if(window.storage.compressLocalSave) {
+      hash = LZString.compressToBase64(hash);
+      ahash = LZString.compressToBase64(ahash);
+    }
     var filename= window.story.name+"_Save.dat";
-    var blob = new Blob([hash], {type: "text/plain;charset=utf-8"});
+    var blob = new Blob([hash,"!achievements!",ahash], {type: "text/plain;charset=utf-8"});
     saveAs(blob, filename);
   },
-    saveBrowser: function(slot) {
-      //var hash= window.story.save();    this call somehow messes up html and I had to copy the following from snowman script
-      var hash = LZString.compressToBase64(JSON.stringify({state:window.story.state,
-          history:window.story.history,checkpointName:window.story.checkpointName}));
-      var options = {year:"numeric", month:"short", day:"numeric", hour:"numeric", minute:"numeric", second:"numeric"};
-      var info=window.gm.player.location +' - '+ (new Intl.DateTimeFormat("default", options).format(new Date()));
-      window.localStorage.setItem(slot.concat('info'),info);
-      window.localStorage.setItem(slot,hash);
-      //document.querySelector("output").textContent = info;  //causes problems because page reset to start-Index.html??
-      return(info);
+  saveBrowser: function(slot) {
+    //var hash= window.story.save();    this call somehow messes up html and I had to copy the following from snowman script
+    //always compress or storage could be full soon !
+    var hash = LZString.compressToBase64(JSON.stringify({state:window.story.state,
+        history:window.story.history,checkpointName:window.story.checkpointName}));
+    var ahash = LZString.compressToBase64(window.storage.getAchievements());
+    var options = {year:"numeric", month:"short", day:"numeric", hour:"numeric", minute:"numeric", second:"numeric"};
+    var info=window.gm.player.location +' - '+ (new Intl.DateTimeFormat("default", options).format(new Date()));
+    //add storyname to avoid conflict with other games on same host (see Document.origin)
+    window.localStorage.setItem(window.story.name+slot.concat('info'),info);
+    window.localStorage.setItem(window.story.name+slot,hash);
+    window.localStorage.setItem(window.story.name+'achievements',ahash);
+    return(info);
   },
-    loadBrowser: function(slot) {
-      var hash,info;
-      if(window.storage.ok()) {
-          //not possible to save object {info,hash} ??
-          hash=window.localStorage.getItem(slot);
-          info=window.storage.getSaveInfo(slot);
-          window.storage.rebuildFromSave(hash,true);
-      }
-      return(info);
+  loadBrowser: function(slot) {
+    var hash,info;
+    if(window.storage.ok()) {
+        //not possible to save object {info,hash} ??
+        hash=window.localStorage.getItem(window.story.name+slot);
+        info=window.storage.getSaveInfo(window.story.name+slot);
+        window.storage.rebuildFromSave(hash,true);
+        var ahash=window.localStorage.getItem(window.story.name+'achievements');
+        window.storage.loadAchivementsFromBrowser();
+    }
+    return(info);
   },
   rebuildFromSave: function(hash,compressed){
     if(!compressed) hash=LZString.compressToBase64(hash);
@@ -188,6 +199,29 @@ window.storage = {
       window.story.checkpointName = save.checkpointName;
       window.gm.rebuildObjects();  // this is for handling version-upgrades
       window.story.show(window.story.history[window.story.history.length - 1], true);      
+  },
+  getAchievements: function() {
+    var ahash = JSON.stringify({achievements : window.gm.achievements});
+    return(ahash);
+  },
+  loadAchivementsFromBrowser:function() {
+    if(window.storage.ok()) {
+      var ahash=window.localStorage.getItem(window.story.name+'achievements');
+      if(ahash!==null) window.storage.rebuildAchievements(ahash,true);
+    }
+  },
+  rebuildAchievements: function(ahash,compressed) {
+    if(!compressed) ahash=LZString.compressToBase64(ahash);
+    var achievements = JSON.parse(LZString.decompressFromBase64(ahash)).achievements;
+    //it might be necessary to adapt the achievements here if a newer game-version is started !
+    var _keys = Object.keys(window.gm.achievements);
+    for(var i=0;i<_keys.length;i++) {
+      if(achievements.hasOwnProperty(_keys[i])) { 
+        var _old = achievements[_keys[i]];
+        var _now = window.gm.achievements[_keys[i]];
+        if(_old>_now) window.gm.achievements[_keys[i]]=_old;  //merge loaded achievements into present
+      }
+    }
   }
 };
 /*  //save demo

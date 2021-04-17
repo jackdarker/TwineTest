@@ -15,7 +15,7 @@ a:hover {
   background-color: #ffede0;
   margin: 0.25em 0.25em;
   padding: 0.25em;
-  width: 10em;
+  min-width: 12em;
   min-height: 30em;
   text-align: center;
   grid-row-start: 1;
@@ -31,8 +31,10 @@ a:hover {
   color: black;
 }
 tw-story {
-  max-width: 70em;
-    margin: 0 auto;
+  height:100vh; 
+  /*width:95vW;*/
+  max-width: 60em;
+    margin: 0 0/*auto*/; 
     line-height: 100%;
     display: block;
 }
@@ -53,6 +55,70 @@ dialog::backdrop, #backdrop {
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);    
 }
+.popup {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* The actual popup */
+.popup .popuptext {
+  visibility: hidden;
+  /*width: 160px;*/
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 0%;
+  left: 0%;
+  /*margin-left: -80px;*/
+}
+
+/* Popup arrow 
+.popup .popuptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}*/
+
+/* Toggle this class - hide and show the popup */
+/*.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}*/
+
+/*.popuptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 0%;
+  left: 0%;
+  margin-left: -80px;
+}*/
+    
+.popup:hover .popuptext {
+  visibility: visible;
+}
+
 [type=checkbox], [type=radio] {
   width:1em;
   height: 1em;
@@ -100,19 +166,31 @@ statdown {
     border-width: 3px;
     border-style: solid;
 }
- 
+.selected {
+    border-style: double;
+    border-width: thick;
+    /* border-spacing: 20px; */
+    border-color: coral;
+} 
 div.scroll {
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
 }
 @media (min-width: 30em) { 
+body {
+    background-image:url('assets/bg_hex.jpg');
+    color:black;
+    padding:0;
+    margin:0;
+  }
   section {
     background: #ffffff;
     display: grid;
     grid-template-columns: 0.5fr 1fr 1fr 1fr;
     grid-template-rows: 80% 20%;
-  }
+    height:100vh;
+    /*width:95vw;*/ /*scrollbars*/  }
   .section_swap {
     grid-template-rows: 2% ;
   }
@@ -123,12 +201,18 @@ div.scroll {
   article {
     background-color: #ffede0;
     margin: 0.25em 0.25em;
-    padding: 0.25em;
+    padding: 1em;
 	  grid-column: 2;
 	  grid-column-end: -1;
-  }
+    line-height: 130%;
+    /*height: 100%;*/
+    overflow-x: hidden;
+    overflow-y: auto;  }
   #LogPanel {
     background: #e4e4e4;
+  }
+  #combatCanvas {
+    height:300px;
   }
 
 }

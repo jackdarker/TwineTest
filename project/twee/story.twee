@@ -20,9 +20,15 @@ teyt
 Select a Link:
 <ul>
     <li>[[_SuperSimpleStory_]]</li>
-	  <li>[[_ImagesAndOtherMedia_]]</li>
+	<li>[[_ImagesAndOtherMedia_]]</li>
     <li>[[_VariablesAndScript_]]</li>
+	<li>[[_ControlElements_]]</li>
     <li>[[_Inventory_]]</li>
     <li>[[_SaveAndRestore_]]</li>
     <li>[[StartPage]]</li>
 </ul>
+
+:: NewGamePlus
+You finished the game in some way but maybe you have missed something. </br>
+Would you like to start a new game while taking some of your equipment/skills with you?</br>
+<a0 onclick='window.gm.newGamePlus()'>Start new game plus</a></br>
