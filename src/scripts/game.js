@@ -8,6 +8,208 @@ window.gm = window.gm || {}; //game related operations
 window.gm.util = window.gm.util || {};  //utility functions
 // define save-game-file-version 1
 
+window.gm.startDominoCombat=function(stopCB, startCB){
+  function start() { 
+    //setup teams,cards
+    data.teams=[];
+    let i,skills,players,x=0;
+    for(i=0;i<=1;i++) { //teams
+      players=[];
+      for(var k=0;k<(i+1);k++) {
+        skills=[];   //skills
+        if(x===0) {
+        skills.push({id:'skill#'+0,start:'blue',end:'red',hp:15,charge:1,cooldown:0});
+        skills.push({id:'skill#'+1,start:'red',end:'blue',hp:5,charge:1,cooldown:0});
+        skills.push({id:'skill#'+2,start:'blue',end:'blue',hp:25,charge:3,cooldown:0});
+        skills.push({id:'skill#'+3,start:'red',end:'green',hp:25,charge:3,cooldown:0});
+        skills.push({id:'skill#'+4,start:'red',end:'red',hp:25,charge:4,cooldown:0});
+        } else if(x===1) {
+          skills.push({id:'skill#'+3,start:'red',end:'red',hp:25,charge:3,cooldown:0});
+          skills.push({id:'skill#'+4,start:'blue',end:'red',hp:25,charge:4,cooldown:0});
+        } else {
+          skills.push({id:'skill#'+0,start:'blue',end:'red',hp:15,charge:2,cooldown:0});
+          skills.push({id:'skill#'+2,start:'red',end:'blue',hp:5,charge:2,cooldown:0});
+          skills.push({id:'skill#'+3,start:'red',end:'red',hp:5,charge:2,cooldown:0});
+        }
+        players.push({id:'player#'+x,hp:100,color:'blue',skills:skills});
+        x+=1;
+      }
+      data.teams.push(players);
+    }   
+    data.run=true;
+    newTurn();
+  }
+  function updateBoard() {
+    let player,skill;
+    //update players or remove them: list health and color of each player
+    //check victory condition
+    let entry,panel=document.getElementById('panel')
+    for(var i=panel.childNodes.length-1;i>=0;i-- ) {
+      panel.removeChild(panel.childNodes[i]);
+    } 
+    //cleanout skill selection
+    let choice=document.getElementById('choice')
+    for(var i=choice.childNodes.length-1;i>=0;i-- ) {
+      choice.removeChild(choice.childNodes[i]);
+    } 
+    for(var i=data.teams.length-1;i>=0;i--) {
+      for(var k=data.teams[i].length-1;k>=0;k--) {
+        player=data.teams[i][k];
+        entry=document.createElement('button');
+        entry.id=player.id;entry.style['color']=player.color;
+        if(player.hp>0) {
+          entry.textContent='Team'+i+' '+player.id+' hp:'+player.hp+' '+player.color;
+        } else {
+          entry.textContent='Team'+i+' '+player.id+' is down';
+        }
+        if(data.team===i || player.hp<=0){
+          entry.disabled=true;
+        } else {
+          //bind click handler targetselect
+          entry.addEventListener("click",(function(target){return(selectTarget.bind(data,target));}(player.id))); 
+          data.target=player.id;
+        }
+        panel.appendChild(entry);
+        if(player.hp>0 && player.id===data.player){  //list skills for curr. player
+          entry.style['border-block-color']='khaki',entry.style['border-block-width']='5px';
+          for(var l=player.skills.length-1;l>=0;l--){
+            skill=player.skills[l];
+            entry=document.createElement('button');
+            entry.id=skill.id;
+            entry.textContent=skill.id+' '+skill.start+' -> '+skill.end+' hit:'+skill.hp+' cooldown:'+skill.cooldown;
+            if(skill.cooldown>0){
+              entry.disabled=true;
+            }else {
+              entry.addEventListener("click",(function(player,skill){return(selectSkill.bind(data,player,skill));}(player.id,skill.id)));  
+            }  
+            choice.appendChild(entry);
+          }   
+          entry=document.createElement('button');
+          entry.id=entry.textContent='skip';  
+          entry.addEventListener("click",nextPlayer);
+          choice.appendChild(entry);
+        }
+        if(player.hp<=0 && player.id===data.player){ //skip dead players
+          nextPlayer();return;
+        }
+      }
+      entry=document.createElement('hr');
+      panel.appendChild(entry);
+    } 
+    entry=document.createElement('p');
+    entry.textContent=data.player+': select target and skill:';
+    choice.appendChild(entry);  
+  }
+  function newTurn(){
+    //check if any team is down
+    let teamDead,player,skill;
+    for(var i=data.teams.length-1;i>=0;i--) {
+      teamDead=true;
+      for(var k=data.teams[i].length-1;k>=0;k--) {
+        player=data.teams[i][k];
+        if(player.hp>0) teamDead=false;
+        for(var l=player.skills.length-1;l>=0;l--){ //tick skills
+          skill=player.skills[l];
+          skill.cooldown=Math.max(0,skill.cooldown-1);
+        }
+      }
+      if(teamDead) {
+        alert('team '+i+' is defeated')
+        stop();
+        break;
+      } else { //start new round with team0 - note that all for-loops are operated backwards
+        data.team=data.teams.length-1;
+        let x=data.teams[data.team].length-1;
+        data.player=data.teams[data.team][x].id;
+        updateBoard();
+      }
+    }
+  }
+  function nextPlayer(){
+    let player,_usethis;
+    //skip to next alive in team
+    _usethis=false;
+    for(var k=data.teams[data.team].length-1;k>=0;k--) {
+      player=data.teams[data.team][k];
+      if(_usethis===true) { //the previous player was the current - this is next 
+        data.player=player.id;
+        _usethis=false;
+        break;
+      }
+      if(player.id===data.player) {
+        _usethis=true;
+      }
+    }
+    if(_usethis===true){//no more players in team, switch to next
+      data.team-=1;
+      for(var i=data.team;(_usethis&&i>=0);i--) {
+        for(var k=data.teams[i].length-1;(_usethis&&k>=0);k--) {
+          player=data.teams[i][k];
+          if(player.hp>0) {
+            data.player=player.id;
+            _usethis=false;
+          }
+        }
+      }
+      if(_usethis===true) {
+        newTurn();//but if no one left... 
+        return;
+      }
+    }
+    updateBoard();
+  }
+  function selectTarget(id) {this.target=id; }
+  function selectSkill(playerId,skillId) {
+    let playerA,playerB,player,skill,skillA;
+    for(var i=data.teams.length-1;i>=0;i--) { //find players
+      for(var k=data.teams[i].length-1;k>=0;k--) {
+        player=data.teams[i][k];
+        if(player.id===data.target) {
+          playerB=player;
+        } 
+        if(player.id===playerId){
+          playerA=player;
+          for(var l=player.skills.length-1;l>=0;l--){ //get skill
+            skill=player.skills[l];
+            if(skill.id===skillId){
+              skillA=skill;
+            }
+          }
+        }
+      }
+    }
+    //execute skill & print log
+    let _log="div#output";
+    if(playerA.color===skillA.start) {
+      if(playerB.color===skillA.start) {
+        playerB.hp-=skillA.hp;playerB.color=skillA.end;
+        window.gm.printOutput(playerA.id+" dealt "+skillA.hp+" damage to "+playerB.id,_log)
+      } else {
+        playerB.hp-=skillA.hp/5;
+        window.gm.printOutput(playerB.id+" color doesnt match - less damage",_log)
+      }
+    } else {
+      window.gm.printOutput(playerA.id+" color wrong - epic fail",_log)
+    }
+    playerA.color=skillA.end;
+    skillA.cooldown=skillA.charge;
+    nextPlayer();
+  }
+  function stop() { data.run=false;}
+  let data ={ //internal state of game
+    scoreBoard : document.getElementById(panel),
+    run:false, //game started?
+    teams:[],
+    team:0,
+    player:'',
+    target:'',
+    stopCB: stopCB, //callback after user trigger 
+    startCB: startCB, //callback after start
+    start: start, //ref to start-function
+  }
+  return(data);
+}
+
 window.gm.switchPlayer = function(playername) {
   var s = window.story.state;
   window.gm.player= s[playername]; 
@@ -262,8 +464,9 @@ window.gm.roll=function(n,sides) { //rolls n x dies with sides
   }
   return(rnd); 
 }
-window.gm.printOutput= function(text) {
-  document.querySelector("section article div output").innerHTML = text;
+//expects DOM like <section><article>..<div id='output'></div>..</article></section>
+window.gm.printOutput= function(text,where="section article div#output") {
+  document.querySelector(where).innerHTML = text;
 };
 //connect to onclick to toggle selected-style for element + un-hiding related text
 //the elmnt (f.e.<img>) needs to be inside a parentnode f.e. <div id="choice">
